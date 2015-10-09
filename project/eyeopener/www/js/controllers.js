@@ -41,12 +41,6 @@ angular.module('eyeopener.controllers', [])
       $scope.closeLogin();
     }, 1000);
   };
-
-
-  $scope.gotoSearch = function(){
-    console.log('goto');
-    $state.go( 'app.search');
-  }
 })
 
 .controller('PlaylistsCtrl', function($scope) {
@@ -66,20 +60,16 @@ angular.module('eyeopener.controllers', [])
 /*
  * 问题查询Controller
  */
-.controller('QuestionsCtrl', function($scope, $state, EOArticles) {
+.controller('QuestionsCtrl', function($scope, $state, EOShare, EOArticles) {
+
+  var shareDataArticle = 'ArticleDetailCtrl.share.article';
 
   $scope.questions = [];
 
-  EOArticles.getAll({}, function(status, statusText, data){
-    console.log( data );
-    if( data || data.length > 0 ){
-      angular.forEach( data, function(question){
-        $scope.questions.push( question );
-      })
-    }
-  });
-
-
+  $scope.gotoArticleDetail = function(article){
+    EOShare.set(shareDataArticle, article);
+    $state.go( 'app.article_detail', {articleId:article.likes});
+  }
 
   $scope.questions = [
     {title:'你的第一桶金是如何赚到的？', aType:'0', sub:'顺丰快递', likes:201, context:'几个月前，当年搞煤矿时认识的一个小土豪过来喝酒。酒到三巡突然放声大哭起来。土豪说：我赔光了！我问：几千万全没了？土豪：就…'},
@@ -124,11 +114,31 @@ angular.module('eyeopener.controllers', [])
     {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', heart:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
   ]
 
-  
+  EOArticles.getAll({}, function(status, statusText, data){
+    console.log( data );
+    if( data || data.length > 0 ){
+      angular.forEach( data, function(question){
+        $scope.questions.push( question );
+      })
+    }
+  });
 })
 
 /*
  * 问题详细Controller
  */
-.controller('QuestionDetailCtrl', function($scope, $state, EOArticles) {
+.controller('ArticleDetailCtrl', function($scope, $state, $stateParams, EOShare, EOArticles) {
+  var shareDataArticle = 'ArticleDetailCtrl.share.article';
+  var articleId = $stateParams.articleId;
+  var shareArticle = EOShare.get(shareDataArticle);
+  console.log( articleId );
+  console.log( shareArticle );
+
+  $scope.article = {};
+  angular.extend($scope.article, shareArticle);
+
+  // 
+  $scope.$on('$destroy', function(){
+    EOShare.set(shareDataArticle, false);
+  })
 })

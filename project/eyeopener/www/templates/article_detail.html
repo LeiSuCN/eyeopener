@@ -1,0 +1,25 @@
+
+<style type="text/css" media="screen">
+.article-detail-buttom-button{}
+.article-detail-title{ font-size: 18px; text-align: center;}
+.article-detail-content{}
+</style>
+
+<ion-view view-title="">
+	<!-- 底部按钮 -->
+
+	<!-- 顶部导航 -->
+  <ion-nav-bar class="bar-eyeopener">
+    <ion-nav-buttons side="right">
+      <button class="button button-icon button-clear ion-ios-eye-outline"></button>
+    </ion-nav-buttons>
+  </ion-nav-bar>
+
+  <!-- 主区域 -->
+  <ion-content>
+    <h2 class="article-detail-title">{{article.title}}</h2>
+    <div class="article-detail-content">
+      {{article.context}}
+    </div>
+  </ion-content>
+</ion-view>

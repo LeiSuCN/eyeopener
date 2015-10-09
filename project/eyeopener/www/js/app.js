@@ -43,6 +43,17 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
+  // ==== ==== ==== ==== >>>> 文章内容
+  .state('app.article_detail', {
+    url: '/article/:articleId',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/article_detail.html',
+        controller: 'ArticleDetailCtrl'
+      }
+    }
+  })
+
   .state('app.search', {
     url: '/search',
     views: {

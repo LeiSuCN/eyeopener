@@ -3,7 +3,27 @@ top.window.SEVER_ADDRESS = top.window.SEVER_ADDRESS || 'http://112.74.213.249'
 angular.module('eyeopener.services', [])
 
 //
-// ======== ======== ======== ========>> 本地存储 <<======== ======== ======== ========
+// ======== ======== ======== ========>> 共享数据Service <<======== ======== ======== ========
+//
+.factory('EOShare', function() {
+
+  var api = {};
+  // 共享数据
+  var _share = {};
+
+  api.get = function( key ){
+    return _share[key];
+  }
+
+  api.set = function( key, value ){
+    _share[key] = value;
+  }
+
+  return api;
+})
+
+//
+// ======== ======== ======== ========>> 文章Service <<======== ======== ======== ========
 //
 .factory('EOArticles', function($http) {
 
