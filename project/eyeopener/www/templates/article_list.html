@@ -1,0 +1,33 @@
+
+<style type="text/css" media="screen">
+.feed-item .item-content{padding: 16px;}
+#submitQuestion{ position: fixed; right:1em; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgba(0,0,0,0.9);}
+.feed-item .item-content{padding-top: 8px; padding-bottom: 8px;}
+.feed-main .qustion-source{color:#999; font-size:14px; line-height:1.6;padding-right: 2em;  position: relative;}
+.feed-main .qustion-source a{color:#259;}
+.feed-main .qustion-source img{ position: absolute; top:0; right:0; width: 1.5em;border-radius: 50%;}
+.feed-main .qustion-content h2{  color: #222; font-size:18px; line-height: 1.6; font-weight: bold;}
+.feed-main .qustion-content{ }
+.feed-main .qustion-content .qustion-vote{ font-size: 14px;padding: 0em; border-radius: .2em;position: absolute; left:0; top: 0; background-color: rgb(92,181,255); color:white; width: 2.8em; text-align: center;}
+.feed-main .qustion-content .qustion-summary{ position: relative;padding-left: 3em; font-size:16px; line-height:1.2; color:#222;word-wrap: break-word;white-space: normal; color:rgb(112,112,112);}
+</style>
+
+<ion-view view-title="">
+	<a id="submitQuestion"></a>
+  	<ion-content>
+
+      <ion-item ng-repeat="question in questions" href="#" class="feed-item">
+      	<div class="feed-main">
+      		<div class="qustion-source">
+      			来自 <a>{{question.aType | typeName}}</a>
+      			<img ng-src="img/category/{{question.aType}}.png">
+      		</div>
+      		<div class="qustion-content">
+       			<h2>{{question.title}}</h2>
+      			<div class="qustion-summary"><span class="qustion-vote">{{question.likes}}</span>{{question.context}}</div>     			
+      		</div>
+      	</div>
+      </ion-item>
+
+  	</ion-content>
+</ion-view>
