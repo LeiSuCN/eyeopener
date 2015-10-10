@@ -23,15 +23,27 @@ angular.module('eyeopener.services', [])
 })
 
 //
-// ======== ======== ======== ========>> 文章Service <<======== ======== ======== ========
+// ======== ======== ======== ========>> 用户Service <<======== ======== ======== ========
 //
-.factory('EOArticles', function($http) {
+.factory('EOUser', function() {
 
   var api = {};
 
-  // POST请求
-  function post(url, params, successcb, errorcb){
-    $http.post( url, params )
+  api.me = function(){
+    return {
+      uid:'16'
+    }
+  }
+
+  return api;
+})
+
+.factory('EOUtils', function($http) {
+
+  var api = {};
+
+  api.send = function(url, params, successcb, errorcb){
+    $http.post( SEVER_ADDRESS + url, params )
     .then(
       // 成功回调结果
       function( resp ){
@@ -49,9 +61,61 @@ angular.module('eyeopener.services', [])
     );
   }
 
-  api.getAll = function(params, successcb, errorcb){
-    var url = SEVER_ADDRESS + '/article/getlist';
-    post(url, params, successcb, errorcb);
+  return api;
+})
+
+//
+// ======== ======== ======== ========>> 文章Service <<======== ======== ======== ========
+//
+.factory('EOArticles', function($http) {
+
+  var api = {};
+
+  // POST请求
+  function post(url, params, successcb, errorcb){
+    $http.post( SEVER_ADDRESS + url, params )
+    .then(
+      // 成功回调结果
+      function( resp ){
+        if( successcb )
+          successcb( resp.status, resp.statusText, resp.data );
+      },
+      // 失败回调结果
+      function( resp ){ 
+        if( errorcb ){
+          errorcb( resp.status, resp.statusText, resp.data );
+        } else{
+          console.log( resp );
+        }
+      }
+    );
+  }
+
+  api.query = function(params, successcb, errorcb){
+    post('/article/getlist', params, successcb, errorcb);
+  }
+
+  api.get = function(params, successcb, errorcb){
+    post('/article/getinfo', params, successcb, errorcb);
+  }
+
+  api.save = function(params, successcb, errorcb){
+    post('/article/buildbyuid', params, successcb, errorcb);
+  }
+
+  return api;
+})
+
+
+//
+// ======== ======== ======== ========>> 评论Service <<======== ======== ======== ========
+//
+.factory('EOComments', function(EOUtils) {
+
+  var api = {};
+
+  api.query = function(params, successcb, errorcb){
+    EOUtils.send('/comment/getlist ', params, successcb, errorcb);
   }
 
   return api;

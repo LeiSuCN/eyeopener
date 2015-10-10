@@ -68,10 +68,10 @@ angular.module('eyeopener.controllers', [])
 
   $scope.gotoArticleDetail = function(article){
     EOShare.set(shareDataArticle, article);
-    $state.go( 'app.article_detail', {articleId:article.likes});
+    $state.go( 'app.article_detail', {articleId:article.aid});
   }
 
-  $scope.questions = [
+  $scope.questions1 = [
     {title:'你的第一桶金是如何赚到的？', aType:'0', sub:'顺丰快递', likes:201, context:'几个月前，当年搞煤矿时认识的一个小土豪过来喝酒。酒到三巡突然放声大哭起来。土豪说：我赔光了！我问：几千万全没了？土豪：就…'},
     {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不…'},
     {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'几个月前，当年搞煤矿时认识的一个小土豪过来喝酒。酒到三巡突然放声大哭起来。土豪说：我赔光了！我问：几千万全没了？土豪：就…'},
@@ -114,7 +114,7 @@ angular.module('eyeopener.controllers', [])
     {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', heart:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
   ]
 
-  EOArticles.getAll({}, function(status, statusText, data){
+  EOArticles.query({}, function(status, statusText, data){
     console.log( data );
     if( data || data.length > 0 ){
       angular.forEach( data, function(question){
@@ -125,9 +125,44 @@ angular.module('eyeopener.controllers', [])
 })
 
 /*
+ * 文章创建Controller
+ */
+.controller('ArticleCreateCtrl', function($scope, EOUser, EOArticles) {
+
+  var me = EOUser.me();
+
+  $scope.article = {
+    uid: me.uid,
+    aType: '0',
+    title: '',
+    context: ''
+  }
+
+  $scope.submit = function(){
+
+
+
+    var article = $scope.article;
+
+    console.log( article.context ); 
+    //return;
+
+    //console.log( article );
+
+    if( article.title && article.context )
+    EOArticles.save( $scope.article );
+  }
+
+  // 注销
+  $scope.$on('$destroy', function(){
+    
+  })
+})
+
+/*
  * 问题详细Controller
  */
-.controller('ArticleDetailCtrl', function($scope, $state, $stateParams, EOShare, EOArticles) {
+.controller('ArticleDetailCtrl', function($scope, $state, $stateParams, $ionicHistory, EOShare, EOArticles) {
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var articleId = $stateParams.articleId;
   var shareArticle = EOShare.get(shareDataArticle);
@@ -137,8 +172,43 @@ angular.module('eyeopener.controllers', [])
   $scope.article = {};
   angular.extend($scope.article, shareArticle);
 
+  $scope.goBack = function(){
+    $ionicHistory.goBack();
+  }
+
+  $scope.goComment = function(){
+    $state.go( 'app.article_comment', {articleId:articleId});
+  }
   // 
   $scope.$on('$destroy', function(){
     EOShare.set(shareDataArticle, false);
   })
+
+  //
+  EOArticles.get({aid: articleId},function(status, statusText, data){
+    angular.extend($scope.article, data);
+  });
+})
+
+/*
+ * 文章评论Controller
+ */
+.controller('ArticleCommentCtrl', function($scope, $stateParams,  $ionicHistory, EOComments) {
+
+  var articleId = $stateParams.articleId;
+  
+  $scope.goBack = function(){
+    $ionicHistory.goBack();
+  }
+
+  // 注销
+  $scope.$on('$destroy', function(){
+    
+  })
+
+  EOComments.query({aid: articleId},function(status, statusText, data){
+    console.log( status )
+    console.log( statusText )
+    console.log( data )
+  });
 })

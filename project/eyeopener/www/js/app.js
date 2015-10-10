@@ -43,6 +43,17 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
+  // ==== ==== ==== ==== >>>> 文章创建
+  .state('app.article_create', {
+    url: '/article/create',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/article_create.html',
+        controller: 'ArticleCreateCtrl'
+      }
+    }
+  })
+
   // ==== ==== ==== ==== >>>> 文章内容
   .state('app.article_detail', {
     url: '/article/:articleId',
@@ -50,6 +61,17 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
       'menuContent': {
         templateUrl: 'templates/article_detail.html',
         controller: 'ArticleDetailCtrl'
+      }
+    }
+  })
+
+  // ==== ==== ==== ==== >>>> 文章内容
+  .state('app.article_comment', {
+    url: '/article/:articleId/comment',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/article_comment.html',
+        controller: 'ArticleCommentCtrl'
       }
     }
   })

@@ -1,12 +1,17 @@
 
 <style type="text/css" media="screen">
-.article-detail-buttom-button{}
+.article-detail-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgba(0,0,0,0.9);}
+.article-detail-buttom-button-back{ left: 1em;}
+.article-detail-buttom-button-comment{ right: 1em;}
 .article-detail-title{ font-size: 18px; text-align: center;}
-.article-detail-content{}
+.article-detail-content{white-space: pre-line;}
 </style>
 
 <ion-view view-title="">
 	<!-- 底部按钮 -->
+  <a class="article-detail-buttom-button article-detail-buttom-button-back" ng-click="goBack()"></a>
+
+  <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"></a>
 
 	<!-- 顶部导航 -->
   <ion-nav-bar class="bar-eyeopener">

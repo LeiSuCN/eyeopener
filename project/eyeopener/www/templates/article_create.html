@@ -1,0 +1,21 @@
+
+<style type="text/css" media="screen">
+</style>
+
+<ion-view view-title="添加问题">
+	<!-- 底部按钮 -->
+  <a class="article-detail-buttom-button article-detail-buttom-button-back" ng-click="goBack()"></a>
+
+	<!-- 顶部导航 -->
+  <ion-nav-bar class="bar-eyeopener">
+    <ion-nav-buttons side="right">
+      <button class="button button-icon button-clear ion-paper-airplane" ng-click="submit()">发布</button>
+    </ion-nav-buttons>
+  </ion-nav-bar>
+
+  <!-- 主区域 -->
+  <ion-content>
+    <input type="text" value="" placeholder="" ng-model="article.title">
+    <textarea ng-model="article.context" style="width: 100%; height: 20em; border: 1px solid gray;"></textarea>
+  </ion-content>
+</ion-view>
