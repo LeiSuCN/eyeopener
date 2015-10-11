@@ -1,18 +1,35 @@
 
 <style type="text/css" media="screen">
-.article-detail-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgba(0,0,0,0.9);}
+.article-detail-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgba(0,0,0,0.8);text-align: center; padding-top: .5em;}
+.article-detail-buttom-button span{ font-size: 2em;color: white;}
 .article-detail-buttom-button-back{ left: 1em;}
 .article-detail-buttom-button-comment{ right: 1em;}
-.article-detail-title,.article-detail-content, .article-detail-comment{ margin: 0 10px;}
+.article-detail-buttom-button-like{ right: 5em; }
+.article-detail-buttom-button-share{ right: 9em; }
+
+.article-detail .article-detail-font{ font-size: 15px; color: rgb(34, 34, 34); line-height: 1.7;}
+.article-detail  .item{padding: 5px 10px;}
+
+.article-detail-title,.article-detail-content{ margin: 0 10px;}
 .article-detail-title{ font-size: 18px; color: rgb(34, 34, 34); line-height: 1.7; padding-top: 5px;margin-bottom: 5px;}
-.article-detail-content{white-space: pre-line; font-size: 15px; color: rgb(34, 34, 34); line-height: 1.7;}
+.article-detail-content{white-space: pre-line; font-size: 15px; color: #5A5A5A; line-height: 1.7;}
+.article-detail-status{ padding: 14px 10px; border-top: 1px solid #E7E7E7; }
+.article-detail-status a{ font-size: 18px; margin-right: .5em;color: #BEBEBE; }
+.article-detail-status a:before{ margin-right: 5px; }
+.article-detail-comment{ position: relative; padding-left: 1.5em; }
+.article-detail-comment .user-header-photo{ position: absolute; left: 0; font-size: 1.5em;line-height: 1; }
+.article-detail-comment .article-detail-context{color: #5A5A5A;}
 </style>
 
 <ion-view view-title="">
 	<!-- 底部按钮 -->
-  <a class="article-detail-buttom-button article-detail-buttom-button-back" ng-click="goBack()"></a>
+  <a class="article-detail-buttom-button article-detail-buttom-button-back" ng-click="goBack()"><span class="icon ion-ios-arrow-thin-left"></span></a>
 
-  <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"></a>
+  <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"><span class="icon ion-ios-compose-outline"></span></a>
+
+  <a class="article-detail-buttom-button article-detail-buttom-button-like" ng-click="goLike()"><span class="icon ion-ios-heart-outline"></span></a>
+
+  <a class="article-detail-buttom-button article-detail-buttom-button-share" ng-click=""><span class="icon ion-ios-upload-outline"></span></a>
 
 	<!-- 顶部导航 -->
   <ion-nav-bar class="bar-eyeopener">
@@ -22,14 +39,21 @@
   </ion-nav-bar>
 
   <!-- 主区域 -->
-  <ion-content>
+  <ion-content class="article-detail">
     <h2 class="article-detail-title">{{article.title}}</h2>
     <div class="article-detail-content">{{article.context}}</div>
-    <div class="article-detail-comment">
+    <div class="article-detail-status">
+      <a class="icon ion-ios-heart">{{article.likes}}</a>
+      <a class="icon ion-chatboxes">{{article.likes}}</a>
+    </div>
+    <div class="article-detail-comments">
       <ion-list>
         <ion-item ng-repeat="comment in comments">
-          <h2>{{comment.user.uname}}:</h3>
-          {{comment.context}}
+          <div class="article-detail-comment article-detail-font">
+            <a class="user-header-photo icon ion-ios-person-outline"></a>
+            <h3 class="article-detail-font">{{comment.user.uname}}</h3>
+            <div class="article-detail-context">{{comment.context}}</div>            
+          </div>
         </ion-item>
       </ion-list>
     </div>

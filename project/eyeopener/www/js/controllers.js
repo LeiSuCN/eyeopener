@@ -183,9 +183,6 @@ angular.module('eyeopener.controllers', [])
     params.page = _pageNo;    //页码
 
     EOComments.query(params,function(status, statusText, data){
-      console.log( status )
-      console.log( statusText )
-      console.log( data )
 
       angular.forEach( data, function(comment){
         $scope.comments.push( comment );
