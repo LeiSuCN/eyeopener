@@ -3,8 +3,9 @@
 .article-detail-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgba(0,0,0,0.9);}
 .article-detail-buttom-button-back{ left: 1em;}
 .article-detail-buttom-button-comment{ right: 1em;}
-.article-detail-title{ font-size: 18px; text-align: center;}
-.article-detail-content{white-space: pre-line;}
+.article-detail-title,.article-detail-content, .article-detail-comment{ margin: 0 10px;}
+.article-detail-title{ font-size: 18px; color: rgb(34, 34, 34); line-height: 1.7; padding-top: 5px;margin-bottom: 5px;}
+.article-detail-content{white-space: pre-line; font-size: 15px; color: rgb(34, 34, 34); line-height: 1.7;}
 </style>
 
 <ion-view view-title="">
@@ -23,8 +24,14 @@
   <!-- 主区域 -->
   <ion-content>
     <h2 class="article-detail-title">{{article.title}}</h2>
-    <div class="article-detail-content">
-      {{article.context}}
+    <div class="article-detail-content">{{article.context}}</div>
+    <div class="article-detail-comment">
+      <ion-list>
+        <ion-item ng-repeat="comment in comments">
+          <h2>{{comment.user.uname}}:</h3>
+          {{comment.context}}
+        </ion-item>
+      </ion-list>
     </div>
   </ion-content>
 </ion-view>

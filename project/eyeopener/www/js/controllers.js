@@ -162,15 +162,48 @@ angular.module('eyeopener.controllers', [])
 /*
  * 问题详细Controller
  */
-.controller('ArticleDetailCtrl', function($scope, $state, $stateParams, $ionicHistory, EOShare, EOArticles) {
+.controller('ArticleDetailCtrl', function($scope, $state, $stateParams, $ionicHistory, EOShare, EOArticles, EOComments) {
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var articleId = $stateParams.articleId;
   var shareArticle = EOShare.get(shareDataArticle);
-  console.log( articleId );
-  console.log( shareArticle );
+  var _pageSize = 20; // 当前页大小
+  var _pageNo = 0;// 当前页码
+
+  // 获取更多评论
+  function getMoreComments(){
+
+    // 已经全部加载完成
+    if( _pageNo < 0 ){
+      return;
+    }
+
+    var params = {};
+    params.aid = articleId;   //文章ID
+    params.limit = _pageSize; //每页数量
+    params.page = _pageNo;    //页码
+
+    EOComments.query(params,function(status, statusText, data){
+      console.log( status )
+      console.log( statusText )
+      console.log( data )
+
+      angular.forEach( data, function(comment){
+        $scope.comments.push( comment );
+      })
+
+      // 还有更多页
+      if( data.length >= _pageSize ){
+        _pageNo = _pageNo + 1;
+      } else{ // 全部加载完成
+        _pageNo = -1;
+      }
+    });
+  }
 
   $scope.article = {};
   angular.extend($scope.article, shareArticle);
+
+  $scope.comments = [];
 
   $scope.goBack = function(){
     $ionicHistory.goBack();
@@ -187,6 +220,7 @@ angular.module('eyeopener.controllers', [])
   //
   EOArticles.get({aid: articleId},function(status, statusText, data){
     angular.extend($scope.article, data);
+    getMoreComments();
   });
 })
 
@@ -205,10 +239,4 @@ angular.module('eyeopener.controllers', [])
   $scope.$on('$destroy', function(){
     
   })
-
-  EOComments.query({aid: articleId},function(status, statusText, data){
-    console.log( status )
-    console.log( statusText )
-    console.log( data )
-  });
 })
