@@ -53,7 +53,7 @@ angular.module('eyeopener.services', [])
       // 失败回调结果
       function( resp ){ 
         if( errorcb ){
-          errorcb( resp.status, resp.statusText, resp.data );
+          errorcb( resp );
         } else{
           console.log( resp );
         }
@@ -67,40 +67,24 @@ angular.module('eyeopener.services', [])
 //
 // ======== ======== ======== ========>> 文章Service <<======== ======== ======== ========
 //
-.factory('EOArticles', function($http) {
+.factory('EOArticles', function(EOUtils) {
 
   var api = {};
 
-  // POST请求
-  function post(url, params, successcb, errorcb){
-    $http.post( SEVER_ADDRESS + url, params )
-    .then(
-      // 成功回调结果
-      function( resp ){
-        if( successcb )
-          successcb( resp.status, resp.statusText, resp.data );
-      },
-      // 失败回调结果
-      function( resp ){ 
-        if( errorcb ){
-          errorcb( resp.status, resp.statusText, resp.data );
-        } else{
-          console.log( resp );
-        }
-      }
-    );
-  }
-
   api.query = function(params, successcb, errorcb){
-    post('/article/getlist', params, successcb, errorcb);
+    EOUtils.send('/article/getlist', params, successcb, errorcb);
   }
 
   api.get = function(params, successcb, errorcb){
-    post('/article/getinfo', params, successcb, errorcb);
+    EOUtils.send('/article/getinfo', params, successcb, errorcb);
   }
 
   api.save = function(params, successcb, errorcb){
-    post('/article/buildbyuid', params, successcb, errorcb);
+    EOUtils.send('/article/buildbyuid', params, successcb, errorcb);
+  }
+
+  api.like = function(params, successcb, errorcb){
+    EOUtils.send('/article/likebyaid', params, successcb, errorcb);
   }
 
   return api;
@@ -115,7 +99,15 @@ angular.module('eyeopener.services', [])
   var api = {};
 
   api.query = function(params, successcb, errorcb){
-    EOUtils.send('/comment/getlist ', params, successcb, errorcb);
+    EOUtils.send('/comment/getlist', params, successcb, errorcb);
+  }
+
+  api.save = function(params, successcb, errorcb){
+    EOUtils.send('/comment/buildbyuid', params, successcb, errorcb);
+  }
+
+  api.like = function(params, successcb, errorcb){
+    EOUtils.send('/comment/likebycid', params, successcb, errorcb);
   }
 
   return api;

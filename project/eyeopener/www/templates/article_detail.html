@@ -1,10 +1,11 @@
 
 <style type="text/css" media="screen">
-.article-detail-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgba(0,0,0,0.8);text-align: center; padding-top: .5em;}
+.article-detail-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgb(0,0,0); opacity: 0.8;text-align: center; padding-top: .5em;}
 .article-detail-buttom-button span{ font-size: 2em;color: white;}
 .article-detail-buttom-button-back{ left: 1em;}
 .article-detail-buttom-button-comment{ right: 1em;}
 .article-detail-buttom-button-like{ right: 5em; }
+.article-detail-buttom-button-like.liked{ background-color: red; }
 .article-detail-buttom-button-share{ right: 9em; }
 
 .article-detail .article-detail-font{ font-size: 15px; color: rgb(34, 34, 34); line-height: 1.7;}
@@ -16,9 +17,16 @@
 .article-detail-status{ padding: 14px 10px; border-top: 1px solid #E7E7E7; }
 .article-detail-status a{ font-size: 18px; margin-right: .5em;color: #BEBEBE; }
 .article-detail-status a:before{ margin-right: 5px; }
-.article-detail-comment{ position: relative; padding-left: 1.5em; }
-.article-detail-comment .user-header-photo{ position: absolute; left: 0; font-size: 1.5em;line-height: 1; }
+.article-detail-comment{ position: relative; padding-left: 3.2em; }
+.article-detail-comment .user-header-photo{ position: absolute; left: 0; top:1em;width: 3em;}
+.article-detail-comment .user-header-photo img{ width: 100%; max-height: 100%;}
+.article-detail-comment .article-detail-date{ position: relative; font-size: .8em; color: #BEBEBE; }
+.article-detail-comment .comment-like{ position: absolute; right: 0; bottom: 0; color: red;font-size: 1.4em;}
+.article-detail-comment .comment-like:before{ margin-right: .2em;  }
 .article-detail-comment .article-detail-context{color: #5A5A5A;}
+.article-detail-popup{}
+.article-detail-popup .popup-head{ display: none; }
+.article-detail-popup .popup-body a{ display: block; width: 100%; text-align: center; }
 </style>
 
 <ion-view view-title="">
@@ -27,7 +35,7 @@
 
   <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"><span class="icon ion-ios-compose-outline"></span></a>
 
-  <a class="article-detail-buttom-button article-detail-buttom-button-like" ng-click="goLike()"><span class="icon ion-ios-heart-outline"></span></a>
+  <a class="article-detail-buttom-button article-detail-buttom-button-like" ng-class="{liked:articleLiked}" ng-click="likeArticle()"><span class="icon ion-ios-heart-outline"></span></a>
 
   <a class="article-detail-buttom-button article-detail-buttom-button-share" ng-click=""><span class="icon ion-ios-upload-outline"></span></a>
 
@@ -44,14 +52,20 @@
     <div class="article-detail-content">{{article.context}}</div>
     <div class="article-detail-status">
       <a class="icon ion-ios-heart">{{article.likes}}</a>
-      <a class="icon ion-chatboxes">{{article.likes}}</a>
+      <a class="icon ion-chatboxes">{{article.commentCount}}</a>
     </div>
     <div class="article-detail-comments">
       <ion-list>
         <ion-item ng-repeat="comment in comments">
-          <div class="article-detail-comment article-detail-font">
-            <a class="user-header-photo icon ion-ios-person-outline"></a>
+          <div class="article-detail-comment article-detail-font" on-hold="popupCommentOpts(comment)">
+            <a class="user-header-photo">
+              <img src="img/ionic.png" alt="">
+            </a>
             <h3 class="article-detail-font">{{comment.user.uname}}</h3>
+            <div class="article-detail-date">
+              {{comment.buildDate*1000 | date:'yyyy-MM-dd HH:mm:ss' }}
+              <span class="icon ion-ios-heart-outline comment-like">{{comment.likes}}</span>
+            </div> 
             <div class="article-detail-context">{{comment.context}}</div>            
           </div>
         </ion-item>

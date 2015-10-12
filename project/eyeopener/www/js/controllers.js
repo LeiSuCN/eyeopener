@@ -60,74 +60,39 @@ angular.module('eyeopener.controllers', [])
 /*
  * 问题查询Controller
  */
-.controller('QuestionsCtrl', function($scope, $state, EOShare, EOArticles) {
+.controller('QuestionsCtrl', function($scope, $rootScope, $state, EOShare, EOArticles) {
 
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
 
   $scope.questions = [];
+
+  function getMore(){
+    EOArticles.query({}, function(status, statusText, data){
+      if( data || data.length > 0 ){
+        angular.forEach( data, function(question){
+          $scope.questions.push( question );
+        })
+      }
+    });    
+  }
 
   $scope.gotoArticleDetail = function(article){
     EOShare.set(shareDataArticle, article);
     $state.go( 'app.article_detail', {articleId:article.aid});
   }
 
-  $scope.questions1 = [
-    {title:'你的第一桶金是如何赚到的？', aType:'0', sub:'顺丰快递', likes:201, context:'几个月前，当年搞煤矿时认识的一个小土豪过来喝酒。酒到三巡突然放声大哭起来。土豪说：我赔光了！我问：几千万全没了？土豪：就…'},
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'几个月前，当年搞煤矿时认识的一个小土豪过来喝酒。酒到三巡突然放声大哭起来。土豪说：我赔光了！我问：几千万全没了？土豪：就…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', likes:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-    {title:'为何考研读马克思主义感觉很有道理？', aType:'1', sub:'菜鸟驿站', likes:11, context:'你的感觉当然是正确的。因为马克思主义作为一个流派，和黑格尔，康德，尼采的地位是有过之而无不及的。有些人否定是因为他们一不读理论，二经验论，把马克思主义混同于苏联和中国的实践，三形而上学，把马克思主义当成某种非黑即白的理论，静止地看待马克思…'},
-    {title:'诺贝尔奖巡礼', aType:'0', sub:'顺丰快递', likes:101, context:'诺贝尔奖依据阿弗雷德·诺贝尔的遗嘱设立，于每年嘉奖在生理学或医学、物理学、化学、文学、和平领域作出杰出贡献的人士。为纪…'},
-    {title:'理财平台那么多？怎样看理财平台是否靠谱呢？', aType:'1', sub:'菜鸟驿站', heart:36, context:'刚好我们社区有位达人发了篇心得，正好可以回答你这个问题：第一档，一线城市以下的P2P 看都不用看。第二档，没活过2年的P2P，想都不用想。第三档，老板不露面，后面财团胡扯的，碰都不用碰。第四档，永远别想着投多少钱得个什么鬼电子产品啊旅游啊这种贪小…'},    
-  ]
+  $rootScope.$on('Article:create', function(){
+    $scope.questions = [];
+    getMore();
+  })
 
-  EOArticles.query({}, function(status, statusText, data){
-    console.log( data );
-    if( data || data.length > 0 ){
-      angular.forEach( data, function(question){
-        $scope.questions.push( question );
-      })
-    }
-  });
+  getMore();
 })
 
 /*
  * 文章创建Controller
  */
-.controller('ArticleCreateCtrl', function($scope, EOUser, EOArticles) {
+.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, EOUser, EOArticles) {
 
   var me = EOUser.me();
 
@@ -138,19 +103,23 @@ angular.module('eyeopener.controllers', [])
     context: ''
   }
 
+  $scope.goBack = function(){
+    $ionicHistory.goBack();
+  }
+
   $scope.submit = function(){
-
-
-
     var article = $scope.article;
 
-    console.log( article.context ); 
-    //return;
-
-    //console.log( article );
-
-    if( article.title && article.context )
-    EOArticles.save( $scope.article );
+    if( article.title ){
+      $ionicLoading.show({ template: '正在提交...' });
+      EOArticles.save( article, function(status, statusText, data){
+        $ionicLoading.hide();
+        $scope.$emit('Article:create');
+        $ionicHistory.goBack();
+      }, function( errResp ){
+        $ionicLoading.hide();
+      })
+    }
   }
 
   // 注销
@@ -162,12 +131,20 @@ angular.module('eyeopener.controllers', [])
 /*
  * 问题详细Controller
  */
-.controller('ArticleDetailCtrl', function($scope, $state, $stateParams, $ionicHistory, EOShare, EOArticles, EOComments) {
+.controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $stateParams, $ionicHistory, $ionicPopup, EOUser, EOShare, EOArticles, EOComments) {
+  var me = EOUser.me();
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
+  var shareDataComment = 'ArticleCommentCtrl.share.comment';
   var articleId = $stateParams.articleId;
   var shareArticle = EOShare.get(shareDataArticle);
   var _pageSize = 20; // 当前页大小
   var _pageNo = 0;// 当前页码
+  var _selectPopup = false;
+
+  $scope.articleLiked = false; // 是否已经赞过
+  $scope.comments = [];  
+  $scope.article = {};
+  angular.extend($scope.article, shareArticle);
 
   // 获取更多评论
   function getMoreComments(){
@@ -197,18 +174,58 @@ angular.module('eyeopener.controllers', [])
     });
   }
 
-  $scope.article = {};
-  angular.extend($scope.article, shareArticle);
+  $scope.popupCommentOpts = function(comment){
+    EOShare.set(shareDataComment,comment);
+    // 弹出框
+    _selectPopup = $ionicPopup.show({
+      cssClass: 'article-detail-popup',
+      template: '<a ng-click="goComment()">回复</a><a ng-click="likeComment()">赞</a>',
+      scope: $scope
+    });
+    angular.element( window ).one('click', function(){
+      _selectPopup.close();
+      _selectPopup = false;
+    })
+  }
 
-  $scope.comments = [];
+  // 赞评论
+  $scope.likeComment = function(){
+    var comment = EOShare.get(shareDataComment);
+    EOComments.like({uid:me.uid, cid:comment.cid},function(status, statusText, data){
+      comment.likes = parseInt(comment.likes) + 1;
+    });
+  }
+
+  // 赞文章
+  $scope.likeArticle = function(){
+    if( $scope.articleLiked )return;
+    EOArticles.like({uid:me.uid, aid:articleId},function(status, statusText, data){
+      if( data.code == '10000' ){
+        $scope.article.likes = parseInt($scope.article.likes) + 1;
+      }
+      $scope.articleLiked = true;
+    });
+  }
 
   $scope.goBack = function(){
     $ionicHistory.goBack();
   }
 
   $scope.goComment = function(){
+    if( _selectPopup ){
+    } else{
+      EOShare.set(shareDataComment,false);
+    }
     $state.go( 'app.article_comment', {articleId:articleId});
   }
+
+  $rootScope.$on('Comments:add', function(){
+    $scope.article.commentCount = parseInt($scope.article.commentCount) + 1;
+    $scope.comments = [];
+    _pageNo = 0;
+    getMoreComments();
+  })
+
   // 
   $scope.$on('$destroy', function(){
     EOShare.set(shareDataArticle, false);
@@ -224,16 +241,50 @@ angular.module('eyeopener.controllers', [])
 /*
  * 文章评论Controller
  */
-.controller('ArticleCommentCtrl', function($scope, $stateParams,  $ionicHistory, EOComments) {
+.controller('ArticleCommentCtrl', function($scope, $stateParams, $ionicHistory, $ionicLoading, EOShare, EOComments, EOUser) {
+  var shareDataComment = 'ArticleCommentCtrl.share.comment';
 
+  var me = EOUser.me();
+  var toComment = EOShare.get(shareDataComment);
   var articleId = $stateParams.articleId;
+
+  $scope.comment = {
+    content: '',
+    placeholder: '写评论:'
+  }
+
+  if( toComment ){
+    $scope.comment.placeholder = '回复' + toComment.user.uname + ':';
+  }
   
-  $scope.goBack = function(){
+  $scope.goBack = function(){    
     $ionicHistory.goBack();
+  }
+
+  $scope.submit = function(){
+    var comment = {};
+    if( toComment ){
+      comment.toUid = toComment.user.uid;//被评论人ID
+      comment.pid = toComment.cid;//原评论ID
+    }
+    comment.aid = articleId;//文章ID
+    comment.uid = me.uid;//评论人ID
+    comment.context = $scope.comment.content;//评论内容
+
+    if( comment.context ){
+      $ionicLoading.show({ template: '正在提交...' });
+      EOComments.save( comment, function(status, statusText, data){
+        $ionicLoading.hide();
+        $scope.$emit('Comments:add');
+        $ionicHistory.goBack();
+      }, function( errResp ){
+        $ionicLoading.hide();
+      })
+    }
   }
 
   // 注销
   $scope.$on('$destroy', function(){
-    
+    EOShare.set(shareDataComment, false);
   })
 })

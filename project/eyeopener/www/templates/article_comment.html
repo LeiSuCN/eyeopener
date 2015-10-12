@@ -1,20 +1,21 @@
 
 <style type="text/css" media="screen">
+.article-comment-content{ width: 100%; height: 20em; padding: .5em;}
 </style>
 
 <ion-view view-title="评论">
 	<!-- 底部按钮 -->
-  <a class="article-detail-buttom-button article-detail-buttom-button-back" ng-click="goBack()"></a>
+  <a class="article-detail-buttom-button article-detail-buttom-button-back" ng-click="goBack()"><span class="icon ion-ios-arrow-thin-left"></span></a>
 
 	<!-- 顶部导航 -->
   <ion-nav-bar class="bar-eyeopener">
     <ion-nav-buttons side="right">
-      <button class="button button-icon button-clear ion-ios-eye-outline"></button>
+      <button class="button button-icon button-clear ion-paper-airplane" ng-click="submit()"></button>
     </ion-nav-buttons>
   </ion-nav-bar>
 
   <!-- 主区域 -->
   <ion-content>
-
+    <textarea class="article-comment-content" ng-model="comment.content" placeholder="{{comment.placeholder}}"></textarea>
   </ion-content>
 </ion-view>
