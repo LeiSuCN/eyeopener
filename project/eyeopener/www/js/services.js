@@ -87,6 +87,10 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/article/likebyaid', params, successcb, errorcb);
   }
 
+  api.types = function(params, successcb, errorcb){
+    EOUtils.send('/article/getatypemap', params, successcb, errorcb);
+  }
+
   return api;
 })
 

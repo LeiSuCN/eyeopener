@@ -1,4 +1,4 @@
-angular.module('eyeopener.controllers', [])
+angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 全局Controller
  */
@@ -92,9 +92,17 @@ angular.module('eyeopener.controllers', [])
 /*
  * 文章创建Controller
  */
-.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, EOUser, EOArticles) {
+.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, $ionicSlideBoxDelegate, EOUser, EOArticles) {
 
   var me = EOUser.me();
+
+  // 更新文章类型
+  function refreshTypes(){
+    EOArticles.types({},function(status, statusText, data){
+      console.log( data );
+      $scope.types = data;
+    });
+  }
 
   $scope.article = {
     uid: me.uid,
@@ -103,13 +111,23 @@ angular.module('eyeopener.controllers', [])
     context: ''
   }
 
+  $scope.tabActive = 0;
+  $scope.types = [];
+
   $scope.goBack = function(){
     $ionicHistory.goBack();
   }
 
+  $scope.slideHasChanged = function(index){
+    $scope.tabActive = index;
+  }
+
+  $scope.changeSlide = function(index){
+    $ionicSlideBoxDelegate.slide(index);
+  }
+
   $scope.submit = function(){
     var article = $scope.article;
-
     if( article.title ){
       $ionicLoading.show({ template: '正在提交...' });
       EOArticles.save( article, function(status, statusText, data){
@@ -121,6 +139,16 @@ angular.module('eyeopener.controllers', [])
       })
     }
   }
+
+  // window.document.ready
+  $scope.$on('$ionicView.afterEnter', function(){
+    // 设置高度
+    var contentHeight = angular.element('.article-create').height();
+    var tabHeight = angular.element('.article-create-tabs').height();
+    angular.element('.slider-slide').css('min-height',(contentHeight - tabHeight) + 'px' );
+    // 加载类型
+    refreshTypes();
+  })
 
   // 注销
   $scope.$on('$destroy', function(){

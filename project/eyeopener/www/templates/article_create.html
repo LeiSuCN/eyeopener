@@ -3,7 +3,14 @@
 .article-create-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgb(0,0,0); opacity: 0.8;text-align: center; padding-top: .5em;}
 .article-create-buttom-button span{ font-size: 2em;color: white;}
 .article-create-buttom-button-back{ left: 1em;}
-.article-create-input{width: 90%; margin-left: 5%; margin-top:2em; border: 1px solid #E6E6E6!important; border-radius: 3px;}
+.article-create-input{ width: 100%; height: 5em;padding: .5em; resize: none;}
+.article-create-tabs{ background-color: #3886e9; padding-left: 1em;}
+.article-create-tab{ color: white; font-size: 18px; padding: .5em 1em; border-bottom:3px solid #3886e9; display: inline-block;font-weight: bold;}
+.article-create-tab.article-create-tab-active{border-bottom-color: white;}
+.article-create .scroll{height: 100%;}
+.article-create .slider-pager{display: none;}
+.article-create .item-thumbnail-left img{width: 2em!important; height: 2em!important;}
+.article-create .item .item-content{ padding-left: 3.5em;min-height: 2.5em;padding-bottom: 8px;}
 </style>
 
 <ion-view view-title="添加问题">
@@ -18,8 +25,38 @@
   </ion-nav-bar>
 
   <!-- 主区域 -->
-  <ion-content>
-    <input type="text" placeholder="请输入问题" ng-model="article.title" class="article-create-input" style="height: 2em;">
-    <textarea placeholder="请输入问题描述" ng-model="article.context" class="article-create-input" style="height: 20em;"></textarea>
+  <ion-content class="article-create">
+    <div class="article-create-tabs">
+      <div class="article-create-tab" ng-click="changeSlide(0)" ng-class="tabActive == 0 ? 'article-create-tab-active':''">问题</div>
+      <div class="article-create-tab" ng-click="changeSlide(1)" ng-class="tabActive == 1 ? 'article-create-tab-active':''">描述</div>
+      <div class="article-create-tab" ng-click="changeSlide(2)" ng-class="tabActive == 2 ? 'article-create-tab-active':''">话题</div>
+    </div>
+    <ion-slide-box on-slide-changed="slideHasChanged($index)">
+      <ion-slide>
+        <div class="box">
+          <textarea placeholder="请输入问题" class="article-create-input" msd-elastic ng-model="article.title"></textarea>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box">
+          <textarea placeholder="请输入描述" class="article-create-input" msd-elastic ng-model="article.context"></textarea>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box">
+          <ion-list>
+            <label ng-repeat="type in types" class="item item-thumbnail-left item-radio" style="min-height: 2.5em; padding-left: 0px;">
+              <input type="radio" name="atype" value="{{type.id}}">
+              <div class="item-content">
+                <img src="{{type.picUrl}}">
+                <h2>{{type.name}}</h2>
+                <p>{{type.team}}</p>
+              </div>
+              <i class="radio-icon ion-checkmark balanced"></i>
+            </label>
+          </ion-list>
+        </div>
+      </ion-slide>
+    </ion-slide-box>
   </ion-content>
 </ion-view>
