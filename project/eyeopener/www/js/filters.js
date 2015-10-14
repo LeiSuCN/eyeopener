@@ -1,14 +1,45 @@
 angular.module('eyeopener.filters', [])
 
-// 任务状态
-.filter('typeName', function() {
+/*
+ * 专题ID转专题名称
+ */
+.filter('typeName', function(EOArticles) {
 
-  return function(type){
+  return function(typeId){
+  	var name = '';
+  	var typeResp = EOArticles.cacheTypes;
+  	if( typeResp && typeResp.data && typeResp.data.length > 0 ){
+  		var types = typeResp.data;
+  		for( var i = 0 ; i < types.length; i++ ){
+  			var type = types[i];
+  			if( type.id == typeId ){
+  				name = type.name;
+  				break;
+  			}
+  		}
+  	}
+    return name;
+  }
+})
 
-    if( type == '0' ){
-      return '顺丰';
-    } else{
-      return '其他';
-    }
+/*
+ * 专题ID转专题图片
+ */
+.filter('typePic', function(EOArticles) {
+
+  return function(typeId){
+  	var pic = '';
+  	var typeResp = EOArticles.cacheTypes;
+  	if( typeResp && typeResp.data && typeResp.data.length > 0 ){
+  		var types = typeResp.data;
+  		for( var i = 0 ; i < types.length; i++ ){
+  			var type = types[i];
+  			if( type.id == typeId ){
+  				pic = type.picUrl;
+  				break;
+  			}
+  		}
+  	}
+    return pic;
   }
 })

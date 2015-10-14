@@ -32,7 +32,7 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     controller: 'AppCtrl'
   })
 
-  // ==== ==== ==== ==== >>>> 知了
+  // ==== ==== ==== ==== >>>> 文章首页
   .state('app.knows', {
     url: '/knows',
     views: {
@@ -54,6 +54,17 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
+  // ==== ==== ==== ==== >>>> 文章搜索
+  .state('app.article_search', {
+    url: '/article/search',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/article_search.html',
+        controller: 'ArticleSearchCtrl'
+      }
+    }
+  })
+
   // ==== ==== ==== ==== >>>> 文章内容
   .state('app.article_detail', {
     url: '/article/:articleId',
@@ -65,7 +76,7 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
-  // ==== ==== ==== ==== >>>> 文章内容
+  // ==== ==== ==== ==== >>>> 文章评论
   .state('app.article_comment', {
     url: '/article/:articleId/comment',
     views: {
@@ -75,7 +86,7 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
       }
     }
   })
-
+  
   .state('app.search', {
     url: '/search',
     views: {

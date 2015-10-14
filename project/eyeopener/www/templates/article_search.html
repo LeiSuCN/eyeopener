@@ -1,0 +1,55 @@
+
+<style type="text/css" media="screen">
+.article-search-buttom-button{ position: fixed; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgb(0,0,0); opacity: 0.8;text-align: center; padding-top: .5em;}
+.article-search-buttom-button span{ font-size: 2em;color: white;}
+.article-search-buttom-button-back{ left: 1em;}
+.article-search-types{ text-align: center;}
+.article-search-type{display: inline-block; width: 5em; text-align: center;}
+.article-search-type span{ display: block; width: 100%; }
+.article-search-type img{ width: 2em; border-radius: 50%; }
+.article-search-hot{text-align: center;border: 0; color: #000; font-size: 14px;}
+.article-search h3{text-align: center; font-weight: normal; color: rgb(112,112,112);}
+.article-search hr{ opacity: .3;}
+</style>
+
+<ion-view view-title="">
+	<!-- 底部按钮 -->
+  <a class="article-search-buttom-button article-search-buttom-button-back" ng-click="goBack()"><span class="icon ion-ios-arrow-thin-left"></span></a>
+
+	<!-- 顶部导航 -->
+  <ion-nav-bar class="bar-eyeopener">
+    <ion-nav-buttons side="right">
+      <div class=" item-input-inset">
+        <label class="item-input-wrapper" style="background-color: rgb(62,157,237);">
+          <i class="icon ion-ios-search placeholder-icon"></i>
+          <input type="search" ng-model="search.text" style="width:16em;color:rgba(255,255,255,0.8);text-align:  center;">
+        </label>
+      </div>
+      <button class="button button-icon button-clear ion-search" ng-click="setHot(search.text)">
+      </button>
+    </ion-nav-buttons>
+  </ion-nav-bar>
+
+  <!-- 主区域 -->
+  <ion-content class="article-search">
+    <div class="article-search-types">
+      <h3>可以搜索以下内容</h3>
+      <div class="article-search-type" ng-repeat="type in types" ng-click="setType(type)">
+        <span>{{type.name}}</span>
+        <img ng-src="{{type.picUrl}}">
+      </div>
+    </div>
+
+    <div>
+      <hr>
+    </div>
+    <div>
+      <h3>热门搜索</h3>
+      <ion-list>
+        <ion-item class="article-search-hot" ng-repeat="hot in hots" ng-click="setHot(hot)">
+          {{hot}}
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-content>
+</ion-view>

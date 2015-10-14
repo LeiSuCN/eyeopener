@@ -46,9 +46,9 @@
         <div class="box">
           <ion-list>
             <label ng-repeat="type in types" class="item item-thumbnail-left item-radio" style="min-height: 2.5em; padding-left: 0px;">
-              <input type="radio" name="atype" value="{{type.id}}">
+              <input type="radio" name="atype" value="{{type.id}}" ng-model="article.aType">
               <div class="item-content">
-                <img src="{{type.picUrl}}">
+                <img ng-src="{{type.picUrl}}">
                 <h2>{{type.name}}</h2>
                 <p>{{type.team}}</p>
               </div>

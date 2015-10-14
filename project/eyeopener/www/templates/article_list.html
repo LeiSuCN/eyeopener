@@ -28,7 +28,7 @@
 		<div class=" item-input-inset">
 		  <label class="item-input-wrapper" style="background-color: rgb(62,157,237);">
 		    <i class="icon ion-ios-search placeholder-icon"></i>
-		    <input type="search" value="搜索问题／专题" style="width:16em;color:rgba(255,255,255,0.8);text-align: center;">
+		    <input type="search" ng-model="search.name" style="width:16em;color:rgba(255,255,255,0.8);text-align: center;" ng-click="gotoArticleSearch()">
 		  </label>
 		</div>
         <button class="button button-icon button-clear ion-ios-eye-outline">
@@ -37,12 +37,11 @@
     </ion-nav-bar>
 
   	<ion-content>
-
       <ion-item ng-repeat="question in questions" class="feed-item">
       	<div class="feed-main">
       		<div class="qustion-source">
       			来自 <a>{{question.aType | typeName}}</a>
-      			<img ng-src="img/category/{{question.aType}}.png">
+      			<img ng-src="{{question.aType | typePic}}">
       		</div>
       		<div class="qustion-content" ng-click="gotoArticleDetail(question)">
        			<h2>{{question.title}}</h2>
@@ -50,6 +49,5 @@
       		</div>
       	</div>
       </ion-item>
-
   	</ion-content>
 </ion-view>

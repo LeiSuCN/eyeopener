@@ -70,6 +70,7 @@ angular.module('eyeopener.services', [])
 .factory('EOArticles', function(EOUtils) {
 
   var api = {};
+  api.cacheTypes = {};
 
   api.query = function(params, successcb, errorcb){
     EOUtils.send('/article/getlist', params, successcb, errorcb);
@@ -87,8 +88,19 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/article/likebyaid', params, successcb, errorcb);
   }
 
-  api.types = function(params, successcb, errorcb){
-    EOUtils.send('/article/getatypemap', params, successcb, errorcb);
+  api.types = function(params, successcb, errorcb, force/* 强制刷新 */){
+
+    // 如果存在缓存，则从缓存中获取结果
+    if( !force && api.cacheTypes && api.cacheTypes.data && api.cacheTypes.data.length > 0 ){
+      successcb(api.cacheTypes.status, api.cacheTypes.statusText, api.cacheTypes.data);
+    } else{
+      EOUtils.send('/article/getatypemap', params, function(status, statusText, data){
+        api.cacheTypes.status = status;
+        api.cacheTypes.statusText = statusText;
+        api.cacheTypes.data = data;
+        successcb(status, statusText, data);
+      }, errorcb);
+    }
   }
 
   return api;

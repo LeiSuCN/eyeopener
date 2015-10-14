@@ -58,16 +58,38 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 })
 
 /*
- * 问题查询Controller
+ * 问题列表Controller
  */
 .controller('QuestionsCtrl', function($scope, $rootScope, $state, EOShare, EOArticles) {
 
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
+  var shareDataSearch = 'ArticleSearchCtrl.share.search';
 
   $scope.questions = [];
 
+  // 搜索内容
+  var gSearch = EOShare.get(shareDataSearch);
+  if( !gSearch ){
+    gSearch = {
+      type:'',
+      name:'',
+      id:''
+    }
+    EOShare.set(shareDataSearch, gSearch);
+  }
+
+  $scope.search = gSearch;
+
   function getMore(){
-    EOArticles.query({}, function(status, statusText, data){
+    var params = {};
+    // 搜索条件
+    if( $scope.search.type == 'hot' ){
+      params.title = $scope.search.name;
+    } else if( $scope.search.type == 'cate' ){
+      params.aType = $scope.search.id;
+    }
+
+    EOArticles.query(params, function(status, statusText, data){
       if( data || data.length > 0 ){
         angular.forEach( data, function(question){
           $scope.questions.push( question );
@@ -81,25 +103,33 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $state.go( 'app.article_detail', {articleId:article.aid});
   }
 
-  $rootScope.$on('Article:create', function(){
+  $scope.gotoArticleSearch = function(){
+    $state.go( 'app.article_search' );
+  }
+
+  $rootScope.$on('Article:refresh', function(){
     $scope.questions = [];
     getMore();
   })
 
-  getMore();
+  // 为了filter能够缓存到专题数据
+  // TODO ugly!!!
+  EOArticles.types({},function(status, statusText, data){
+    getMore();  
+  });
+  
 })
 
 /*
  * 文章创建Controller
  */
-.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, $ionicSlideBoxDelegate, EOUser, EOArticles) {
+.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, EOUser, EOArticles) {
 
   var me = EOUser.me();
 
   // 更新文章类型
   function refreshTypes(){
     EOArticles.types({},function(status, statusText, data){
-      console.log( data );
       $scope.types = data;
     });
   }
@@ -113,6 +143,16 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   $scope.tabActive = 0;
   $scope.types = [];
+
+  function showAlert(msg,index){
+    var alertPopup = $ionicPopup.alert({
+      title: '请完善您的问题',
+      template: msg
+    });
+    alertPopup.then(function(res) {
+      $scope.changeSlide(index);
+    });
+  }
 
   $scope.goBack = function(){
     $ionicHistory.goBack();
@@ -128,11 +168,22 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   $scope.submit = function(){
     var article = $scope.article;
-    if( article.title ){
+
+    if( !article.title ){
+      showAlert('请填写问题题目',0)
+      return;      
+    }
+
+    if( !article.aType || article.aType.length <= 0 || article.aType == '0'){
+      showAlert('请选择问题所属专题',2)
+      return;
+    }
+
+    if( article.title && article.aType ){
       $ionicLoading.show({ template: '正在提交...' });
       EOArticles.save( article, function(status, statusText, data){
         $ionicLoading.hide();
-        $scope.$emit('Article:create');
+        $scope.$emit('Article:refresh');
         $ionicHistory.goBack();
       }, function( errResp ){
         $ionicLoading.hide();
@@ -159,7 +210,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 问题详细Controller
  */
-.controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $stateParams, $ionicHistory, $ionicPopup, EOUser, EOShare, EOArticles, EOComments) {
+.controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $stateParams, $ionicHistory, $ionicPopup, $ionicScrollDelegate, EOUser, EOShare, EOArticles, EOComments) {
   var me = EOUser.me();
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var shareDataComment = 'ArticleCommentCtrl.share.comment';
@@ -168,6 +219,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   var _pageSize = 20; // 当前页大小
   var _pageNo = 0;// 当前页码
   var _selectPopup = false;
+  var _scrollTop = 0; // 滚动条位置
+  var _showButtomButton = true; // 是否显示底部按钮
 
   $scope.articleLiked = false; // 是否已经赞过
   $scope.comments = [];  
@@ -247,6 +300,44 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $state.go( 'app.article_comment', {articleId:articleId});
   }
 
+  $scope.scrolling = function(){
+    console.log($ionicScrollDelegate.getScrollPosition());
+
+    var position = $ionicScrollDelegate.getScrollPosition();
+    if( _scrollTop == 0 ){
+      _scrollTop = position.top;
+      return;
+    }
+    var activeDistance = 5;
+    var distince = position.top - _scrollTop;
+    // 向下滑动
+    if( distince > 0 ){
+      // 向下滑动有效距离
+      if( distince < activeDistance ){
+        return;
+      }
+      _scrollTop = position.top;
+      if( _showButtomButton ){
+        _showButtomButton = false;
+        angular.element('.article-detail-buttom-button')
+          .animate({'bottom':'-3em'})
+      }
+    }
+    // 向上滑动
+    else if( distince < 0 ){
+      // 向下滑动有效距离
+      if( distince*-1 < activeDistance ){
+        return;
+      }
+      _scrollTop = position.top;
+      if( !_showButtomButton ){
+        _showButtomButton = true;
+        angular.element('.article-detail-buttom-button')
+          .animate({'bottom':'1em'})
+      }
+    }   
+  }
+
   $rootScope.$on('Comments:add', function(){
     $scope.article.commentCount = parseInt($scope.article.commentCount) + 1;
     $scope.comments = [];
@@ -315,4 +406,58 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   $scope.$on('$destroy', function(){
     EOShare.set(shareDataComment, false);
   })
+})
+
+
+/*
+ * 文章搜索Controller
+ */
+.controller('ArticleSearchCtrl', function($scope, $ionicHistory, EOShare, EOArticles) {
+
+  var shareDataSearch = 'ArticleSearchCtrl.share.search';
+
+  $scope.search = { text:'', type:'' }
+  $scope.types = [];
+  $scope.hots = [];
+
+  var preSearch = EOShare.get(shareDataSearch);
+  if( preSearch && preSearch.name ){
+    $scope.search.text = preSearch.name;
+  }
+
+  $scope.hots = ['菜鸟驿站','小白兔干洗','跨境电商'];
+
+  function getTypes(){
+    EOArticles.types({},function(status, statusText, data){
+      $scope.types = data;
+    });
+  }
+
+  function search(type, name, id){
+    // {type: type, name: name, id: id}
+    var search = EOShare.get(shareDataSearch);
+    search.type = type;
+    search.name = name;
+    search.id = id;
+    $scope.$emit('Article:refresh');
+    $ionicHistory.goBack();
+  }
+
+  $scope.goBack = function(){    
+    $ionicHistory.goBack();
+  }
+
+  $scope.setType = function(type){
+    search('cate', type.name, type.id)
+  }
+
+  $scope.setHot = function(hot){
+    search('hot', hot, false)
+  }
+
+  // 注销
+  $scope.$on('$destroy', function(){
+  })
+
+  getTypes();
 })
