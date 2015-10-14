@@ -301,9 +301,9 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 
   $scope.scrolling = function(){
-    console.log($ionicScrollDelegate.getScrollPosition());
 
-    var position = $ionicScrollDelegate.getScrollPosition();
+    var position = $ionicScrollDelegate.$getByHandle('article-detail-scroll').getScrollPosition();
+
     if( _scrollTop == 0 ){
       _scrollTop = position.top;
       return;

@@ -44,7 +44,7 @@
   </ion-nav-bar>
 
   <!-- 主区域 -->
-  <ion-content class="article-detail" scroll-delegate on-scroll="scrolling()">
+  <ion-content class="article-detail" delegate-handle="article-detail-scroll" on-scroll="scrolling()">
     <h2 class="article-detail-title">{{article.title}}</h2>
     <div class="article-detail-content">{{article.context}}</div>
     <div class="article-detail-status">
