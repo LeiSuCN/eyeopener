@@ -13,7 +13,7 @@
 
 <ion-view view-title="">
 	<!-- 右下角按钮 -->
-	<a id="submitQuestion" href="#/app/article/create" class="button button-icon icon ion-ios-plus-empty" style="color:white;">
+	<a id="submitQuestion" ng-click="gotoArticleCreate()" class="button button-icon icon ion-ios-plus-empty" style="color:white;">
     
   </a>
 	<!-- 顶部导航 -->
@@ -31,12 +31,12 @@
 		    <input type="search" ng-model="search.name" style="width:16em;color:rgba(255,255,255,0.8);text-align: center;" ng-click="gotoArticleSearch()">
 		  </label>
 		</div>
-        <button class="button button-icon button-clear ion-ios-eye-outline">
+        <button class="button button-icon button-clear ion-ios-eye-outline" ng-click="gotoFinderList()">
         </button>
       </ion-nav-buttons>
     </ion-nav-bar>
 
-  	<ion-content>
+  	<ion-content on-swipe-left="swipeLeft()">
       <ion-item ng-repeat="question in questions" class="feed-item">
       	<div class="feed-main">
       		<div class="qustion-source">

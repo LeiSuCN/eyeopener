@@ -38,7 +38,7 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     views: {
       'menuContent': {
         templateUrl: 'templates/article_list.html',
-        controller: 'QuestionsCtrl'
+        controller: 'ArticleListCtrl'
       }
     }
   })
@@ -86,7 +86,18 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
       }
     }
   })
-  
+
+  // ==== ==== ==== ==== >>>> 发现列表
+  .state('app.finder_list', {
+    url: '/finder/list',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/finder_list.html',
+        controller: 'FinderListCtrl'
+      }
+    }
+  })
+
   .state('app.search', {
     url: '/search',
     views: {

@@ -60,7 +60,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 问题列表Controller
  */
-.controller('QuestionsCtrl', function($scope, $rootScope, $state, EOShare, EOArticles) {
+.controller('ArticleListCtrl', function($scope, $rootScope, $state, EOShare, EOArticles) {
 
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var shareDataSearch = 'ArticleSearchCtrl.share.search';
@@ -98,13 +98,25 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     });    
   }
 
+  $scope.swipeLeft = function(){
+    $scope.gotoFinderList();
+  }
+
   $scope.gotoArticleDetail = function(article){
     EOShare.set(shareDataArticle, article);
     $state.go( 'app.article_detail', {articleId:article.aid});
   }
 
+  $scope.gotoArticleCreate = function(){
+    $state.go( 'app.article_create' );
+  }
+
   $scope.gotoArticleSearch = function(){
     $state.go( 'app.article_search' );
+  }
+
+  $scope.gotoFinderList = function(){
+    $state.go( 'app.finder_list' );
   }
 
   $rootScope.$on('Article:refresh', function(){
@@ -460,4 +472,28 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   })
 
   getTypes();
+})
+
+
+/*
+ * 发现列表Controller
+ */
+.controller('FinderListCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate, EOShare) {
+
+
+  $scope.toggleLeftSideMenu = function() {
+    $ionicSideMenuDelegate.toggleLeft();
+  };
+
+  $scope.swipeRight = function(){
+    $scope.goBack();
+  }
+
+  $scope.goBack = function(){    
+    $ionicHistory.goBack();
+  }
+
+  // 注销
+  $scope.$on('$destroy', function(){
+  })
 })
