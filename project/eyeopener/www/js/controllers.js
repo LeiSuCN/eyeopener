@@ -14,12 +14,38 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   // Form data for the login modal
   $scope.loginData = {};
 
+  // 第三方客户端对象
+  $scope.clients = {
+    qq: 'UNKNOW'
+  }
+
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
   });
+
+  // 检测QQ客户端是否安装
+  function checkQqClientInstalled(successcb, failurecb){
+
+    if( !window.YCQQ ){
+      failurecb('未检测到QQ插件');
+      return;
+    }
+
+    YCQQ.checkClientInstalled(successcb, failurecb);
+  }
+
+  function registerWithQQ(){
+    var checkClientIsInstalled = 1;//default is 0,only for iOS
+    YCQQ.ssoLogin(function(args){
+      alert(args.access_token);
+      alert(args.userid);
+      },function(failReason){
+       console.log(failReason);
+      },checkClientIsInstalled);
+  }
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
@@ -28,6 +54,12 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   // Open the login modal
   $scope.login = function() {
+
+    checkQqClientInstalled(function(){
+      $scope.clients.qq = 'success';
+      registerWithQQ();
+    }, function(error){ $scope.clients.qq = error });
+
     $scope.modal.show();
   };
 
@@ -56,6 +88,18 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
+
+.controller('AppTestCtrl', function($scope) {
+
+  $scope.ps = ['window.cordova.plugins:'];
+
+  if (window.cordova && window.cordova.plugins) {
+    angular.forEach( window.cordova.plugins, function(p,name){
+      $scope.ps.push( name );
+    })
+  }
+})
+
 
 /*
  * 问题列表Controller

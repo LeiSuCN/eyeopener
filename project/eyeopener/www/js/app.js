@@ -98,6 +98,17 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
+  // ==== ==== ==== ==== >>>> 文章首页
+  .state('app.test', {
+    url: '/test',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/test.html',
+        controller: 'AppTestCtrl'
+      }
+    }
+  })
+
   .state('app.search', {
     url: '/search',
     views: {
