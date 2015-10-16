@@ -1,4 +1,4 @@
-top.window.SEVER_ADDRESS = top.window.SEVER_ADDRESS || 'http://112.74.213.249'
+top.window.SEVER_ADDRESS = top.window.SEVER_ADDRESS || 'http://112.74.213.249' ; //mwnshop.mailworld.org 112.74.213.249
 
 angular.module('eyeopener.services', [])
 
@@ -23,21 +23,8 @@ angular.module('eyeopener.services', [])
 })
 
 //
-// ======== ======== ======== ========>> 用户Service <<======== ======== ======== ========
+// ======== ======== ======== ========>> 共同Service <<======== ======== ======== ========
 //
-.factory('EOUser', function() {
-
-  var api = {};
-
-  api.me = function(){
-    return {
-      uid:'16'
-    }
-  }
-
-  return api;
-})
-
 .factory('EOUtils', function($http) {
 
   var api = {};
@@ -59,6 +46,42 @@ angular.module('eyeopener.services', [])
         }
       }
     );
+  }
+
+  return api;
+})
+
+//
+// ======== ======== ======== ========>> 用户Service <<======== ======== ======== ========
+//
+.factory('EOUser', function(EOUtils) {
+
+  var _me = false;
+
+  var api = {};
+
+  api.me = function(){
+    return _me;
+  }
+
+  api.login = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/loginbyopenid', params, function(status, statusText, data){
+
+      // 注册成功
+      if( data && data.uid ){
+        _me = {};
+        _me.uid = data.uid;//用户ID
+        _me.cname = data.cname;//用户昵称
+        _me.upic = data.upic;//用户头像
+        _me.buildDate = data.buildDate;//注册时间
+      }
+
+      successcb(status, statusText, data);
+    }, errorcb);
+  }
+
+  api.experts = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/getlistpro', params, successcb, errorcb);
   }
 
   return api;

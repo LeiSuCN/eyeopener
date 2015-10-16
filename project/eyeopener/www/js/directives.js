@@ -1,0 +1,45 @@
+angular.module('eyeopener.directives', [])
+
+.directive('eoFinderTypes', function(){
+	return {
+		restrict: 'E',
+		link: function(scope, element, attrs){
+
+			function max(a, b){
+				return 
+			}
+
+			function updateView(rootTypes){
+				var html = '';
+				angular.forEach(rootTypes, function(root, ri){
+					var typeHtml = '';
+					typeHtml += '<div class="finder-list-group">'
+					typeHtml += '<div class="finder-list-group-header">';
+					typeHtml += '<span class="finder-list-group-header-name">' + root.name + '</span>';
+					typeHtml += '<a class="button button-clear icon-right ion-chevron-right finder-list-group-header-more">更多类目(' + root.types.length + ')</a>';
+					typeHtml += '</div>';// <!-- /.finder-list-group-header -->
+
+					typeHtml += '<div class="finder-list-group-subs">';
+					var types = root.types;
+					var showSize = Math.min( 4, types.length );
+					for( var i = 0 ; i < showSize ; i++ ){
+						var type = types[i];
+						typeHtml += '<div class="finder-list-group-sub" style="background-image:url(' + type.picUrl + ')">';
+						typeHtml += '<span class="finder-list-group-sub-name">' + type.name + '</span>';
+
+						typeHtml += '</div>';// <!-- /.finder-list-group-sub -->
+					}
+					typeHtml += '</div>';// <!-- /.finder-list-group-subs -->
+
+					typeHtml += '</div>';// <!-- /.finder-list-group -->
+					html += typeHtml;
+				})
+				element.html( html );				
+			}
+
+			scope.$watchCollection(attrs.types, function(value){
+				updateView(value);
+			})
+		}
+	}
+})

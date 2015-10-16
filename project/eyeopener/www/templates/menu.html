@@ -1,32 +1,11 @@
-<ion-side-menus enable-menu-with-back-views="false">
+<style type="text/css">
+.eo-left-side{}
+.left-side-user-profile{ text-align: center; }
+.left-side-user-profile img{border-radius: 50%; height: 8em;}
+.left-side-user-profile span{ display: block; font-size: 18px;}
+</style>
+<ion-side-menus enable-menu-with-back-views="false" class="eo-left-side">
   <ion-side-menu-content>
-  <!--
-    <ion-nav-bar class="bar-eyeopener">
-      <ion-nav-back-button>
-      </ion-nav-back-button>
-
-      <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
-        </button>
-      </ion-nav-buttons>
-
-
-
-      <ion-nav-buttons side="right">
-
-<div class=" item-input-inset">
-  <label class="item-input-wrapper" style="background-color: rgb(62,157,237);">
-    <i class="icon ion-ios-search placeholder-icon"></i>
-    <input type="search" value="搜索问题／专题" style="width:16em;color:rgba(255,255,255,0.8);text-align: center;" ng-click="gotoSearch()">
-  </label>
-</div>
-
-        <button class="button button-icon button-clear ion-ios-eye-outline">
-        </button>
-      </ion-nav-buttons>
-
-    </ion-nav-bar>
-    -->
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
 
@@ -34,7 +13,11 @@
     <ion-header-bar class="bar-stable">
       <h1 class="title">Left</h1>
     </ion-header-bar>
-    <ion-content>
+    <ion-content >
+      <div class="left-side-user-profile">
+        <img ng-src="{{me.upic}}">
+        <span>{{me.cname}}</span>
+      </div>
       <ion-list>
         <ion-item menu-close ng-click="login()">
           Login

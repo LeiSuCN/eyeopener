@@ -2,7 +2,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 全局Controller
  */
-.controller('AppCtrl', function($scope, $state, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, $ionicLoading, EOUser) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -16,7 +16,16 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   // 第三方客户端对象
   $scope.clients = {
-    qq: 'UNKNOW'
+    qq: 'UNKNOW',
+    message: ''
+  }
+
+  $scope.me = EOUser.me();
+  if( !$scope.me ){
+    var me = {};
+    me.cname = '未登录';
+    me.upic = 'img/def.png';
+    $scope.me = me;
   }
 
   // Create the login modal that we will use later
@@ -26,40 +35,66 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.modal = modal;
   });
 
-  // 检测QQ客户端是否安装
-  function checkQqClientInstalled(successcb, failurecb){
+  // 显示警告信息
+  function showWarnMessage(msg){
+    alert(msg);
+  }
+
+  // 第三方认证成功后
+  function afterThirdAuthSucc(params){
+    $ionicLoading.show({ template: '正在处理请稍后...' });
+    // 开始注册
+    EOUser.login(params
+      // 注册成功
+    , function(){
+      $scope.me = EOUser.me();
+      $ionicLoading.hide();
+      $scope.closeLogin();
+    }
+      // 注册失败
+    , function(){
+      $ionicLoading.hide();
+      $scope.closeLogin();
+    });
+  }
+
+  // 第三方登录：QQ
+  $scope.registerWithQQ = function(){
 
     if( !window.YCQQ ){
-      failurecb('未检测到QQ插件');
-      return;
+      showWarnMessage('未检测到QQ插件');
+
+      window.YCQQ = {
+        checkClientInstalled: function(sc,fc){sc()},
+        ssoLogin: function(sc, fc){sc({ userid:'F687C5E2C23D282A0A91A9992B085530', access_token:'EDAC1FFAC3C597A7E41AA791542B980C'})}
+      }
+
+      //return;
     }
 
-    YCQQ.checkClientInstalled(successcb, failurecb);
+    YCQQ.checkClientInstalled(function(){
+      var checkClientIsInstalled = 1;//default is 0,only for iOS
+      YCQQ.ssoLogin(function(args){
+          var params = {};
+          params.connectType = 'qq';
+          params.openid = args.userid;
+          params.accessToken = args.access_token;
+          afterThirdAuthSucc(params);
+        }
+        ,function(failReason){
+         showWarnMessage(failReason);
+        },checkClientIsInstalled);
+
+    }, function(){
+      showWarnMessage('请先安装QQ客户端');
+    });
   }
 
-  function registerWithQQ(){
-    var checkClientIsInstalled = 1;//default is 0,only for iOS
-    YCQQ.ssoLogin(function(args){
-      alert(args.access_token);
-      alert(args.userid);
-      },function(failReason){
-       console.log(failReason);
-      },checkClientIsInstalled);
-  }
-
-  // Triggered in the login modal to close it
   $scope.closeLogin = function() {
     $scope.modal.hide();
   };
 
-  // Open the login modal
   $scope.login = function() {
-
-    checkQqClientInstalled(function(){
-      $scope.clients.qq = 'success';
-      registerWithQQ();
-    }, function(error){ $scope.clients.qq = error });
-
     $scope.modal.show();
   };
 
@@ -522,8 +557,53 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 发现列表Controller
  */
-.controller('FinderListCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate, EOShare) {
+.controller('FinderListCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate,$ionicSlideBoxDelegate, $timeout, EOShare, EOUser, EOArticles) {
 
+  $scope.types = [];
+
+  // 更新列表
+  function refreshTypes(){
+    var currentRootType = false;
+    EOArticles.types({}, function(status, statusText, data){
+      angular.forEach(data, function(type){
+        if( type.team != currentRootType.name ){
+          if( currentRootType ){
+            $scope.types.push(currentRootType);
+          }
+
+          currentRootType = {'name': type.team, types: [] };
+        }
+
+        currentRootType.types.push(type);
+      });
+
+      if( currentRootType ){
+        $scope.types.push( currentRootType );
+      }
+
+      refreshExperts();
+    });
+  }
+
+  // 更新列表
+  function refreshExperts(){
+    EOUser.experts({}, function(status, statusText, data){
+      console.log( data );
+      $scope.experts = data;
+    });
+  }
+
+  $scope.disableSlide = function(){
+    $ionicSlideBoxDelegate.enableSlide(false);
+  }
+
+  $scope.showTypes = function(){
+    $ionicSlideBoxDelegate.slide(0);
+  }
+
+  $scope.showExperts = function(){
+    $ionicSlideBoxDelegate.slide(1); 
+  }
 
   $scope.toggleLeftSideMenu = function() {
     $ionicSideMenuDelegate.toggleLeft();
@@ -536,6 +616,15 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   $scope.goBack = function(){    
     $ionicHistory.goBack();
   }
+
+  refreshTypes();
+
+
+  // 进入
+  $scope.$on('$ionicView.enter', function(){
+    var subEle = angular.element('.finder-list-group-sub');
+    //subEle.height( subEle.width() );
+  })
 
   // 注销
   $scope.$on('$destroy', function(){

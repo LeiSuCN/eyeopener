@@ -1,5 +1,21 @@
 
 <style type="text/css" media="screen">
+.eo-finder{}
+.eo-finder .tab-nav{top:0;}
+.eo-finder .scroll{padding-top: 49px;}
+.eo-finder .slider-pager{ display: none;}
+
+.eo-finder .finder-list-group{font-size: 18px;  clear: both;}
+.eo-finder .finder-list-group-header{padding: 1em;position: relative;}
+.eo-finder .finder-list-group-header-name{color: gray;}
+.eo-finder .finder-list-group-header-more{font-size: 12px;  position: absolute; right: 1em; top: 0.7em;}
+.eo-finder .finder-list-group-header-more:before{font-size: 14px;}
+.eo-finder .finder-list-group-subs{}
+.eo-finder .finder-list-group-sub{display: inline-block;width: 50%; height: 8em ;background-size: 100% 100%; position: relative;  float: left;}
+.eo-finder .finder-list-group-sub-name{background: #960; color: white; position: absolute; top:1em; left: 0; padding-left: .2em; padding-right:1em; border-bottom-right-radius: 10%;border-top-right-radius: 10%;line-height: 2em;}
+
+.eo-finder .item-thumbnail-left p{ font-size: 24px; padding-top: 1em;}
+.eo-finder .item-thumbnail-left p.item-1{color: red;}
 </style>
 
 <ion-view view-title="">
@@ -17,7 +33,27 @@
   </ion-nav-bar>
 
   <!-- 主区域 -->
-  <ion-content  on-swipe-right="swipeRight()">
+  <ion-content  on-swipe-right="swipeRight()" class="eo-finder">
 
+<ion-tabs class="tabs-striped tabs-top tabs-positive tabs-icon-left" style="top: 0">
+
+  <ion-tab title="看专题" icon-on="ion-ios-keypad" icon-off="ion-ios-keypad-outline" on-select="showTypes()"></ion-tab>
+
+  <ion-tab title="问专家" icon-on="ion-ios-people" icon-off="ion-ios-people-outline" on-select="showExperts()"></ion-tab>
+
+</ion-tabs>
+
+    <ion-slide-box ng-init="disableSlide()">
+      <ion-slide>
+        <eo-finder-types types="types"></eo-finder-types>
+      </ion-slide>
+      <ion-slide>
+        <ion-item ng-repeat="expert in experts" class="item item-thumbnail-left ">
+          <img ng-src="{{expert.upic}}">
+          <h2>{{expert.cname}}</h2>
+          <p class="item-{{$index+1}}">{{$index + 1}}</p>
+        </ion-item>
+      </ion-slide>
+    </ion-slide-box>
   </ion-content>
 </ion-view>
