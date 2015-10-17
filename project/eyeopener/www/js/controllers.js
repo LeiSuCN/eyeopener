@@ -543,9 +543,17 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 发现列表Controller
  */
-.controller('FinderListCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate,$ionicSlideBoxDelegate, $timeout, EOShare, EOUser, EOArticles) {
+.controller('FinderListCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate,$ionicSlideBoxDelegate, $timeout, $ionicModal, EOShare, EOUser, EOArticles) {
 
   $scope.types = [];
+  $scope.subsModal = false;
+
+  // 专题列表
+  $ionicModal.fromTemplateUrl('templates/finder_subs.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.subsModal = modal;
+  });
 
   // 更新列表
   function refreshTypes(){
@@ -570,6 +578,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       refreshExperts();
     });
   }
+
 
   // 更新列表
   function refreshExperts(){
@@ -596,6 +605,10 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   $scope.swipeRight = function(){
     $scope.goBack();
+  }
+
+  $scope.drillSubs = function(cate){
+    console.log( cate )
   }
 
   $scope.goBack = function(){    

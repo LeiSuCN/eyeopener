@@ -5,10 +5,6 @@ angular.module('eyeopener.directives', [])
 		restrict: 'E',
 		link: function(scope, element, attrs){
 
-			function max(a, b){
-				return 
-			}
-
 			function updateView(rootTypes){
 				var html = '';
 				angular.forEach(rootTypes, function(root, ri){
@@ -16,7 +12,7 @@ angular.module('eyeopener.directives', [])
 					typeHtml += '<div class="finder-list-group">'
 					typeHtml += '<div class="finder-list-group-header">';
 					typeHtml += '<span class="finder-list-group-header-name">' + root.name + '</span>';
-					typeHtml += '<a class="button button-clear icon-right ion-chevron-right finder-list-group-header-more">更多类目(' + root.types.length + ')</a>';
+					typeHtml += '<a class="button button-clear icon-right ion-chevron-right finder-list-group-header-more" ng-click="$parent.drillSubs(' + ri + ')">更多类目(' + root.types.length + ')</a>';
 					typeHtml += '</div>';// <!-- /.finder-list-group-header -->
 
 					typeHtml += '<div class="finder-list-group-subs">';
