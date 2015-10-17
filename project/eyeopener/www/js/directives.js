@@ -27,6 +27,14 @@ angular.module('eyeopener.directives', [])
 						typeHtml += '<div class="finder-list-group-sub" style="background-image:url(' + type.picUrl + ')">';
 						typeHtml += '<span class="finder-list-group-sub-name">' + type.name + '</span>';
 
+						// <!-- finder-list-group-sub-summary -->
+						typeHtml += '<div class="finder-list-group-sub-summary">'
+						typeHtml += '<span class="finder-list-group-sub-article"><i class="icon ion-ios-bookmarks-outline"></i>' + type.countArticle + '</span>';
+						typeHtml += '<span class="finder-list-group-sub-comment"><i class="icon ion-ios-chatboxes-outline"></i>' + type.countComment + '</span>';
+						typeHtml += '<span class="finder-list-group-sub-like"><i class="icon ion-ios-heart-outline"></i>' + type.countLike + '</span>';
+						typeHtml += '</div>'; 
+						// <!-- /.finder-list-group-sub-summary -->
+
 						typeHtml += '</div>';// <!-- /.finder-list-group-sub -->
 					}
 					typeHtml += '</div>';// <!-- /.finder-list-group-subs -->

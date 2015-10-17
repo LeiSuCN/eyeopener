@@ -13,7 +13,7 @@
 
 <ion-view view-title="">
 	<!-- 右下角按钮 -->
-	<a id="submitQuestion" ng-click="gotoArticleCreate()" class="button button-icon icon ion-ios-plus-empty" style="color:white;">
+	<a id="submitQuestion" on-tap="gotoArticleCreate()" class="button button-icon icon ion-ios-plus-empty" style="color:white;">
     
   </a>
 	<!-- 顶部导航 -->
@@ -37,7 +37,7 @@
     </ion-nav-bar>
 
   	<ion-content on-swipe-left="swipeLeft()">
-      <ion-item ng-repeat="question in questions" class="feed-item">
+      <ion-item collection-repeat="question in questions" class="feed-item">
       	<div class="feed-main">
       		<div class="qustion-source">
       			来自 <a>{{question.aType | typeName}}</a>
@@ -50,4 +50,5 @@
       	</div>
       </ion-item>
   	</ion-content>
+
 </ion-view>

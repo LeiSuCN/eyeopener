@@ -1,8 +1,18 @@
 <style type="text/css">
 .eo-left-side{}
-.left-side-user-profile{ text-align: center; }
+.left-side-user-profile{ text-align: center; padding: 1em 0;}
 .left-side-user-profile img{border-radius: 50%; height: 8em;}
-.left-side-user-profile span{ display: block; font-size: 18px;}
+.left-side-user-profile span{ display: block; font-size: 18px;color: white; line-height: 2em;}
+.eo-left-side .menu-left{ background-image: url(img/menu_bg.png);background-size: 100% 100%;}
+.eo-left-side .eo-left-menu .item{ background-color: transparent!important; border:0px;border-top: 1px solid rgba(255,255,255, .1);}
+.eo-left-side .eo-left-menu-item{display: block; color: white;font-size: 18px;}
+.eo-left-side .eo-left-menu-item .icon{font-size: 1.4em; display: inline-block;width: 1.4em; line-height: 1.4em; text-align: center;border-radius: 50%; color: white;vertical-align: middle; margin-right: .5em;}
+.eo-left-side .eo-left-menu-item.menu-item-read .icon{ background-color: rgb( 255, 204, 0 );}
+.eo-left-side .eo-left-menu-item.menu-item-like .icon{ background-color: rgb( 241, 158, 194 );}
+.eo-left-side .eo-left-menu-item.menu-item-comment .icon{ background-color: rgb( 81, 162, 204 );}
+.eo-left-side .eo-left-menu-item.menu-item-ask .icon{ background-color: rgb( 169, 149, 221 );}
+.eo-left-side .eo-left-menu-item.menu-item-setting .icon{ background-color: rgb( 235, 104, 119 );}
+.eo-left-side .eo-left-menu-item.menu-item-service .icon{ background-color: rgb( 84, 165, 12 );}
 </style>
 <ion-side-menus enable-menu-with-back-views="false" class="eo-left-side">
   <ion-side-menu-content>
@@ -10,29 +20,35 @@
   </ion-side-menu-content>
 
   <ion-side-menu side="left">
-    <ion-header-bar class="bar-stable">
-      <h1 class="title">Left</h1>
-    </ion-header-bar>
-    <ion-content >
+    <ion-content>
       <div class="left-side-user-profile">
-        <img ng-src="{{me.upic}}">
+        <img ng-src="{{me.upic}}"  ng-click="login()">
         <span>{{me.cname}}</span>
       </div>
-      <ion-list>
-        <ion-item menu-close ng-click="login()">
-          Login
+      <ion-list class="eo-left-menu">
+        <!-- 阅读 -->
+        <ion-item menu-close>
+          <a class="eo-left-menu-item menu-item-read"><i class="icon ion-ios-bookmarks-outline"></i>阅读</a>
         </ion-item>
-        <ion-item menu-close href="#/app/search">
-          Search
+        <!-- 点赞 -->
+        <ion-item menu-close>
+          <a class="eo-left-menu-item menu-item-like"><i class="icon ion-ios-heart-outline"></i>点赞</a>
         </ion-item>
-        <ion-item menu-close href="#/app/browse">
-          Browse
+        <!-- 评论 -->
+        <ion-item menu-close>
+          <a class="eo-left-menu-item menu-item-comment"><i class="icon ion-ios-chatboxes-outline"></i>评论</a>
         </ion-item>
-        <ion-item menu-close href="#/app/playlists">
-          Playlists
+        <!-- 提问 -->
+        <ion-item menu-close>
+          <a class="eo-left-menu-item menu-item-ask"><i class="icon ion-paper-airplane"></i>提问</a>
         </ion-item>
-        <ion-item menu-close href="#/app/test">
-          Test
+        <!-- 设置 -->
+        <ion-item menu-close>
+          <a class="eo-left-menu-item menu-item-setting"><i class="icon ion-ios-gear-outline"></i>设置</a>
+        </ion-item>
+        <!-- 客服 -->
+        <ion-item menu-close>
+          <a class="eo-left-menu-item menu-item-service"><i class="icon ion-happy-outline"></i>客服</a>
         </ion-item>
       </ion-list>
     </ion-content>
