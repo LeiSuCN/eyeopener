@@ -336,7 +336,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 问题详细Controller
  */
-.controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $stateParams, $ionicHistory, $ionicPopup, $ionicScrollDelegate, EOUser, EOShare, EOArticles, EOComments) {
+.controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $timeout, $stateParams, $ionicHistory, $ionicPopup, $ionicScrollDelegate, $ionicLoading, EOUser, EOShare, EOArticles, EOComments) {
   var me = EOUser.me();
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var shareDataComment = 'ArticleCommentCtrl.share.comment';
@@ -378,6 +378,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       } else{ // 全部加载完成
         _pageNo = -1;
       }
+
+      $ionicLoading.hide();
     });
   }
 
@@ -476,11 +478,24 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     EOShare.set(shareDataArticle, false);
   })
 
-  //
-  EOArticles.get({aid: articleId},function(status, statusText, data){
-    angular.extend($scope.article, data);
-    getMoreComments();
+
+  // 延迟加载数据
+  $scope.$on('$ionicView.loaded', function(){
+    $timeout( function(){
+      //
+      EOArticles.get({aid: articleId},function(status, statusText, data){
+        angular.extend($scope.article, data);
+        getMoreComments();
+      });  
+    } )
+  })
+
+  // loading
+  $ionicLoading.show({
+    template: '<ion-spinner icon="ripple" class="eo-spinner"></ion-spinner>',
+    hideOnStageChange: true
   });
+
 })
 
 /*
