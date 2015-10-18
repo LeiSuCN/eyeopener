@@ -133,6 +133,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   var limit = 10;
   var page = 0;
   $scope.questions = [];
+  $scope.topTips = '';
 
   // 搜索内容
   var gSearch = EOShare.get(shareDataSearch);
@@ -148,8 +149,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   $scope.search = gSearch;
 
   function reset(){
-    isHasMore = true;
     $scope.questions = [];
+    isHasMore = true; 
     page = 0;    
   }
 
@@ -172,7 +173,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     }
 
     EOArticles.query(params, function(status, statusText, data){
-      console.log( data.length )
       if( data && data.length > 0 ){
         angular.forEach( data, function(question){
           $scope.questions.push( question );
@@ -196,7 +196,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
    * 加载更多数据
    */
   $scope.loadMore = function(){
-    console.log( 'load more' )
     page = page + 1;
     getMore();
   }
@@ -227,6 +226,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   $rootScope.$on('Article:refresh', function(){
     reset();
+    page = page + 1;
     getMore();
   })
 
@@ -235,7 +235,12 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $timeout( function(){
       // 为了filter能够缓存到专题数据
       // TODO ugly!!!
-      EOArticles.types({});      
+      EOArticles.types({});  
+
+      // 统计全网数据
+      EOArticles.summary({}, function(status, statusText, data){
+        $scope.topTips = '共1000个问题/3000个回答';
+      });    
     } )
   })
 })
@@ -566,11 +571,25 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.search.text = preSearch.name;
   }
 
-  $scope.hots = ['菜鸟驿站','小白兔干洗','跨境电商'];
+  $scope.hots = [];
 
   function getTypes(){
-    EOArticles.types({},function(status, statusText, data){
-      $scope.types = data;
+    EOArticles.hots({},function(status, statusText, data){
+
+      if( !data ){
+        return;
+      }
+
+      // 热搜类别
+      if( data.classes ){
+        $scope.types = data.classes;
+      }
+      // 热搜关键字
+      if( data.words ){
+        $scope.hots = data.words;
+      }
+
+      //$scope.types = data;
     });
   }
 
@@ -583,13 +602,22 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.$emit('Article:refresh');
     $ionicHistory.goBack();
   }
+  $scope.goBack = function(){ 
+    if( $scope.search.text != preSearch.name ){
+      search('hot', $scope.search.text, false)
+    } else{
+      $ionicHistory.goBack();
+    }
+    
+  }
 
-  $scope.goBack = function(){    
-    $ionicHistory.goBack();
+  $scope.clear = function(){    
+    $scope.search.text = '';
+    $scope.search.type = '';
   }
 
   $scope.setType = function(type){
-    search('cate', type.name, type.id)
+    search('cate', type.word, type.hid)
   }
 
   $scope.setHot = function(hot){

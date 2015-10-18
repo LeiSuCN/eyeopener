@@ -132,6 +132,14 @@ angular.module('eyeopener.services', [])
     }
   }
 
+  api.summary = function(params, successcb, errorcb){
+    successcb();
+  }
+
+  api.hots = function(params, successcb, errorcb){
+    EOUtils.send('/article/gethotword', params, successcb, errorcb);
+  }
+  
   return api;
 })
 
