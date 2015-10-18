@@ -131,7 +131,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   var shareDataSearch = 'ArticleSearchCtrl.share.search';
   var isHasMore = true;
   var limit = 10;
-  var page = -1;
+  var page = 0;
   $scope.questions = [];
 
   // 搜索内容
@@ -150,7 +150,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   function reset(){
     isHasMore = true;
     $scope.questions = [];
-    page = -1;    
+    page = 0;    
   }
 
   function getMore(){
