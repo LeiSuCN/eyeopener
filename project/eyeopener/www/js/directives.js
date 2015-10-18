@@ -1,6 +1,6 @@
 angular.module('eyeopener.directives', [])
 
-.directive('eoFinderTypes', function(){
+.directive('eoFinderTypes', function($compile){
 	return {
 		restrict: 'E',
 		link: function(scope, element, attrs){
@@ -12,7 +12,7 @@ angular.module('eyeopener.directives', [])
 					typeHtml += '<div class="finder-list-group">'
 					typeHtml += '<div class="finder-list-group-header">';
 					typeHtml += '<span class="finder-list-group-header-name">' + root.name + '</span>';
-					typeHtml += '<a class="button button-clear icon-right ion-chevron-right finder-list-group-header-more" ng-click="$parent.drillSubs(' + ri + ')">更多类目(' + root.types.length + ')</a>';
+					typeHtml += '<a class="button button-clear icon-right ion-chevron-right finder-list-group-header-more" ng-click="drillSubs(' + ri + ')">更多类目(' + root.types.length + ')</a>';
 					typeHtml += '</div>';// <!-- /.finder-list-group-header -->
 
 					typeHtml += '<div class="finder-list-group-subs">';
@@ -20,7 +20,8 @@ angular.module('eyeopener.directives', [])
 					var showSize = Math.min( 4, types.length );
 					for( var i = 0 ; i < showSize ; i++ ){
 						var type = types[i];
-						typeHtml += '<div class="finder-list-group-sub" style="background-image:url(' + type.picUrl + ')">';
+						var jsType = "ng-click='goTypeList(" + JSON.stringify(type) + ")'>";
+						typeHtml += '<div class="finder-list-group-sub" style="background-image:url(' + type.picUrl + ')" ' + jsType + '>';
 						typeHtml += '<span class="finder-list-group-sub-name">' + type.name + '</span>';
 
 						// <!-- finder-list-group-sub-summary -->
@@ -38,8 +39,10 @@ angular.module('eyeopener.directives', [])
 					typeHtml += '</div>';// <!-- /.finder-list-group -->
 					html += typeHtml;
 				})
-				element.html( html );				
+				html = $compile(html)( scope );
+				element.html( html );		
 			}
+
 
 			scope.$watchCollection(attrs.types, function(value){
 				updateView(value);

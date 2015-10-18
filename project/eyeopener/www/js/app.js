@@ -98,7 +98,18 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
-  // ==== ==== ==== ==== >>>> 文章首页
+  // ==== ==== ==== ==== >>>> 发现专题
+  .state('app.finder_article', {
+    url: '/finder/article/:type',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/finder_articles.html',
+        controller: 'FinderArticleListCtrl'
+      }
+    }
+  })
+
+  // ==== ==== ==== ==== >>>> 测试
   .state('app.test', {
     url: '/test',
     views: {
@@ -109,6 +120,7 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
+  // ==== ==== ==== ==== >>>> 搜索
   .state('app.search', {
     url: '/search',
     views: {

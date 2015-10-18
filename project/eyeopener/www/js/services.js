@@ -57,11 +57,15 @@ angular.module('eyeopener.services', [])
 .factory('EOUser', function(EOUtils) {
 
   var _me = false;
+  var _me1 = {
+    uid:16,
+    cname:'测试帐号'
+  }
 
   var api = {};
 
   api.me = function(){
-    return _me;
+    return _me1;
   }
 
   api.login = function(params, successcb, errorcb){
@@ -121,7 +125,9 @@ angular.module('eyeopener.services', [])
         api.cacheTypes.status = status;
         api.cacheTypes.statusText = statusText;
         api.cacheTypes.data = data;
-        successcb(status, statusText, data);
+        if( successcb ){
+          successcb(status, statusText, data);
+        }
       }, errorcb);
     }
   }

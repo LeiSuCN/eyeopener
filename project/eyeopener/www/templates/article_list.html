@@ -49,6 +49,7 @@
       		</div>
       	</div>
       </ion-item>
+      <ion-infinite-scroll on-infinite="loadMore()" distance="1%" ng-if="hasMore()"></ion-infinite-scroll>
   	</ion-content>
 
 </ion-view>

@@ -125,11 +125,13 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 问题列表Controller
  */
-.controller('ArticleListCtrl', function($scope, $rootScope, $state, EOShare, EOArticles) {
+.controller('ArticleListCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, EOShare, EOArticles) {
 
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var shareDataSearch = 'ArticleSearchCtrl.share.search';
-
+  var isHasMore = true;
+  var limit = 10;
+  var page = -1;
   $scope.questions = [];
 
   // 搜索内容
@@ -145,8 +147,23 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   $scope.search = gSearch;
 
+  function reset(){
+    isHasMore = true;
+    $scope.questions = [];
+    page = -1;    
+  }
+
   function getMore(){
+    // loading
+    $ionicLoading.show({
+      template: '<ion-spinner icon="ripple" class="eo-spinner"></ion-spinner>',
+      hideOnStageChange: true
+    });
+    // 条件
     var params = {};
+    // 分页条件
+    params.limit = limit;
+    params.page = page;
     // 搜索条件
     if( $scope.search.type == 'hot' ){
       params.title = $scope.search.name;
@@ -155,16 +172,40 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     }
 
     EOArticles.query(params, function(status, statusText, data){
-      if( data || data.length > 0 ){
+      console.log( data.length )
+      if( data && data.length > 0 ){
         angular.forEach( data, function(question){
           $scope.questions.push( question );
         })
+        if( data.length < limit ){
+          isHasMore = false;
+        }
+      } else{
+        isHasMore = false;
       }
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+      $ionicLoading.hide();
     });    
   }
 
   $scope.swipeLeft = function(){
     $scope.gotoFinderList();
+  }
+
+  /*
+   * 加载更多数据
+   */
+  $scope.loadMore = function(){
+    console.log( 'load more' )
+    page = page + 1;
+    getMore();
+  }
+
+  /*
+   * 是否有跟多数据
+   */
+  $scope.hasMore = function(){
+    return isHasMore;
   }
 
   $scope.gotoArticleDetail = function(article){
@@ -185,16 +226,18 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 
   $rootScope.$on('Article:refresh', function(){
-    $scope.questions = [];
+    reset();
     getMore();
   })
 
-  // 为了filter能够缓存到专题数据
-  // TODO ugly!!!
-  EOArticles.types({},function(status, statusText, data){
-    getMore();  
-  });
-  
+  // 延迟加载数据
+  $scope.$on('$ionicView.loaded', function(){
+    $timeout( function(){
+      // 为了filter能够缓存到专题数据
+      // TODO ugly!!!
+      EOArticles.types({});      
+    } )
+  })
 })
 
 /*
@@ -251,6 +294,11 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       return;      
     }
 
+    if( !article.context || article.context.length <= 30){
+      showAlert('为了更好的解决您的问题，请至少输入30字的问题描述',1)
+      return;
+    }
+
     if( !article.aType || article.aType.length <= 0 || article.aType == '0'){
       showAlert('请选择问题所属专题',2)
       return;
@@ -258,7 +306,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
     if( article.title && article.aType ){
       $ionicLoading.show({ template: '正在提交...' });
-      EOArticles.save( article, function(status, statusText, data){
+      EOArticles.save( {title: article.title, context: article.context, aType: article.aType
+        , uid: me.uid}, function(status, statusText, data){
         $ionicLoading.hide();
         $scope.$emit('Article:refresh');
         $ionicHistory.goBack();
@@ -543,9 +592,14 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 发现列表Controller
  */
-.controller('FinderListCtrl', function($scope, $ionicHistory, $ionicSideMenuDelegate,$ionicSlideBoxDelegate, $timeout, $ionicModal, EOShare, EOUser, EOArticles) {
+.controller('FinderListCtrl', function($scope, $ionicHistory, $state
+  , $ionicSideMenuDelegate,$ionicSlideBoxDelegate, $ionicScrollDelegate, $timeout, $ionicModal
+  , EOShare, EOUser, EOArticles) {
+
+  var shareDataType = 'FinderArticleListCtrl.share.type';
 
   $scope.types = [];
+  $scope.showRootType = {};
   $scope.subsModal = false;
 
   // 专题列表
@@ -608,7 +662,19 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 
   $scope.drillSubs = function(cate){
-    console.log( cate )
+    $scope.showRootType = $scope.types[parseInt(cate)]
+    $ionicScrollDelegate.$getByHandle('finder-subs-content').scrollTop();
+    $scope.subsModal.show();
+  }
+
+  $scope.closeLogin = function() {
+    $scope.subsModal.hide();
+  };
+
+  $scope.goTypeList = function(type){
+    $scope.subsModal.hide();
+    EOShare.set(shareDataType, type);
+    $state.go( 'app.finder_article', {type:type.id});
   }
 
   $scope.goBack = function(){    
@@ -616,7 +682,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 
   refreshTypes();
-
 
   // 进入
   $scope.$on('$ionicView.enter', function(){
@@ -627,4 +692,57 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   // 注销
   $scope.$on('$destroy', function(){
   })
+})
+
+
+/*
+ * 返现专题Controller
+ */
+.controller('FinderArticleListCtrl', function($scope, $rootScope, $state, $stateParams
+  , $timeout, $ionicLoading, EOShare, EOArticles) {
+
+  var shareDataType = 'FinderArticleListCtrl.share.type';
+  var shareDataArticle = 'ArticleDetailCtrl.share.article';
+  var typeId = $stateParams.type;
+
+  $scope.type = EOShare.get(shareDataType);
+  $scope.articles = [];
+
+  function getMore(){
+    $ionicLoading.show({
+      template: '<ion-spinner icon="ripple" class="eo-spinner"></ion-spinner>',
+      hideOnStageChange: true
+    });
+
+    //var params = {aType: type};
+    var params = {};
+    EOArticles.query(params, function(status, statusText, data){
+      if( data || data.length > 0 ){
+        angular.forEach( data, function(article){
+          $scope.articles.push( article );
+        })
+      }
+      $ionicLoading.hide();
+    });    
+  }
+  
+  $scope.gotoArticleDetail = function(article){
+    EOShare.set(shareDataArticle, article);
+    $state.go( 'app.article_detail', {articleId:article.aid});
+  }
+
+  $scope.goBack = function(){    
+    $state.go( 'app.finder_list' );
+  }
+
+  // 延迟加载数据
+  $scope.$on('$ionicView.loaded', function(){
+    $timeout( getMore )
+  })
+
+  // 退出时清除共享数据
+  $scope.$on('$destroy', function(){
+    EOShare.set(shareDataType, false);
+  })
+  
 })

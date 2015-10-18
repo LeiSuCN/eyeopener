@@ -1,0 +1,38 @@
+
+<style type="text/css" media="screen">
+.finder-articles{}
+.finder-articles .header{ position: relative;}
+.finder-articles .header img{width: 100%;display: block;}
+.finder-articles .header .summary{  position: absolute;bottom: 0;width: 100%;text-align: center;color: white;font-size: 18px;  padding: .5em 0;  font-weight: bold; background-color: rgba(0,0,0,0.4);}
+.finder-articles .header .summary span{color: rgb( 255, 204, 0 );}
+</style>
+
+<ion-view view-title="{{type.name}}">
+	<!-- 右下角按钮 -->
+  <a class="eo-buttom-button eo-buttom-button-back" ng-click="goBack()"><span class="icon ion-ios-arrow-thin-left"></span></a>
+    
+  </a>
+	<!-- 顶部导航 -->
+  <ion-nav-bar class="bar-eyeopener">  
+  </ion-nav-bar>
+
+  <ion-content class="finder-articles">
+    <div class="header">
+      <img ng-src="{{type.picUrl}}">
+      <div class="summary">
+        <span>{{type.countArticle}}</span>篇文章
+         | <span>{{type.countComment}}</span>评论
+         | <span>{{type.countLike}}</span>点赞       
+      </div>
+    </div>
+    <ion-item collection-repeat="question in articles" class="feed-item">
+      <div class="feed-main">
+        <div class="qustion-content" ng-click="gotoArticleDetail(question)">
+          <h2>{{question.title}}</h2>
+          <div class="qustion-summary"><span class="qustion-vote">{{question.likes}}</span>{{question.context}}</div>           
+        </div>
+      </div>
+    </ion-item>
+  </ion-content>
+
+</ion-view>

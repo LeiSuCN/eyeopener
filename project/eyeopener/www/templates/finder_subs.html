@@ -1,10 +1,28 @@
 <style type="text/css">
 .finder-subs{}
+.finder-subs .item-thumbnail-left{ min-height: 3em;}
+.finder-subs .item-thumbnail-left img{height: 3em;width: auto;}
+.finder-subs .item-thumbnail-left h2{}
+.finder-subs .item-thumbnail-left p{margin-top:.8em;}
+.finder-subs .item-thumbnail-left span{   margin-right: 1em; color: red;}
+.finder-subs .item-thumbnail-left span i{ margin-right: .2em;}
 </style>
 <ion-modal-view class="finder-subs">
   <ion-header-bar>
-    <h1 class="title">My Modal title</h1>
+    <h1 class="title">{{showRootType.name}}</h1>
+    <div class="buttons">
+      <a class="button button-icon icon ion-ios-close " ng-click="closeLogin()"></a>
+    </div>
   </ion-header-bar>
-  <ion-content>
+  <ion-content delegate-handle="finder-subs-content">
+    <ion-item class="item item-thumbnail-left" collection-repeat="type in showRootType.types" ng-click="goTypeList(type)">
+      <img ng-src="{{type.picUrl}}">
+      <h2>{{type.name}}</h2>
+      <p>
+        <span><i class="icon ion-ios-bookmarks-outline"></i>{{type.countArticle}}</span>
+        <span><i class="icon ion-ios-chatboxes-outline"></i>{{type.countComment}}</span>
+        <span><i class="icon ion-ios-heart-outline"></i>{{type.countLike}}</span>
+      </p>
+    </ion-item>
   </ion-content>
 </ion-modal-view>
