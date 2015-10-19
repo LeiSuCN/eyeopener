@@ -74,6 +74,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   // 第三方认证成功后
   function afterThirdAuthSucc(params){
+
     $ionicLoading.show({ template: '正在处理请稍后...' });
     // 开始注册
     EOUser.login(params
@@ -223,6 +224,12 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.modal.show();
   };
 
+  $scope.logout = function() {
+    $scope.me.cname = '未登录';
+    $scope.me.upic = 'img/def.png';
+    EOUser.clear();
+    $scope.closeSetting();
+  };
 
   $scope.closeSetting = function() {
     $scope.settingModal.hide();

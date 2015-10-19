@@ -126,6 +126,11 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/eyer/getlistpro', params, successcb, errorcb);
   }
 
+  api.clear = function(){
+    _me = false;
+    saveUser({});
+  }
+
   return api;
 })
 
