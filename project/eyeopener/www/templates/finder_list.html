@@ -19,8 +19,9 @@
 .eo-finder .finder-list-group-sub-summary span{  margin: 0 .2em;}
 .eo-finder .finder-list-group-sub-summary i{margin-right: .2em;}
 
-.eo-finder .item-thumbnail-left p{ font-size: 24px; padding-top: 1em;}
-.eo-finder .item-thumbnail-left p.item-1{color: red;}
+.eo-finder .item-thumbnail-left p{ font-size: 24px; padding-top: 1em; color:red;}
+.eo-finder .item-thumbnail-left p i{ margin-right: .2em;}
+.eo-finder .item-thumbnail-left p span{margin-right: 1em;}
 </style>
 
 <ion-view view-title="">
@@ -58,7 +59,11 @@
         <ion-item ng-repeat="expert in experts" class="item item-thumbnail-left ">
           <img ng-src="{{expert.upic}}">
           <h2>{{expert.cname}}</h2>
-          <p class="item-{{$index+1}}">{{$index + 1}}</p>
+          <p class="item-{{$index+1}}">
+            <span><i class="icon ion-ios-bookmarks-outline"></i>{{expert.countLikeAritcle}}</span>
+            <span><i class="icon ion-ios-chatboxes-outline"></i>{{expert.countComment}}</span>
+            <span><i class="icon ion-ios-heart-outline"></i>{{expert.countLike}}</span>
+          </p>
         </ion-item>
       </ion-slide>
     </ion-slide-box>

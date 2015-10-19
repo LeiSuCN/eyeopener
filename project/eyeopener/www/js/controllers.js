@@ -2,7 +2,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 全局Controller
  */
-.controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, $ionicLoading, EOUser) {
+.controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, $ionicLoading, $ionicPopup
+  , EOUser, EOShare) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -11,8 +12,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
-  // Form data for the login modal
-  $scope.loginData = {};
+  // 登录数据
+  $scope.loginData = {usr:'', pwd:''};
 
   // 第三方客户端对象
   $scope.clients = {
@@ -28,20 +29,47 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.me = me;
   }
 
+  if( !$scope.me.cname ){
+    $scope.me.cname = '点击登录';
+  }
+
   if( !$scope.me.upic ){
     $scope.me.upic = 'img/def.png';
   }
 
-  // Create the login modal that we will use later
+  // 登录Modal
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
   });
 
+  // 设置Modal
+  $ionicModal.fromTemplateUrl('templates/setting.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.settingModal = modal;
+  });
+
   // 显示警告信息
-  function showWarnMessage(msg){
-    alert(msg);
+  function showWarnMessage(msg, title){
+    $ionicPopup.alert({
+      title: title ? title : '',
+      template: msg
+    }).then(function(res) {});
+  }
+
+  // 显示加载
+  function showLoading(){
+    $ionicLoading.show({
+      template: '<ion-spinner icon="ripple" class="eo-spinner"></ion-spinner>',
+      hideOnStageChange: true
+    });
+  }
+
+  // 隐藏加载
+  function hideLoading(){
+    $ionicLoading.hide();
   }
 
   // 第三方认证成功后
@@ -72,8 +100,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
         checkClientInstalled: function(sc,fc){sc()},
         ssoLogin: function(sc, fc){sc({ userid:'F687C5E2C23D282A0A91A9992B085530', access_token:'EDAC1FFAC3C597A7E41AA791542B980C'})}
       }
-
-      //return;
     }
 
     YCQQ.checkClientInstalled(function(){
@@ -94,6 +120,79 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     });
   }
 
+  // 注册
+  $scope.registerWithEo = function(){
+
+    var usr = $scope.loginData.usr;
+    var pwd = $scope.loginData.pwd;
+
+    if( !usr ){
+      showWarnMessage('帐号不能为空');
+      return;
+    }
+    
+    if( usr.length < 4 ){
+      showWarnMessage('帐号长度不能小于4位');
+      return;      
+    }
+
+    if( !pwd ){
+      showWarnMessage('密码不能为空');
+      return;
+    }
+
+    if( pwd.length < 6 ){
+      showWarnMessage('密码长度不能小于6位');
+      return;      
+    }
+
+    showLoading();
+    EOUser.register({uname:usr, pwd:pwd, cname:usr, upic:''},function(status, statusText, data){
+      hideLoading();
+      if( data.code != '10000' ){
+        showWarnMessage(data.text, '注册失败');
+      } else{
+        $scope.loginWithEo();
+      }
+    });
+  };
+
+  $scope.loginWithEo = function(){
+    var usr = $scope.loginData.usr;
+    var pwd = $scope.loginData.pwd;
+
+    if( !usr ){
+      showWarnMessage('帐号不能为空');
+      return;
+    }
+    
+    if( usr.length < 4 ){
+      showWarnMessage('帐号长度不能小于4位');
+      return;      
+    }
+
+    if( !pwd ){
+      showWarnMessage('密码不能为空');
+      return;
+    }
+
+    if( pwd.length < 6 ){
+      showWarnMessage('密码长度不能小于6位');
+      return;      
+    }
+
+    showLoading();
+    EOUser.loginEo({uname:usr, pwd:pwd},function(status, statusText, data){
+      hideLoading();
+      if( data.code != '10000' ){
+        showWarnMessage(data.text, '登录失败');
+      } else{
+        $scope.me = EOUser.me();
+        $scope.closeLogin();
+      }
+    });
+  }
+
   $scope.closeLogin = function() {
     $scope.modal.hide();
   };
@@ -102,16 +201,20 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.modal.show();
   };
 
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
 
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
+  $scope.closeSetting = function() {
+    $scope.settingModal.hide();
   };
+
+  $scope.setting = function() {
+    $scope.settingModal.show();
+  };
+
+  $scope.view = function(viewType){
+    var shareDataArticleList = 'ArticleListCtrl.share.view'; 
+    EOShare.set(shareDataArticleList, viewType);
+    $scope.$emit('Article:refresh');
+  }
 })
 
 .controller('AppTestCtrl', function($scope) {
@@ -129,13 +232,16 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 问题列表Controller
  */
-.controller('ArticleListCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, EOShare, EOArticles) {
-
+.controller('ArticleListCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $ionicPopup
+  , EOShare, EOArticles, EOUser) {
+  var shareDataArticleList = 'ArticleListCtrl.share.view'; 
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var shareDataSearch = 'ArticleSearchCtrl.share.search';
   var isHasMore = true;
   var limit = 10;
   var page = 0;
+  var viewDataFun;
+  var view;
   $scope.questions = [];
   $scope.topTips = '';
 
@@ -149,10 +255,27 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     }
     EOShare.set(shareDataSearch, gSearch);
   }
-
   $scope.search = gSearch;
 
   function reset(){
+    // 视图
+    view = EOShare.get(shareDataArticleList);
+    if( !view || view == 'read' ){
+      viewDataFun = EOArticles.query;
+    } else if( view == 'like' ){
+      viewDataFun = EOArticles.queryLike;
+      $scope.search.type = 'like';
+      $scope.search.name = '点赞过的问题';
+    } else if( view == 'comment' ){
+      viewDataFun = EOArticles.queryComment;
+      $scope.search.type = 'comment';
+      $scope.search.name = '评论过的问题';
+    } else if( view == 'submit' ){
+      viewDataFun = EOArticles.querySubmit;
+      $scope.search.type = 'submit';
+      $scope.search.name = '提交过的问题';
+    }
+
     $scope.questions = [];
     isHasMore = true; 
     page = 0;    
@@ -175,8 +298,21 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     } else if( $scope.search.type == 'cate' ){
       params.aType = $scope.search.id;
     }
+    // 我
+    var me = EOUser.me();
+    if( me ){
+      params.uid = me.uid;
+    }
+    // 回调函数
+    var successCallback = function(status, statusText, data){
 
-    EOArticles.query(params, function(status, statusText, data){
+      if( !!data.substr == true ){
+        isHasMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+        $ionicLoading.hide(); 
+        return;
+      }
+
       if( data && data.length > 0 ){
         angular.forEach( data, function(question){
           $scope.questions.push( question );
@@ -189,7 +325,9 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       }
       $scope.$broadcast('scroll.infiniteScrollComplete');
       $ionicLoading.hide();
-    });    
+    };
+
+    viewDataFun(params, successCallback);    
   }
 
   $scope.swipeLeft = function(){
@@ -217,7 +355,16 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 
   $scope.gotoArticleCreate = function(){
-    $state.go( 'app.article_create' );
+
+    var me = EOUser.me();
+    if( !me || !me.uid ){
+      $ionicPopup.alert({
+        title: '^_^',
+        template: '请您先登录后才能提问'
+      }).then(function(res) {});
+    } else{
+      $state.go( 'app.article_create' );
+    }
   }
 
   $scope.gotoArticleSearch = function(){
@@ -243,10 +390,13 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
       // 统计全网数据
       EOArticles.summary({}, function(status, statusText, data){
-        $scope.topTips = '共1000个问题/3000个回答';
+        $scope.topTips = '共' + data.numArticle + '个问题/' + data.numComment + '个回答';
       });    
     } )
   })
+
+  // 恢复初始状态
+  reset();
 })
 
 /*
@@ -351,7 +501,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   var shareDataComment = 'ArticleCommentCtrl.share.comment';
   var articleId = $stateParams.articleId;
   var shareArticle = EOShare.get(shareDataArticle);
-  var _pageSize = 20; // 当前页大小
+  var _pageSize = 100; // 当前页大小
   var _pageNo = 0;// 当前页码
   var _selectPopup = false;
   var _scrollTop = 0; // 滚动条位置
@@ -430,6 +580,15 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 
   $scope.goComment = function(){
+    var me = EOUser.me();
+    if( !me || !me.uid ){
+      $ionicPopup.alert({
+        title: '^_^',
+        template: '请您先登录后才能评论'
+      }).then(function(res) {});
+      return;
+    }
+
     if( _selectPopup ){
     } else{
       EOShare.set(shareDataComment,false);
@@ -565,6 +724,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 .controller('ArticleSearchCtrl', function($scope, $ionicHistory, EOShare, EOArticles) {
 
   var shareDataSearch = 'ArticleSearchCtrl.share.search';
+  var shareDataArticleList = 'ArticleListCtrl.share.view'; 
 
   $scope.search = { text:'', type:'' }
   $scope.types = [];
@@ -592,13 +752,11 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       if( data.words ){
         $scope.hots = data.words;
       }
-
-      //$scope.types = data;
     });
   }
 
   function search(type, name, id){
-    // {type: type, name: name, id: id}
+    EOShare.set(shareDataArticleList, '');
     var search = EOShare.get(shareDataSearch);
     search.type = type;
     search.name = name;
@@ -621,7 +779,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 
   $scope.setType = function(type){
-    search('cate', type.word, type.hid)
+    search('cate', type.word, type.typeId)
   }
 
   $scope.setHot = function(hot){

@@ -7,7 +7,7 @@
 .login-modal-header-close{color: white;top: -.8em;right: 0;position: absolute;}
 .login-enter-login{margin: 0 2em;}
 .login-enter-login input{display: block;width: 100%;border-radius: 5px;margin: 1em 0;padding: .5em; font-size: 18px;}
-.login-enter-login .button{margin: 0 1em}
+.login-enter-login .button{margin: 0 1em;}
 .login-enter-options{margin: 0 2em;}
 .login-enter-option{display:block;color: white; margin: 1em 0; ;padding: .8em 0;}
 .login-enter-option img{ height: 2em;vertical-align: middle; margin:0 1em 0 3em;}
@@ -25,11 +25,11 @@
         <a class="button button-icon icon ion-ios-close login-modal-header-close" ng-click="closeLogin()"></a>
       </div>
       <div class="login-enter-login">
-        <input type="text" placeholder="账号">
-        <input type="password" placeholder="密码">
+        <input type="text" placeholder="账号" ng-model="loginData.usr">
+        <input type="password" placeholder="密码" ng-model="loginData.pwd">
         <div class="button-bar">
-          <a class="button button-balanced">登录</a>
-          <a class="button button-calm">注册</a>
+          <a class="button button-balanced" ng-click="loginWithEo()">登录</a>
+          <a class="button button-calm" ng-click="registerWithEo()">注册</a>
         </div>
       </div>
       <div class="login-modal-header">

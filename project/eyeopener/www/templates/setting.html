@@ -1,0 +1,23 @@
+<style type="text/css">
+.setting-modal{ background-color: rgba(0,0,0,0.9);}
+.setting-modal-main{ font-size: 18px; margin-top: 4em; }
+.setting-modal-header{color: white;margin: 0 2em;position: relative;}
+.setting-modal-header-title{font-size: 1.5em;}
+.setting-modal-header-sub{margin: 1em 0;}
+.setting-modal-header-close{color: white;top: -.8em;right: 0;position: absolute;}
+.setting-enter-settings{margin: 0 2em;}
+</style>
+<ion-modal-view class="setting-modal">
+  <ion-content>
+    <div class="setting-modal-main">
+      <div class="setting-modal-header">
+        <div class="setting-modal-header-title">设置眼界</div>
+        <div class="setting-modal-header-sub">帐号管理</div>
+        <a class="button button-icon icon ion-ios-close setting-modal-header-close" ng-click="closeSetting()"></a>
+      </div>
+      <div class="setting-enter-settings">
+        <a class="button button-block button-assertive" ng-click="logout()">退出</a>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

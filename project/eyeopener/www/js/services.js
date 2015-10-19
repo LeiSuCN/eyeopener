@@ -74,31 +74,52 @@ angular.module('eyeopener.services', [])
 .factory('EOUser', function(EOUtils) {
 
   var _me = false;
-  var _me1 = {
-    uid:16,
-    cname:'测试帐号'
+
+  // 保存用户信息
+  function saveUser( user ){
+    _me = {};
+    _me.uid = user.uid;//用户ID
+    _me.cname = user.cname;//用户昵称
+    _me.upic = user.upic;//用户头像
+    _me.buildDate = user.buildDate;//注册时间
+
+    EOUtils.setObject('me', user);
   }
 
   var api = {};
 
   api.me = function(){
-    return _me1;
+
+    if( !_me ){
+      _me = EOUtils.getObject('me');
+    }
+
+    return _me;
   }
 
   api.login = function(params, successcb, errorcb){
     EOUtils.send('/eyer/loginbyopenid', params, function(status, statusText, data){
-
       // 注册成功
       if( data && data.uid ){
-        _me = {};
-        _me.uid = data.uid;//用户ID
-        _me.cname = data.cname;//用户昵称
-        _me.upic = data.upic;//用户头像
-        _me.buildDate = data.buildDate;//注册时间
+        saveUser( data );
       }
-
       successcb(status, statusText, data);
     }, errorcb);
+  }
+
+  api.loginEo = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/login', params, function(status, statusText, data){
+      // 注册成功
+      if( data && data.user ){
+        saveUser( data.user );
+      }
+      successcb(status, statusText, data);
+    }, errorcb);
+  }
+
+  // 注册
+  api.register = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/register', params, successcb, errorcb);
   }
 
   api.experts = function(params, successcb, errorcb){
@@ -118,6 +139,18 @@ angular.module('eyeopener.services', [])
 
   api.query = function(params, successcb, errorcb){
     EOUtils.send('/article/getlist', params, successcb, errorcb);
+  }
+
+  api.queryLike = function(params, successcb, errorcb){
+    EOUtils.send('/article/getlistbyuidwithlikes', params, successcb, errorcb);
+  }
+
+  api.queryComment = function(params, successcb, errorcb){
+    EOUtils.send('/article/getlistbyuidwithcomments', params, successcb, errorcb);
+  }
+
+  api.querySubmit = function(params, successcb, errorcb){
+    EOUtils.send('/article/getlistbyuid', params, successcb, errorcb);
   }
 
   api.get = function(params, successcb, errorcb){
@@ -150,7 +183,7 @@ angular.module('eyeopener.services', [])
   }
 
   api.summary = function(params, successcb, errorcb){
-    successcb();
+    EOUtils.send('/article/getlength', params, successcb, errorcb);
   }
 
   api.hots = function(params, successcb, errorcb){

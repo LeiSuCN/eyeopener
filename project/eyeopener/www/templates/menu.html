@@ -27,28 +27,28 @@
       </div>
       <ion-list class="eo-left-menu">
         <!-- 阅读 -->
-        <ion-item menu-close>
+        <ion-item menu-close  ng-click="view('read')">
           <a class="eo-left-menu-item menu-item-read"><i class="icon ion-ios-bookmarks-outline"></i>阅读</a>
         </ion-item>
         <!-- 点赞 -->
-        <ion-item menu-close>
+        <ion-item menu-close ng-click="view('like')"> 
           <a class="eo-left-menu-item menu-item-like"><i class="icon ion-ios-heart-outline"></i>点赞</a>
         </ion-item>
         <!-- 评论 -->
-        <ion-item menu-close>
+        <ion-item menu-close ng-click="view('comment')">
           <a class="eo-left-menu-item menu-item-comment"><i class="icon ion-ios-chatboxes-outline"></i>评论</a>
         </ion-item>
         <!-- 提问 -->
-        <ion-item menu-close>
+        <ion-item menu-close ng-click="view('submit')">
           <a class="eo-left-menu-item menu-item-ask"><i class="icon ion-paper-airplane"></i>提问</a>
         </ion-item>
         <!-- 设置 -->
-        <ion-item menu-close>
+        <ion-item ng-click="setting()">
           <a class="eo-left-menu-item menu-item-setting"><i class="icon ion-ios-gear-outline"></i>设置</a>
         </ion-item>
         <!-- 客服 -->
-        <ion-item menu-close>
-          <a class="eo-left-menu-item menu-item-service"><i class="icon ion-happy-outline"></i>客服</a>
+        <ion-item>
+          <a class="eo-left-menu-item menu-item-service" href="tel:0755-26600185"  style="text-decoration: none!important;"><i class="icon ion-happy-outline"></i>客服</a>
         </ion-item>
       </ion-list>
     </ion-content>
