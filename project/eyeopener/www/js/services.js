@@ -25,7 +25,7 @@ angular.module('eyeopener.services', [])
 //
 // ======== ======== ======== ========>> 共同Service <<======== ======== ======== ========
 //
-.factory('EOUtils', function($http) {
+.factory('EOUtils', function($http,$window) {
 
   var api = {};
 
@@ -46,6 +46,23 @@ angular.module('eyeopener.services', [])
         }
       }
     );
+  }
+
+
+  api.set = function(key, value) {
+    $window.localStorage[key] = value;
+  }
+
+  api.get = function(key, defaultValue) {
+    return $window.localStorage[key] || defaultValue;
+  }
+
+  api.setObject = function(key, value) {
+    $window.localStorage[key] = JSON.stringify(value);
+  }
+
+  api.getObject = function(key) {
+    return JSON.parse($window.localStorage[key] || '{}');
   }
 
   return api;
@@ -139,7 +156,7 @@ angular.module('eyeopener.services', [])
   api.hots = function(params, successcb, errorcb){
     EOUtils.send('/article/gethotword', params, successcb, errorcb);
   }
-  
+
   return api;
 })
 

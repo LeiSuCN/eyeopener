@@ -1,18 +1,37 @@
-
-<style type="text/css" media="screen">
+<style type="text/css">
+.login-modal{   background-color: rgba(0,0,0,0.9);}
+.login-modal-main{ font-size: 18px; margin-top: 4em; }
+.login-modal-header{color: white;margin: 0 2em;position: relative;}
+.login-modal-header-title{font-size: 1.5em;}
+.login-modal-header-sub{margin: 1em 0;}
+.login-modal-header-close{color: white;top: -.8em;right: 0;position: absolute;}
+.login-enter-options{margin: 0 2em;}
+.login-enter-option{display:block;color: white; margin: 1em 0; ;padding: .8em 0;}
+.login-enter-option img{ height: 2em;vertical-align: middle; margin:0 1em 0 3em;}
+.login-enter-option span{font-weight: normal;}
+.login-enter-option-wb{background-color: rgb(221,17,33);}
+.login-enter-option-qq{background-color: rgb(82,148,208);}
+.login-enter-option-wx{background-color: rgb(124,222,62);}
 </style>
-
-<ion-view view-title="">
-  <!-- 底部按钮 -->
-  <!-- 顶部导航 -->
-  <ion-nav-bar class="bar-eyeopener">
-  </ion-nav-bar>
-
-  <!-- 主区域 -->
+<ion-modal-view class="login-modal">
   <ion-content>
-  <ion-item ng-repeat="p in ps">
-    {{p}}
-  </ion-item>
-
+    <div class="login-modal-main">
+      <div class="login-modal-header">
+        <div class="login-modal-header-title">登录眼界</div>
+        <div class="login-modal-header-sub">你可以用以下方式登录</div>
+        <a class="button button-icon icon ion-ios-close login-modal-header-close" ng-click="closeLogin()"></a>
+      </div>
+      <div class="login-enter-options">
+        <a class="login-enter-option login-enter-option-wb">
+          <img src="img/QQ.png"><span>用微博帐号登录</span>
+        </a>
+        <a class="login-enter-option login-enter-option-qq" ng-click="registerWithQQ()">
+          <img src="img/QQ.png"><span>用QQ帐号登录</span>
+        </a>
+        <a class="login-enter-option login-enter-option-wx">
+          <img src="img/QQ.png"><span>用微信帐号登录</span>
+        </a>
+      </div>
+    </div>
   </ion-content>
-</ion-view>
+</ion-modal-view>

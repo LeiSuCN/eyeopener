@@ -5,6 +5,9 @@
 .login-modal-header-title{font-size: 1.5em;}
 .login-modal-header-sub{margin: 1em 0;}
 .login-modal-header-close{color: white;top: -.8em;right: 0;position: absolute;}
+.login-enter-login{margin: 0 2em;}
+.login-enter-login input{display: block;width: 100%;border-radius: 5px;margin: 1em 0;padding: .5em; font-size: 18px;}
+.login-enter-login .button{margin: 0 1em}
 .login-enter-options{margin: 0 2em;}
 .login-enter-option{display:block;color: white; margin: 1em 0; ;padding: .8em 0;}
 .login-enter-option img{ height: 2em;vertical-align: middle; margin:0 1em 0 3em;}
@@ -18,8 +21,19 @@
     <div class="login-modal-main">
       <div class="login-modal-header">
         <div class="login-modal-header-title">登录眼界</div>
-        <div class="login-modal-header-sub">你可以用以下方式登录</div>
+        <div class="login-modal-header-sub">眼界账号登录</div>
         <a class="button button-icon icon ion-ios-close login-modal-header-close" ng-click="closeLogin()"></a>
+      </div>
+      <div class="login-enter-login">
+        <input type="text" placeholder="账号">
+        <input type="password" placeholder="密码">
+        <div class="button-bar">
+          <a class="button button-balanced">登录</a>
+          <a class="button button-calm">注册</a>
+        </div>
+      </div>
+      <div class="login-modal-header">
+        <div class="login-modal-header-sub">其他账号登录</div>
       </div>
       <div class="login-enter-options">
         <a class="login-enter-option login-enter-option-wb">

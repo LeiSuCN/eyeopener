@@ -28,6 +28,10 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.me = me;
   }
 
+  if( !$scope.me.upic ){
+    $scope.me.upic = 'img/def.png';
+  }
+
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
