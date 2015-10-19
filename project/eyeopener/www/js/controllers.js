@@ -89,6 +89,28 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       $scope.closeLogin();
     });
   }
+  // 第三方登录：WX
+  $scope.registerWithWX = function(){
+
+    if( !window.Wechat ){
+      showWarnMessage('未检测到微信插件');
+      return;
+    }
+
+    Wechat.isInstalled(function(installed){
+      if( installed ){
+        Wechat.auth("snsapi_userinfo", function (response) {
+          showWarnMessage(JSON.stringify(response));
+        }, function (reason) {
+          showWarnMessage(reason,'登录失败');
+        });
+      } else{
+        showWarnMessage('请先安装微信客户端');
+      }
+
+    });
+  }
+
 
   // 第三方登录：QQ
   $scope.registerWithQQ = function(){
@@ -575,6 +597,32 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     });
   }
 
+  $scope.shareWX = function(){
+    if( !window.Wechat ){
+      alert('没有微信插件')
+      return;
+    }
+//Wechat = {Type:{LINK:'url'}, Scene:{TIMELINE:'TIMELINE'}}
+    var params = {};
+    params.scene = Wechat.Scene.TIMELINE;
+    params.message = {
+      title: "眼界",
+      description: "猫屋",
+      messageExt: "这是第三方带的测试字段",
+      thumb: "http://img.mailworld.org/uploads/eyer/share.png",
+      media: {
+        type: Wechat.Type.LINK,
+        webpageUrl: "http://img.mailworld.org/download/eyer"
+      }
+    };
+
+    Wechat.share(params, function () {
+            alert("Success");
+        }, function (reason) {
+            alert("Failed: " + reason);
+    });
+  }
+
   $scope.goBack = function(){
     $ionicHistory.goBack();
   }
@@ -864,6 +912,12 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   $scope.swipeRight = function(){
     $scope.goBack();
+  }
+
+  $scope.swipeLeft = function(){
+    if( $ionicSideMenuDelegate.isOpen() ){
+      $ionicSideMenuDelegate.toggleLeft();
+    }
   }
 
   $scope.drillSubs = function(cate){
