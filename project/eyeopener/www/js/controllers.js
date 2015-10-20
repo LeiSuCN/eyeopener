@@ -250,15 +250,59 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   }
 })
 
-.controller('AppTestCtrl', function($scope) {
+.controller('AppTestCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $ionicPopup
+  , $ionicSlideBoxDelegate
+  , EOShare, EOArticles, EOUser) {
 
-  $scope.ps = ['window.cordova.plugins:'];
+  $scope.questions = [];
 
-  if (window.cordova && window.cordova.plugins) {
-    angular.forEach( window.cordova.plugins, function(p,name){
-      $scope.ps.push( name );
-    })
+  function getMore(){
+    // loading
+    $ionicLoading.show({
+      template: '<ion-spinner icon="ripple" class="eo-spinner"></ion-spinner>',
+      hideOnStageChange: true
+    });
+    // 条件
+    var params = {};
+    // 分页条件
+    params.limit = 10;
+    params.page = 1;
+    // 回调函数
+    var successCallback = function(status, statusText, data){
+
+      if( !!data.substr == true ){
+        isHasMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+        $ionicLoading.hide(); 
+        return;
+      }
+
+      if( data && data.length > 0 ){
+        angular.forEach( data, function(question){
+          $scope.questions.push( question );
+        })
+        if( data.length < 10 ){
+          isHasMore = false;
+        }
+      } else{
+        isHasMore = false;
+      }
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+      $ionicLoading.hide();
+
+      $timeout(function(){
+        $ionicSlideBoxDelegate.update();
+      }, 1000);
+    }; 
+
+    EOArticles.query(params, successCallback);
   }
+
+  $scope.$on('$ionicView.loaded', function(){
+    $timeout( function(){
+      getMore();
+    } )
+  })
 })
 
 
@@ -580,7 +624,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     // 弹出框
     _selectPopup = $ionicPopup.show({
       cssClass: 'article-detail-popup',
-      template: '<a ng-click="goComment()">回复</a><a ng-click="likeComment()">赞</a>',
+      template: '<a ng-click="goComment()" class="ul">回复</a><a ng-click="likeComment()" class="ul">赞</a><a class="ul">复制</a><a>举报</a>',
       scope: $scope
     });
     angular.element( window ).one('click', function(){

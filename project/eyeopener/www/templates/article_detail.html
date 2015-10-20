@@ -12,7 +12,7 @@
 .article-detail  .item{padding: 5px 10px;}
 
 .article-detail-title,.article-detail-content{ margin: 0 10px;}
-.article-detail-title{ font-size: 18px; color: rgb(34, 34, 34); line-height: 1.7; padding-top: 5px;margin-bottom: 5px;}
+.article-detail-title{ font-size: 18px; color: rgb(34, 34, 34); line-height: 1.7; padding-top: 5px;margin-bottom: 5px; text-align: center;}
 .article-detail-content{white-space: pre-line; font-size: 15px; color: #5A5A5A; line-height: 1.7;}
 .article-detail-status{ padding: 14px 10px; border-top: 1px solid #E7E7E7; }
 .article-detail-status a{ font-size: 18px; margin-right: .5em;color: #BEBEBE; }
@@ -28,10 +28,11 @@
 .article-detail-popup{}
 .article-detail-popup .popup-head{ display: none; }
 .article-detail-popup .popup-body a{ display: block; width: 100%; text-align: center; padding: 1em 0;}
-.article-detail-popup .popup-body a:first-child{ border-bottom: 1px solid rgba(0,0,0,0.2);}
+.article-detail-popup .popup-body .ul{ border-bottom: 1px solid rgba(0,0,0,0.2);}
+.article-detail-comment-button-image img{width: 34px; height: 34px; border-radius: 50%;}
 </style>
 
-<ion-view view-title="">
+<ion-view view-title="{{article.aType | typeName}}">
 	<!-- 底部按钮 -->
   <a class="article-detail-buttom-button article-detail-buttom-button-back" ng-click="goBack()"><span class="icon ion-ios-arrow-thin-left"></span></a>
 
@@ -43,6 +44,11 @@
 
 	<!-- 顶部导航 -->
   <ion-nav-bar class="bar-eyeopener">
+    <ion-nav-buttons side="right">
+      <button class="button button-clear article-detail-comment-button-image">
+        <img ng-src="{{article.aType | typePic}}" alt="">
+      </button>
+    </ion-nav-buttons>
   </ion-nav-bar>
 
   <!-- 主区域 -->
