@@ -2,7 +2,6 @@
 <style type="text/css" media="screen">
 .eo-finder{}
 .eo-finder .tab-nav{top:0;}
-.eo-finder .scroll{padding-top: 49px;}
 .eo-finder .slider-pager{ display: none;}
 .eo-finder .tab-title{ font-size: 24px;}
 .eo-finder .finder-list-group{font-size: 18px;  clear: both;}
@@ -40,17 +39,6 @@
 
   <!-- 主区域 -->
   <ion-content  on-swipe-right="swipeRight()"  on-swipe-left="swipeLeft()" class="eo-finder">
-
-  
-
-<ion-tabs class="tabs-striped tabs-top tabs-positive tabs-icon-left" style="top: 0">
-
-  <ion-tab title="看专题" icon-on="ion-ios-keypad" icon-off="ion-ios-keypad-outline" on-select="showTypes()"></ion-tab>
-
-  <ion-tab title="问专家" icon-on="ion-ios-people" icon-off="ion-ios-people-outline" on-select="showExperts()"></ion-tab>
-
-</ion-tabs>
-
     <ion-slide-box ng-init="disableSlide()">
       <ion-slide>
         <eo-finder-types types="types"></eo-finder-types>

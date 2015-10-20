@@ -17,11 +17,11 @@
 </style>
 
 <ion-view view-title="">
-  <!-- 右下角按钮 -->
-  <a id="submitQuestion" on-tap="gotoArticleCreate()" class="button button-icon icon ion-ios-plus-empty" style="color:white;">
+	<!-- 右下角按钮 -->
+	<a id="submitQuestion" on-tap="gotoArticleCreate()" class="button button-icon icon ion-ios-plus-empty" style="color:white;">
     
   </a>
-  <!-- 顶部导航 -->
+	<!-- 顶部导航 -->
     <ion-nav-bar class="bar-eyeopener">
       <ion-nav-back-button>
       </ion-nav-back-button>
@@ -30,36 +30,36 @@
         </button>
       </ion-nav-buttons>
       <ion-nav-buttons side="right">
-    <div class=" item-input-inset">
-      <label class="item-input-wrapper" style="background-color: rgb(62,157,237);border-radius:15px;">
-        <i class="icon ion-ios-search placeholder-icon"></i>
-        <input type="search" ng-model="search.name" style="font-size: 16px;width:14em;color:rgba(255,255,255,0.8);text-align: center;" ng-click="gotoArticleSearch()" placeholder="{{topTips}}">
-      </label>
-    </div>
+		<div class=" item-input-inset">
+		  <label class="item-input-wrapper" style="background-color: rgb(62,157,237);border-radius:15px;">
+		    <i class="icon ion-ios-search placeholder-icon"></i>
+		    <input type="search" ng-model="search.name" style="font-size: 16px;width:14em;color:rgba(255,255,255,0.8);text-align: center;" ng-click="gotoArticleSearch()" placeholder="{{topTips}}">
+		  </label>
+		</div>
         <button class="button button-icon button-clear ion-ios-eye-outline" ng-click="gotoFinderList()">
         </button>
       </ion-nav-buttons>
     </ion-nav-bar>
 
-    <ion-content on-swipe-left="swipeLeft()">
+  	<ion-content on-swipe-left="swipeLeft()">
       <ion-item collection-repeat="question in questions" class="feed-item">
-        <div class="feed-main">
-          <div class="qustion-source">
-            来自 <a>{{question.aType | typeName}}</a>
-            <img ng-src="{{question.aType | typePic}}">
-          </div>
-          <div class="qustion-content" ng-click="gotoArticleDetail(question)">
-            <h2>{{question.title}}</h2>
-            <div class="qustion-summary">{{question.context}}</div>           
-          </div>
+      	<div class="feed-main">
+      		<div class="qustion-source">
+      			来自 <a>{{question.aType | typeName}}</a>
+      			<img ng-src="{{question.aType | typePic}}">
+      		</div>
+      		<div class="qustion-content" ng-click="gotoArticleDetail(question)">
+       			<h2>{{question.title}}</h2>
+      			<div class="qustion-summary">{{question.context}}</div>     			
+      		</div>
           <div class="qustion-footer">
            <span class="icon-status" style="float:left;"><i class="icon ion-ios-clock assertive"></i><a class="text">{{question.buildDate*1000 | date:'MM-dd HH:mm' }}</a></span>
            <span class="icon-status"><i class="icon ion-chatbox-working assertive"></i><a class="text">{{question.commentCount}}</a></span>
            <span class="icon-status"><i class="icon ion-heart assertive"></i><a class="text">{{question.likes}}</a></span>
           </div>
-        </div>
+      	</div>
       </ion-item>
       <ion-infinite-scroll on-infinite="loadMore()" distance="1%" ng-if="hasMore()"></ion-infinite-scroll>
-    </ion-content>
+  	</ion-content>
 
 </ion-view>

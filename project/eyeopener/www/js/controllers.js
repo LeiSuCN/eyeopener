@@ -984,8 +984,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       hideOnStageChange: true
     });
 
-    //var params = {aType: type};
-    var params = {};
+    var params = {aType: typeId};
+    //var params = {};
     EOArticles.query(params, function(status, statusText, data){
       if( data || data.length > 0 ){
         angular.forEach( data, function(article){
