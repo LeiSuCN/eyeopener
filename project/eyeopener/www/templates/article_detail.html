@@ -24,6 +24,7 @@
 .article-detail-comment .comment-like{ position: absolute; right: 0; bottom: 0; color: red;font-size: 1.4em;}
 .article-detail-comment .comment-like:before{ margin-right: .2em;  }
 .article-detail-comment .article-detail-context{color: #5A5A5A;}
+.article-detail-comment .article-detail-context .article-detail-re{color:gray;}
 .article-detail-popup{}
 .article-detail-popup .popup-head{ display: none; }
 .article-detail-popup .popup-body a{ display: block; width: 100%; text-align: center; padding: 1em 0;}
@@ -54,8 +55,8 @@
     </div>
     <div class="article-detail-comments">
       <ion-list>
-        <ion-item ng-repeat="comment in comments">
-          <div class="article-detail-comment article-detail-font" on-hold="popupCommentOpts(comment)">
+        <ion-item ng-repeat="comment in comments" on-tap="popupCommentOpts(comment)">
+          <div class="article-detail-comment article-detail-font">
             <a class="user-header-photo">
               <img ng-src="{{comment.user.upic}}" alt="">
             </a>
@@ -64,7 +65,7 @@
               {{comment.buildDate*1000 | date:'yyyy-MM-dd HH:mm:ss' }}
               <span class="icon ion-ios-heart-outline comment-like">{{comment.likes}}</span>
             </div> 
-            <div class="article-detail-context">{{comment.context}}</div>            
+            <div class="article-detail-context"><span ng-show="comment.touser.uname" class="article-detail-re">回复 {{comment.touser.uname}} : </span>{{comment.context}}</div>            
           </div>
         </ion-item>
       </ion-list>

@@ -101,7 +101,11 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     Wechat.isInstalled(function(installed){
       if( installed ){
         Wechat.auth("snsapi_userinfo", function (response) {
-          showWarnMessage(JSON.stringify(response));
+          var params = {};
+          params.connectType = 'wx';
+          params.openid = response.code;
+          params.accessToken = '';
+          afterThirdAuthSucc(params);
         }, function (reason) {
           showWarnMessage(reason,'登录失败');
         });
@@ -609,7 +613,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       alert('没有微信插件')
       return;
     }
-//Wechat = {Type:{LINK:'url'}, Scene:{TIMELINE:'TIMELINE'}}
+
     var params = {};
     params.scene = Wechat.Scene.TIMELINE;
     params.message = {
