@@ -501,13 +501,27 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     context: ''
   }
 
+  // 上传图片，并在结束时返回
+  function uploadPictures(params, fileURLs, uploadSuccess, uploadError, updateStatus){
+
+    // 结束返回
+    if( !fileURLs || fileURLs.length == 0 ){
+      $ionicLoading.hide();
+      $scope.$emit('Article:refresh');
+      $ionicHistory.goBack();
+      return;
+    }
+
+    var fileURL = fileURLs.remove(0);
+
+
+
+  }
+
   function uploadPicture(params, fileURL, uploadSuccess, uploadError, updateStatus){
 
-    //showAlert(fileURL)
-
-    //var uri = EOUtils.getServer() + '/article/uploadimg';
-    var uri = 'http://192.168.1.19:81/article/uploadimg';
-
+    var uri = EOUtils.getServer() + '/article/uploadimg';
+    // var uri = 'http://192.168.1.19:81/article/uploadimg';
     var options = new FileUploadOptions();
     options.params = params;
     options.fileKey="image";
@@ -517,14 +531,11 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     ft.onprogress = function(progressEvent) {
         if (progressEvent.lengthComputable) {
           var status = parseInt( progressEvent.loaded / progressEvent.total * 100 );
-          //updateStatus( status );
+          updateStatus( status );
         } else {
           //loadingStatus.increment();
         }
     };
-
-
-    //showAlert(uri)
     ft.upload(fileURL, uri, uploadSuccess, uploadError, options);
   }
 
@@ -536,6 +547,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     alertPopup.then(function(res) {});
   }
 
+  // 显示图片
   function showPicture( imgUri, ele){
 
     showAlert( imgUri );
@@ -552,6 +564,9 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     imgEle.show();
   }
 
+
+
+  // 获取本地图片
   $scope.getPicture = function($event){
 
     var containerEle = $event.toElement.parentElement;
@@ -575,11 +590,13 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $ionicHistory.goBack();
   }
 
+
+
   function testUpload(){
 
-    uploadPicture({}, angular.element('#articleCreateImage0').find('img').attr('src'), 
+    uploadPicture({aid:'123',uid:'456'}, angular.element('#articleCreateImage0').find('img').attr('src'), 
       function(r){
-        
+        alert('success')
       }, function(error){
         
     alert("An error has occurred: Code = " + error.code);
@@ -598,13 +615,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     var article = $scope.article;
 
     if( !article.title ){
-      showAlert('请填写问题题目',0)
+      showAlert('请填写问题题目')
       return;      
-    }
-
-    if( !article.context || article.context.length <= 30){
-      showAlert('为了更好的解决您的问题，请至少输入30字的问题描述',1)
-      return;
     }
 
     if( !article.aType || article.aType.length <= 0 || article.aType == '0'){
@@ -615,7 +627,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     // 上传图片
     var images = [];
     for( var i = 0 ; i < 3 ; i++ ){
-      var imgSrc = angular.element('#articleCreateImage' + i ).attr('src');
+      var imgSrc = angular.element('#articleCreateImage' + i ).find('img').attr('src');
       if( imgSrc ){
         images.push( imgSrc );
       }
@@ -627,6 +639,10 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
         , uid: me.uid}
       , function(status, statusText, data){
         $ionicLoading.hide();
+
+
+
+
         $scope.$emit('Article:refresh');
         $ionicHistory.goBack();
       }, function( errResp ){
