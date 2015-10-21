@@ -479,9 +479,13 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 文章创建Controller
  */
-.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, EOUser, EOArticles) {
+.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate
+  , EOUser, EOArticles, EOUtils) {
 
   var me = EOUser.me();
+
+  // 限制条件
+  $scope.titleMax = 60; // 标题最大字数限制
 
   // 更新文章类型
   function refreshTypes(){
@@ -497,32 +501,100 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     context: ''
   }
 
-  $scope.tabActive = 0;
-  $scope.types = [];
+  function uploadPicture(params, fileURL, uploadSuccess, uploadError, updateStatus){
 
-  function showAlert(msg,index){
+    //showAlert(fileURL)
+
+    //var uri = EOUtils.getServer() + '/article/uploadimg';
+    var uri = 'http://192.168.1.19:81/article/uploadimg';
+
+    var options = new FileUploadOptions();
+    options.params = params;
+    options.fileKey="image";
+    options.fileName=fileURL.substr(fileURL.lastIndexOf('/')+1);
+
+    var ft = new FileTransfer();
+    ft.onprogress = function(progressEvent) {
+        if (progressEvent.lengthComputable) {
+          var status = parseInt( progressEvent.loaded / progressEvent.total * 100 );
+          //updateStatus( status );
+        } else {
+          //loadingStatus.increment();
+        }
+    };
+
+
+    //showAlert(uri)
+    ft.upload(fileURL, uri, uploadSuccess, uploadError, options);
+  }
+
+  function showAlert(msg){
     var alertPopup = $ionicPopup.alert({
       title: '请完善您的问题',
       template: msg
     });
-    alertPopup.then(function(res) {
-      $scope.changeSlide(index);
-    });
+    alertPopup.then(function(res) {});
+  }
+
+  function showPicture( imgUri, ele){
+
+    showAlert( imgUri );
+
+    var containerEle = angular.element( ele );
+    var h = containerEle.width(); 
+
+    var btnEle = containerEle.find('button');
+    var imgEle = containerEle.find('img');
+    imgEle.attr('src', imgUri);
+    imgEle.css('max-height', h + 'px');
+
+    btnEle.hide();
+    imgEle.show();
+  }
+
+  $scope.getPicture = function($event){
+
+    var containerEle = $event.toElement.parentElement;
+
+    //showPicture('img/def.png', $event.toElement.parentElement );return;
+
+    EOUtils.getPicture({
+      quality:10,
+      destinationType: Camera.DestinationType.FILE_URI,
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+      encodingType: Camera.EncodingType.JPEG,
+      correctOrientation: true
+    }).then(function(imageURI){
+      showPicture(imageURI, containerEle);
+    }, function(err){
+      showAlert(err);
+    })
   }
 
   $scope.goBack = function(){
     $ionicHistory.goBack();
   }
 
-  $scope.slideHasChanged = function(index){
-    $scope.tabActive = index;
-  }
+  function testUpload(){
 
-  $scope.changeSlide = function(index){
-    $ionicSlideBoxDelegate.slide(index);
+    uploadPicture({}, angular.element('#articleCreateImage0').find('img').attr('src'), 
+      function(r){
+        
+      }, function(error){
+        
+    alert("An error has occurred: Code = " + error.code);
+    alert("upload error source " + error.source);
+    alert("upload error target " + error.target);
+
+      }, function(status){
+        $scope.article.title = status;
+      });
   }
 
   $scope.submit = function(){
+
+    testUpload();return;
+
     var article = $scope.article;
 
     if( !article.title ){
@@ -540,10 +612,20 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       return;
     }
 
+    // 上传图片
+    var images = [];
+    for( var i = 0 ; i < 3 ; i++ ){
+      var imgSrc = angular.element('#articleCreateImage' + i ).attr('src');
+      if( imgSrc ){
+        images.push( imgSrc );
+      }
+    }
+
     if( article.title && article.aType ){
       $ionicLoading.show({ template: '正在提交...' });
       EOArticles.save( {title: article.title, context: article.context, aType: article.aType
-        , uid: me.uid}, function(status, statusText, data){
+        , uid: me.uid}
+      , function(status, statusText, data){
         $ionicLoading.hide();
         $scope.$emit('Article:refresh');
         $ionicHistory.goBack();
@@ -552,16 +634,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       })
     }
   }
-
-  // window.document.ready
-  $scope.$on('$ionicView.afterEnter', function(){
-    // 设置高度
-    var contentHeight = angular.element('.article-create').height();
-    var tabHeight = angular.element('.article-create-tabs').height();
-    angular.element('.slider-slide').css('min-height',(contentHeight - tabHeight) + 'px' );
-    // 加载类型
-    refreshTypes();
-  })
 
   // 注销
   $scope.$on('$destroy', function(){

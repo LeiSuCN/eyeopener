@@ -25,7 +25,7 @@ angular.module('eyeopener.services', [])
 //
 // ======== ======== ======== ========>> 共同Service <<======== ======== ======== ========
 //
-.factory('EOUtils', function($http,$window) {
+.factory('EOUtils', function($q, $http, $window) {
 
   var api = {};
 
@@ -48,7 +48,6 @@ angular.module('eyeopener.services', [])
     );
   }
 
-
   api.set = function(key, value) {
     $window.localStorage[key] = value;
   }
@@ -63,6 +62,22 @@ angular.module('eyeopener.services', [])
 
   api.getObject = function(key) {
     return JSON.parse($window.localStorage[key] || '{}');
+  }
+
+  api.getPicture = function(options){
+    var q = $q.defer();
+
+    navigator.camera.getPicture( function(result){
+      q.resolve( result );
+    }, function(err){
+      q.reject( err );
+    }, options)
+
+    return q.promise;
+  }
+
+  api.getServer = function(){
+    return SEVER_ADDRESS;
   }
 
   return api;
