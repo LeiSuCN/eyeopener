@@ -1,0 +1,24 @@
+<style type="text/css">
+.article-create-type-modal{}
+.article-create-type-modal .title{}
+.article-create-type-content{ font-size: 16px; }
+.article-create-type-false{ display: block;height: 2em; margin-bottom: .5em;margin-top: 1em;}
+.article-create-type-false span{background-color: rgb(48,186,182);color:white;display: inline-block;float:left;line-height: 2em; padding: 0 .6em;}
+.article-create-type-false:after{ content: '';display: inline-block;float:left;border-left:.6em solid rgb(48,186,182);border-top:1em solid transparent;border-bottom:1em solid transparent;}
+.article-create-type-true{ display: inline-block;  border: 1px solid #e3e3e3;  padding: .5em;  border-radius: 1em;  color: #333;  margin: .2em .3em;}
+.article-create-type-true span{}
+.article-create-type-active{ color: white; border-color: red; background-color: rgba(255,0,0,0.4);}
+</style>
+<ion-modal-view class="article-create-type-modal">
+  <ion-header-bar align-title="center">
+    <div class="buttons">
+      <a class="button icon-left button-clear ion-ios-arrow-left" ng-click="closeTypeModal()"></a>
+    </div>
+    <h2 class="title">请选择一个专题</h2>
+  </ion-header-bar>
+  <ion-content class="article-create-type-content">
+    <div>
+      <a ng-repeat="type in types" class="article-create-type-{{type.isType}}" ng-click="chooseType($index)" ng-class=" $parent.article.aType == type.id ? 'article-create-type-active':'' "><span>{{ type.name }}</span></a>
+    </div>
+  </ion-content>
+</ion-modal-view>

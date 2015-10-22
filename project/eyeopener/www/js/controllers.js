@@ -116,7 +116,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     });
   }
 
-
   // 第三方登录：QQ
   $scope.registerWithQQ = function(){
 
@@ -431,7 +430,9 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $state.go( 'app.article_detail', {articleId:article.aid});
   }
 
-  $scope.gotoArticleCreate = function(){
+  $scope.gotoArticleCreate = function($event){
+
+    $event.stopPropagation();
 
     var me = EOUser.me();
     if( !me || !me.uid ){
@@ -479,7 +480,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 文章创建Controller
  */
-.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate
+.controller('ArticleCreateCtrl', function($scope, $ionicHistory, $ionicLoading
+  , $ionicPopup, $ionicSlideBoxDelegate, $ionicModal
   , EOUser, EOArticles, EOUtils) {
 
   var me = EOUser.me();
@@ -487,18 +489,51 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   // 限制条件
   $scope.titleMax = 60; // 标题最大字数限制
 
+  // 创建的文章
+  $scope.article = {
+    uid: me.uid,
+    aType: '',
+    aTypeName: '',
+    title: '',
+    context: ''
+  }
+
+  // 专题列表
+  $scope.types = [];
+
+  // 专题Modal
+  $ionicModal.fromTemplateUrl('templates/article_create_type.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.typeModal = modal;
+  });
+
   // 更新文章类型
-  function refreshTypes(){
+  function refreshTypes(successCallback){
     EOArticles.types({},function(status, statusText, data){
-      $scope.types = data;
+
+      var currentCate = false;
+      if( data && data.length > 0 ){
+        angular.forEach(data, function(type, index){
+          // 切换类目
+          if( type.team != currentCate ){
+            $scope.types.push({ name: type.team, isType: false, id: '0' });
+            currentCate = type.team;
+          }
+          $scope.types.push({ name: type.name, isType: true, id: type.id });
+        });
+      }
+
+      successCallback();
     });
   }
 
-  $scope.article = {
-    uid: me.uid,
-    aType: '0',
-    title: '',
-    context: ''
+  function showAlert(msg){
+    var alertPopup = $ionicPopup.alert({
+      title: '请完善您的问题',
+      template: msg
+    });
+    alertPopup.then(function(res) {});
   }
 
   // 上传图片，并在结束时返回
@@ -506,18 +541,19 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
     // 结束返回
     if( !fileURLs || fileURLs.length == 0 ){
-      $ionicLoading.hide();
-      $scope.$emit('Article:refresh');
-      $ionicHistory.goBack();
+      // 完成后回调uploadSuccess函数
+      uploadSuccess();
       return;
     }
 
-    var fileURL = fileURLs.remove(0);
-
-
-
+    var fileURL = fileURLs.pop();
+    // 上传单张图片，并在上传成功后递归调用uploadPictures
+    uploadPicture( params, fileURL, function(){
+      uploadPictures(params, fileURLs, uploadSuccess, uploadError, updateStatus);
+    }, uploadError, updateStatus );
   }
 
+  // 上传单张图片
   function uploadPicture(params, fileURL, uploadSuccess, uploadError, updateStatus){
 
     var uri = EOUtils.getServer() + '/article/uploadimg';
@@ -539,18 +575,8 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     ft.upload(fileURL, uri, uploadSuccess, uploadError, options);
   }
 
-  function showAlert(msg){
-    var alertPopup = $ionicPopup.alert({
-      title: '请完善您的问题',
-      template: msg
-    });
-    alertPopup.then(function(res) {});
-  }
-
   // 显示图片
   function showPicture( imgUri, ele){
-
-    showAlert( imgUri );
 
     var containerEle = angular.element( ele );
     var h = containerEle.width(); 
@@ -563,8 +589,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     btnEle.hide();
     imgEle.show();
   }
-
-
 
   // 获取本地图片
   $scope.getPicture = function($event){
@@ -586,11 +610,40 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     })
   }
 
+  // 弹出专题Modal
+  $scope.showTypeModal = function(){
+
+    //  如果没有专题列表需要先获取专题列表
+    if( $scope.types.length == 0 ){
+      refreshTypes(function(){
+        $scope.typeModal.show();
+      });
+    } else{
+      $scope.typeModal.show();
+    }
+    
+  }
+
+  // 关闭专题Modal
+  $scope.closeTypeModal = function(){
+    $scope.typeModal.hide();
+  }
+
+  // 选中专题
+  $scope.chooseType = function( index ){
+    var type = $scope.types[index];
+    if( !type.isType ){
+      return;
+    }
+
+    $scope.article.aType = type.id;
+    $scope.article.aTypeName = type.name;
+    $scope.closeTypeModal();
+  }
+
   $scope.goBack = function(){
     $ionicHistory.goBack();
   }
-
-
 
   function testUpload(){
 
@@ -610,7 +663,11 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 
   $scope.submit = function(){
 
-    testUpload();return;
+    //testUpload();return;
+    // var images = ['img/def.png','img/QQ.png','img/weixin.png'];
+    // uploadPictures({}, images, function(){ 
+    //   console.log( 'upload finished' )
+    // }, function(){}, function(){});return;
 
     var article = $scope.article;
 
@@ -619,7 +676,7 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       return;      
     }
 
-    if( !article.aType || article.aType.length <= 0 || article.aType == '0'){
+    if( !article.aType || article.aType.length <= 0 || article.aType == ''){
       showAlert('请选择问题所属专题',2)
       return;
     }
@@ -638,13 +695,34 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       EOArticles.save( {title: article.title, context: article.context, aType: article.aType
         , uid: me.uid}
       , function(status, statusText, data){
-        $ionicLoading.hide();
 
+        if( data.code != '10000' ){
+          // TODO
+          showAlert(data.code);
+          return;
+        }
 
+        var aid = data.aid;
 
+        uploadPictures({// 上传参数
+            uid: me.uid,
+            aid: aid
+          // 上传图片
+          }, images,
+          // 上传成功回调函数
+          function(){ 
+            showAlert('success');
+            $ionicLoading.hide();
+            $scope.$emit('Article:refresh');
+            $ionicHistory.goBack();
+          // 上传失败回调函数
+          }, function(){
+            showAlert(error.code);
+          // 上传进度回调函数
+          }, function(){ 
 
-        $scope.$emit('Article:refresh');
-        $ionicHistory.goBack();
+          })
+
       }, function( errResp ){
         $ionicLoading.hide();
       })

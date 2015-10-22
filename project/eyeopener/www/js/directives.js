@@ -20,7 +20,7 @@ angular.module('eyeopener.directives', [])
 					var showSize = Math.min( 4, types.length );
 					for( var i = 0 ; i < showSize ; i++ ){
 						var type = types[i];
-						var jsType = "ng-click='goTypeList(" + JSON.stringify(type) + ")'>";
+						var jsType = "ng-click='goTypeList(" + JSON.stringify(type) + ")'";
 						typeHtml += '<div class="finder-list-group-sub" style="background-image:url(' + type.picUrl + ')" ' + jsType + '>';
 						typeHtml += '<span class="finder-list-group-sub-name">' + type.name + '</span>';
 

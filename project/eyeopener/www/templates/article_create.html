@@ -14,7 +14,7 @@
 .article-create-images .button{ margin-top: 0px;}
 .article-create-types h3{ position: relative;}
 .article-create-types h3 .button{ position: absolute; top: -12px; right: 0px;}
-.article-create-images img { width: 100%; }
+.article-create-images img { width: 100%; display: none; }
 
 
 
@@ -48,13 +48,13 @@
       <h3>添加图片</h3>
       <div class="row">
         <div class="col" id="articleCreateImage0"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)"></button><img src=""></div>
-        <div class="col" id="articleCreateImage1"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)"></button></div>
-        <div class="col" id="articleCreateImage2"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)"></button></div>       
+        <div class="col" id="articleCreateImage1"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)" style="display: none;"></button></div>
+        <div class="col" id="articleCreateImage2"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)" style="display: none;"></button></div>       
       </div>
     </div>
     <!-- 添加标签 -->
     <div class="article-create-input article-create-types">
-      <h3>添加标签<a class="button button-icon icon ion-ios-arrow-right"></a></h3>
+      <h3 ng-click="showTypeModal()">添加专题<a class="button button-icon icon-right icon ion-ios-arrow-right">{{article.aTypeName}}</a></h3>
     </div>
   </ion-content>
 </ion-view>

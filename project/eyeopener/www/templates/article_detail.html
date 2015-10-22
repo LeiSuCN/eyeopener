@@ -13,6 +13,7 @@
 
 .article-detail-title,.article-detail-content{ margin: 0 10px;}
 .article-detail-title{ font-size: 18px; color: rgb(34, 34, 34); line-height: 1.7; padding-top: 5px;margin-bottom: 5px; text-align: center;}
+.article-detail-author{ text-align: center; font-size: 18px; color: #666;}
 .article-detail-content{white-space: pre-line; font-size: 15px; color: #5A5A5A; line-height: 1.7;}
 .article-detail-status{ padding: 14px 10px; border-top: 1px solid #E7E7E7; }
 .article-detail-status a{ font-size: 18px; margin-right: .5em;color: #BEBEBE; }
@@ -54,6 +55,7 @@
   <!-- 主区域 -->
   <ion-content class="article-detail" delegate-handle="article-detail-scroll" on-scroll="scrolling()">
     <h2 class="article-detail-title">{{article.title}}</h2>
+    <h3 class="article-detail-author">{{article.uname}}</h3>
     <div class="article-detail-content">{{article.context}}</div>
     <div class="article-detail-status">
       <a class="icon ion-ios-heart">{{article.likes}}</a>
