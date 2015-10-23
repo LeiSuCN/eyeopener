@@ -1,0 +1,48 @@
+<style type="text/css">
+.eoModal-share {background-color:transparent;}
+.eoModal-share-content{background-color: rgba(0,0,0,0.9); margin-top: 100%;}
+.eoModal-share-content-items { text-align: center; margin-top: 1em;}
+.eoModal-share-content-container{ width: 30%; display: inline-block; }
+.eoModal-share-content-item img{ max-width: 64px; display: block; margin:0 auto; }
+.eoModal-share-content-item span{ color:white; display: block; text-align: center;}
+</style>
+<ion-modal-view class="eoModal-share" ng-click="closeShare()">
+  <ion-content class="eoModal-share-content">
+    <div class="eoModal-share-content-items">
+      <div class="eoModal-share-content-container">
+        <a class="eoModal-share-content-item" ng-click="share('comments', $event)">
+          <img src="img/share_moments.png">
+          <span>朋友圈</span>
+        </a>
+      </div>
+      <div class="eoModal-share-content-container">
+        <a class="eoModal-share-content-item"  ng-click="share('wechat', $event)">
+          <img src="img/share_wx.png">
+          <span>微信</span>
+        </a>
+      </div>
+      <div class="eoModal-share-content-container">
+         <a class="eoModal-share-content-item" ng-click="share('qzone', $event)">
+          <img src="img/share_qzone.dms">
+          <span>QQ空间</span>
+          </a>       
+      </div>
+    </div>
+
+    <div class="eoModal-share-content-items">
+      <div class="eoModal-share-content-container">
+        <a class="eoModal-share-content-item" ng-click="share('comments', $event)">
+          <img src="img/share_bookmark.png">
+          <span>收藏</span>
+        </a>
+      </div>
+      <div class="eoModal-share-content-container">
+        <a class="eoModal-share-content-item"  ng-click="share('wechat', $event)">
+          <img src="img/share_copy.png">
+          <span>复制链接</span>
+        </a>
+      </div>
+    </div>
+
+  </ion-content>
+</ion-modal-view>

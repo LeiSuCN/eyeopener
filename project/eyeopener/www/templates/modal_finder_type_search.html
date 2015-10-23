@@ -1,0 +1,25 @@
+<style type="text/css">
+.eoModal-finder-type-search {background-color:white;}
+</style>
+<ion-modal-view class="eoModal-finder-type-search">
+  <!-- 顶部导航 -->
+  <ion-header-bar class="bar-eyeopener">
+    <div class="buttons  pull-right">
+      <div class=" item-input-inset" style="position: relative;">
+        <label class="item-input-wrapper" style="background-color: rgb(62,157,237);border-radius:15px;">
+          <input type="search" ng-model="search.name" style="font-size: 16px;width:14em;color:rgba(255,255,255,0.8);text-align:  center;">
+        </label>
+        <button class="button button-icon button-clear ion-ios-close-empty" style="position: absolute;top:0;right: 1em;" ng-click="clearSearchText()">
+      </div>
+      
+      </button>
+      <button class="button button-clear" ng-click="hideTypeSearchModal()">取消</button>
+    </div>
+  </ion-header-bar>
+
+  <ion-content class="eoModal-finder-type-search-content">
+    <ion-item ng-repeat="type in oriTypes | filter: search.name" ng-click="hideTypeSearchModal();goTypeList(type)">
+      {{type.name}}
+    </ion-item>
+  </ion-content>
+</ion-modal-view>

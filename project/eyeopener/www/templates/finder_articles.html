@@ -1,22 +1,39 @@
 
 <style type="text/css" media="screen">
 .finder-articles{}
+.finder-articles .bar-footer{height: auto;font-size: 14px; padding: 1em; background-color: transparent;border:0px;}
+.finder-articles .bar-footer .button{width: 42px; height: 42px; background-color: black;opacity: .8;border-radius: 50%;}
+.finder-articles .bar-footer .buttons.pull-right{ bottom: auto; top: auto; right: 0em;}
+.finder-articles .bar-footer .buttons.pull-right .button{ margin-right: 1em;}
 .finder-articles .header{ position: relative;}
 .finder-articles .header img{width: 100%;display: block;}
 .finder-articles .header .summary{  position: absolute;bottom: 0;width: 100%;text-align: center;color: white;font-size: 18px;  padding: .5em 0;  font-weight: bold; background-color: rgba(0,0,0,0.4);}
 .finder-articles .header .summary span{color: rgb( 255, 204, 0 );}
 </style>
 
-<ion-view view-title="{{type.name}}">
+<ion-view view-title="{{type.name}}"  class="finder-articles">
 	<!-- 右下角按钮 -->
+
+  <!--
   <a class="eo-buttom-button eo-buttom-button-back" ng-click="goBack()"><span class="icon ion-ios-arrow-thin-left"></span></a>
-    
-  </a>
+  -->
+
+  <div class="bar bar-footer">
+    <div class="buttons">
+      <button class="button button-clear icon ion-ios-arrow-thin-left" ng-click="goBack()"></button>
+    </div>
+    <div class="buttons pull-right">
+      <button class="button button-clear icon ion-ios-telephone"></button>
+      <button class="button button-clear icon ion-thumbsdown"></button>
+    </div>
+  </div>
+
+
 	<!-- 顶部导航 -->
   <ion-nav-bar class="bar-eyeopener">  
   </ion-nav-bar>
 
-  <ion-content class="finder-articles">
+  <ion-content  class="finder-articles-content">
     <div class="header">
       <img ng-src="{{type.picUrl}}">
       <div class="summary">
@@ -27,9 +44,19 @@
     </div>
     <ion-item collection-repeat="question in articles" class="feed-item">
       <div class="feed-main">
+        <div class="qustion-source">
+          来自 <a>{{question.aType | typeName}}</a>
+          <img ng-src="{{question.aType | typePic}}">
+        </div>
         <div class="qustion-content" ng-click="gotoArticleDetail(question)">
           <h2>{{question.title}}</h2>
-          <div class="qustion-summary"><span class="qustion-vote">{{question.likes}}</span>{{question.context}}</div>           
+          <div class="qustion-summary">{{question.context}}</div>           
+        </div>
+        <div class="qustion-footer">
+         <span class="icon-status" style="float:left;"><i class="icon ion-ios-clock assertive"></i><a class="text">{{question.buildDate*1000 | date:'MM-dd HH:mm' }}</a></span>
+         <span class="icon-status"><i class="icon ion-ios-book assertive"></i><a class="text">{{question.reads}}</a></span>
+         <span class="icon-status"><i class="icon ion-chatbox-working assertive"></i><a class="text">{{question.commentCount}}</a></span>
+         <span class="icon-status"><i class="icon ion-heart assertive"></i><a class="text">{{question.likes}}</a></span>
         </div>
       </div>
     </ion-item>

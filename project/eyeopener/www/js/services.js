@@ -25,7 +25,7 @@ angular.module('eyeopener.services', [])
 //
 // ======== ======== ======== ========>> 共同Service <<======== ======== ======== ========
 //
-.factory('EOUtils', function($q, $http, $window) {
+.factory('EOUtils', function($q, $http, $window, $ionicLoading) {
 
   var api = {};
 
@@ -78,6 +78,18 @@ angular.module('eyeopener.services', [])
 
   api.getServer = function(){
     return SEVER_ADDRESS;
+  }
+
+  api.showLoading = function(){
+    // loading
+    $ionicLoading.show({
+      template: '<ion-spinner icon="ripple" class="eo-spinner"></ion-spinner>',
+      hideOnStageChange: true
+    });
+  }
+
+  api.hideLoading = function(){
+    $ionicLoading.hide();
   }
 
   return api;
@@ -231,6 +243,10 @@ angular.module('eyeopener.services', [])
 
   api.like = function(params, successcb, errorcb){
     EOUtils.send('/comment/likebycid', params, successcb, errorcb);
+  }
+
+  api.report = function( params, successcb, errorcb){
+    EOUtils.send('/report/buildbyuid', params, successcb, errorcb);
   }
 
   return api;

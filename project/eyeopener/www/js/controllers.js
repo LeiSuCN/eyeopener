@@ -711,7 +711,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
           }, images,
           // 上传成功回调函数
           function(){ 
-            showAlert('success');
             $ionicLoading.hide();
             $scope.$emit('Article:refresh');
             $ionicHistory.goBack();
@@ -738,7 +737,9 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
 /*
  * 问题详细Controller
  */
-.controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $timeout, $stateParams, $ionicHistory, $ionicPopup, $ionicScrollDelegate, $ionicLoading, EOUser, EOShare, EOArticles, EOComments) {
+.controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $timeout, $stateParams
+  , $ionicHistory, $ionicPopup, $ionicScrollDelegate, $ionicLoading, $ionicModal
+  , EOUser, EOShare, EOArticles, EOComments, EOUtils) {
   var me = EOUser.me();
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var shareDataComment = 'ArticleCommentCtrl.share.comment';
@@ -754,6 +755,13 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   $scope.comments = [];  
   $scope.article = {};
   angular.extend($scope.article, shareArticle);
+
+  // 分享Modal
+  $ionicModal.fromTemplateUrl('templates/modal_share.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.shareModal = modal;
+  });
 
   // 获取更多评论
   function getMoreComments(){
@@ -785,12 +793,20 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     });
   }
 
+  function showAlert(msg,title){
+    var alertPopup = $ionicPopup.alert({
+      title: title,
+      template: msg
+    });
+    alertPopup.then(function(res) {});
+  }
+
   $scope.popupCommentOpts = function(comment){
     EOShare.set(shareDataComment,comment);
     // 弹出框
     _selectPopup = $ionicPopup.show({
       cssClass: 'article-detail-popup',
-      template: '<a ng-click="goComment()" class="ul">回复</a><a ng-click="likeComment()" class="ul">赞</a><a class="ul">复制</a><a>举报</a>',
+      template: '<a ng-click="goComment()" class="ul">回复</a><a ng-click="likeComment()" class="ul">赞</a><a class="ul" a ng-click="copy()">复制</a><a ng-click="report()">举报</a>',
       scope: $scope
     });
     angular.element( window ).one('click', function(){
@@ -842,6 +858,45 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
         }, function (reason) {
             alert("Failed: " + reason);
     });
+  }
+
+  $scope.share = function(shareTarget, $event){
+    $event.stopPropagation();
+    console.log( shareTarget );
+  }
+
+  // 举报
+  $scope.report = function(cid){
+
+    var comment = EOShare.get(shareDataComment);
+
+    EOUtils.showLoading();
+
+    //rType:投诉类型(0:文章,1:评论)
+    EOComments.report({uid:me.uid, rType:1, cid:comment.cid}, function(status, statusText, data){
+      EOUtils.hideLoading();
+      showAlert(data.text, '投诉成功');
+    }, function(){
+      EOUtils.hideLoading();
+      showAlert('投诉失败');
+    })
+  }
+
+  // 复制
+  $scope.copy = function(){
+    var comment = EOShare.get(shareDataComment);
+    cordova.plugins.clipboard.copy(comment.context);
+  }
+
+  // 打开分享页面
+  $scope.openShare = function(){
+    $scope.shareModal.show();
+  }
+
+  // 关闭分享页面
+  $scope.closeShare = function(){
+    console.log( 'closeShare' );
+    $scope.shareModal.hide();
   }
 
   $scope.goBack = function(){
@@ -1073,20 +1128,30 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
   var shareDataType = 'FinderArticleListCtrl.share.type';
 
   $scope.types = [];
+  $scope.oriTypes = [];
   $scope.showRootType = {};
   $scope.subsModal = false;
+  $scope.search = { name:''}
 
-  // 专题列表
+  // 专题列表Modal
   $ionicModal.fromTemplateUrl('templates/finder_subs.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.subsModal = modal;
   });
 
+  // 专题搜索Modal
+  $ionicModal.fromTemplateUrl('templates/modal_finder_type_search.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.typeSearchModal = modal;
+  });
+
   // 更新列表
   function refreshTypes(){
     var currentRootType = false;
     EOArticles.types({}, function(status, statusText, data){
+      $scope.oriTypes = data;
       angular.forEach(data, function(type){
         if( type.team != currentRootType.name ){
           if( currentRootType ){
@@ -1102,16 +1167,6 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
       if( currentRootType ){
         $scope.types.push( currentRootType );
       }
-
-      refreshExperts();
-    });
-  }
-
-
-  // 更新列表
-  function refreshExperts(){
-    EOUser.experts({}, function(status, statusText, data){
-      $scope.experts = data;
     });
   }
 
@@ -1151,6 +1206,18 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $scope.subsModal.hide();
   };
 
+  $scope.showTypeSearchModal = function(){
+    $scope.typeSearchModal.show();
+  }
+
+  $scope.hideTypeSearchModal = function(){
+    $scope.typeSearchModal.hide();
+  }
+
+  $scope.clearSearchText = function(){
+    $scope.search.name = '';
+  }
+
   $scope.goTypeList = function(type){
     $scope.subsModal.hide();
     EOShare.set(shareDataType, type);
@@ -1161,12 +1228,11 @@ angular.module('eyeopener.controllers', ['monospaced.elastic'])
     $ionicHistory.goBack();
   }
 
-  refreshTypes();
+  //refreshTypes();
 
   // 进入
-  $scope.$on('$ionicView.enter', function(){
-    var subEle = angular.element('.finder-list-group-sub');
-    //subEle.height( subEle.width() );
+  $scope.$on('$ionicView.loaded', function(){
+    refreshTypes();
   })
 
   // 注销

@@ -11,9 +11,9 @@
 .eo-finder .finder-list-group-header-more:before{font-size: 14px;}
 .eo-finder .finder-list-group-subs{}
 .eo-finder .finder-list-group-sub{display: inline-block;width: 50%; height: 8em ;background-size: 100% 100%; position: relative;  float: left;}
-.eo-finder .finder-list-group-sub-name{background: #960; color: white; position: absolute; top:1em; left: 0; padding-left: .2em; padding-right:1em; border-bottom-right-radius: 10%;border-top-right-radius: 10%;line-height: 2em;}
+.eo-finder .finder-list-group-sub-name{font-size:.8em;background: #000; color: white; position: absolute; top:1em; left: 0; padding-left: .2em; padding-right:1em; border-bottom-right-radius: 10%;border-top-right-radius: 10%;line-height: 2em; opacity: .4;}
 
-.eo-finder .finder-list-group-sub-summary{position: absolute;  bottom: 0;text-align: center;  display: block;  width: 100%;color: white; background-color: rgba(153, 102, 0, .6);  padding: .2em 0;}
+.eo-finder .finder-list-group-sub-summary{position: absolute;  bottom: 0;text-align: center;  display: block;  width: 100%;color: white; background-color: rgba(0, 0, 0, .5);  padding: .2em 0;}
 
 .eo-finder .finder-list-group-sub-summary span{  margin: 0 .2em;}
 .eo-finder .finder-list-group-sub-summary i{margin-right: .2em;}
@@ -33,6 +33,13 @@
       <button class="button button-icon button-clear ion-navicon" ng-click="toggleLeftSideMenu()"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
+    <div class=" item-input-inset">
+      <label class="item-input-wrapper" style="background-color: rgb(62,157,237);border-radius:15px;">
+        <i class="icon ion-ios-search placeholder-icon"></i>
+        <input type="search" ng-model="search.name" style="font-size: 16px;width:14em;color:rgba(255,255,255,0.8);text-align: center;" ng-click="showTypeSearchModal()" placeholder="{{topTips}}">
+      </label>
+    </div>
+
       <button class="button button-icon button-clear ion-ios-eye" ng-click="goBack()"></button>
     </ion-nav-buttons>
   </ion-nav-bar>
