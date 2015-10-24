@@ -1,10 +1,15 @@
 
 <style type="text/css" media="screen">
 .finder-articles{}
-.finder-articles .bar-footer{height: auto;font-size: 14px; padding: 1em; background-color: transparent;border:0px;}
-.finder-articles .bar-footer .button{width: 42px; height: 42px; background-color: black;opacity: .8;border-radius: 50%;}
+.finder-articles .bar-footer{height: auto;font-size: 14px; padding: 1em; background: transparent;}
 .finder-articles .bar-footer .buttons.pull-right{ bottom: auto; top: auto; right: 0em;}
-.finder-articles .bar-footer .buttons.pull-right .button{ margin-right: 1em;}
+.finder-articles .bar-footer .buttons.pull-right .rbutton{ margin-right: 1em; box-shadow: 0 0 1em #333;}
+
+.finder-articles .bar-footer .rbutton{ font-size: 16px;display: inline-block; width: 4em; height: 4em; background-color: black; border:0; border-radius: 50%; opacity: .8;}
+
+.finder-articles .bar-footer .rbutton span{ line-height: 1em; color: white;}
+.finder-articles .bar-footer .rbutton span.num{ font-size: .8em; color: red;padding-top: .1em;}
+
 .finder-articles .header{ position: relative;}
 .finder-articles .header img{width: 100%;display: block;}
 .finder-articles .header .summary{  position: absolute;bottom: 0;width: 100%;text-align: center;color: white;font-size: 18px;  padding: .5em 0;  font-weight: bold; background-color: rgba(0,0,0,0.4);}
@@ -20,11 +25,17 @@
 
   <div class="bar bar-footer">
     <div class="buttons">
-      <button class="button button-clear icon ion-ios-arrow-thin-left" ng-click="goBack()"></button>
+      <button class="rbutton" ng-click="goBack()">
+        <i class="icon ion-ios-arrow-thin-left" style="font-size: 2em; color: white;"></i>
+      </button>
     </div>
     <div class="buttons pull-right">
-      <button class="button button-clear icon ion-ios-telephone"></button>
-      <button class="button button-clear icon ion-thumbsdown"></button>
+      <button class="rbutton" ng-click="ask()">
+        <span>申请<br><span class="num">1000</span></span>
+      </button>
+      <button class="rbutton" ng-click="challeng()">
+        <span>吐槽<br><span class="num">1000</span></span>
+      </button>
     </div>
   </div>
 
@@ -63,3 +74,7 @@
   </ion-content>
 
 </ion-view>
+
+<script id="finder_articles_challeng.html" type="text/ng-template">
+  <input type="text" ng-model="data.challengContent">
+</script>

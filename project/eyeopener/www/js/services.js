@@ -155,7 +155,7 @@ angular.module('eyeopener.services', [])
 
   api.clear = function(){
     _me = false;
-    saveUser({});
+    saveUser(false);
   }
 
   return api;
@@ -220,6 +220,16 @@ angular.module('eyeopener.services', [])
 
   api.hots = function(params, successcb, errorcb){
     EOUtils.send('/article/gethotword', params, successcb, errorcb);
+  }
+
+  // 吐槽
+  api.challeng = function(params, successcb, errorcb){
+    EOUtils.send('/report/challengbyuid', params, successcb, errorcb);
+  }
+
+  // 申请
+  api.ask = function(params, successcb, errorcb){
+    EOUtils.send('/report/askbyuid', params, successcb, errorcb);
   }
 
   return api;

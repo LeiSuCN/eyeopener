@@ -22,7 +22,8 @@
     "com.ionic.keyboard",
     "cordova-plugin-qqsdk",
     "cordova-plugin-camera",
-    "cordova-plugin-file-transfer"
+    "cordova-plugin-file-transfer",
+    "cordova-plugin-x-toast"
   ],
   "cordovaPlatforms": []
 }
