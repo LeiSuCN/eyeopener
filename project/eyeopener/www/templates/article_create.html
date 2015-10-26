@@ -20,7 +20,7 @@
 
 </style>
 
-<ion-view view-title="创建话题">
+<ion-view view-title="创建问题">
   <!-- 底部按钮 -->
   <a class="article-create-buttom-button article-create-buttom-button-back" ng-click="goBack()"><span class="icon ion-ios-arrow-thin-left"></span></a>
 
@@ -33,10 +33,14 @@
 
   <!-- 主区域 -->
   <ion-content class="article-create">
-  <!-- 话题描述 -->
+    <!-- 选择标签 -->
+    <div class="article-create-input article-create-types">
+      <h3 ng-click="showTypeModal()">选择标签<a class="button button-icon icon-right icon ion-ios-arrow-right">{{article.aTypeName}}</a></h3>
+    </div>
+    <!-- 话题描述 -->
     <label class="article-create-input article-create-title" for="articleCreateTitle" style="margin-top: 2em;">
-      <h3 ng-class="{onFocus: inputTitleFocus}">话题描述 <span>{{article.title.length}}/{{titleMax}}</span></h3>
-      <textarea type="text" name="articleCreateTitle" placeholder="请简单描述您有待解决的问题" rows="4" maxlength="{{titleMax}}" ng-focus="inputTitleFocus=true" ng-blur="inputTitleFocus=false" ng-model="article.title"></textarea>
+      <h3 ng-class="{onFocus: inputTitleFocus}">简述问题 <span>{{article.title.length}}/{{titleMax}}</span></h3>
+      <textarea type="text" name="articleCreateTitle" placeholder="请简单描述您有待解决的问题" rows="3" maxlength="{{titleMax}}" ng-focus="inputTitleFocus=true" ng-blur="inputTitleFocus=false" ng-model="article.title"></textarea>
     </label>
     <!-- 补充说明 -->
     <label class="article-create-input article-create-context" for="articleCreateContext">
@@ -49,12 +53,9 @@
       <div class="row">
         <div class="col" id="articleCreateImage0"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)"></button><img src=""></div>
         <div class="col" id="articleCreateImage1"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)" style="display: none;"></button></div>
-        <div class="col" id="articleCreateImage2"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)" style="display: none;"></button></div>       
+        <div class="col" id="articleCreateImage2"><button class="button button-block button-outline icon ion-plus-round" ng-click="getPicture($event)" style="display: none;"></button></div>      
       </div>
     </div>
-    <!-- 添加标签 -->
-    <div class="article-create-input article-create-types">
-      <h3 ng-click="showTypeModal()">添加专题<a class="button button-icon icon-right icon ion-ios-arrow-right">{{article.aTypeName}}</a></h3>
-    </div>
+
   </ion-content>
 </ion-view>

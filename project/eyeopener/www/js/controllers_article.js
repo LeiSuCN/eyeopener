@@ -163,7 +163,7 @@ angular.module('eyeopener.controllers')
 
       // 统计全网数据
       EOArticles.summary({}, function(status, statusText, data){
-        $scope.topTips = '共' + data.numArticle + '个问题/' + data.numComment + '个回答';
+        $scope.topTips = '话题' + data.numArticle + '/得赏0';
       });    
     } )
   })
@@ -285,6 +285,44 @@ angular.module('eyeopener.controllers')
     imgEle.show();
   }
 
+  // 获取当前的内容
+  function getCurrentContent(){
+
+    var article = $scope.article;
+
+    var images = [];
+    for( var i = 0 ; i < 3 ; i++ ){
+      var imgSrc = angular.element('#articleCreateImage' + i ).find('img').attr('src');
+      if( imgSrc ){
+        images.push( imgSrc );
+      }
+    }
+
+    return {
+      title: article.title,
+      context: article.context,
+      aType: article.aType,
+      aTypeName: article.aTypeName,
+      images: images
+    }
+  }
+
+  // 清除草稿
+  function clearDraft(){
+    EOUtils.setObject('draft', false);
+  }
+
+  // 加载草稿
+  function loadDraft(){
+    var draft = EOUtils.getObject('draft');
+    if( draft ){
+      $scope.article.title = draft.title;
+      $scope.article.context = draft.context;
+      $scope.article.aType = draft.aType;
+      $scope.article.aTypeName = draft.aTypeName;
+    }
+  }
+
   // 获取本地图片
   $scope.getPicture = function($event){
 
@@ -337,7 +375,26 @@ angular.module('eyeopener.controllers')
   }
 
   $scope.goBack = function(){
-    $ionicHistory.goBack();
+
+    // 草稿提示
+    if( $scope.article.title || $scope.article.context ){
+      var confirmPopup = $ionicPopup.confirm({
+        template: '您编写的问题还未提交，是否保存为草稿？',
+        cancelText:'放弃并返回',
+        cancelType: 'button-assertive',
+        okText:'保存为草稿',
+      });
+      confirmPopup.then(function(res) {
+        if(res) {
+          EOUtils.setObject('draft', getCurrentContent());
+        } else{
+          clearDraft();
+        }
+        $ionicHistory.goBack();
+      });
+    } else{
+      $ionicHistory.goBack();
+    }
   }
 
   function testUpload(){
@@ -367,12 +424,12 @@ angular.module('eyeopener.controllers')
     var article = $scope.article;
 
     if( !article.title ){
-      showAlert('请填写问题题目')
+      showAlert('请填写问题简素')
       return;      
     }
 
     if( !article.aType || article.aType.length <= 0 || article.aType == ''){
-      showAlert('请选择问题所属专题',2)
+      showAlert('请选择问题标签',2)
       return;
     }
 
@@ -406,6 +463,7 @@ angular.module('eyeopener.controllers')
           }, images,
           // 上传成功回调函数
           function(){ 
+            clearDraft();// 上传成功后要清除草稿
             $ionicLoading.hide();
             $scope.$emit('Article:refresh');
             $ionicHistory.goBack();
@@ -423,6 +481,10 @@ angular.module('eyeopener.controllers')
     }
   }
 
+  $scope.$on('$ionicView.afterEnter', function(){
+    loadDraft();
+  });
+
   // 注销
   $scope.$on('$destroy', function(){
     
@@ -433,7 +495,7 @@ angular.module('eyeopener.controllers')
  * 问题详细Controller
  */
 .controller('ArticleDetailCtrl', function($scope, $rootScope, $state, $timeout, $stateParams
-  , $ionicHistory, $ionicPopup, $ionicScrollDelegate, $ionicLoading, $ionicModal
+  , $ionicHistory, $ionicPopover, $ionicPopup, $ionicScrollDelegate, $ionicLoading, $ionicModal
   , EOUser, EOShare, EOArticles, EOComments, EOUtils) {
   var me = EOUser.me();
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
@@ -451,11 +513,20 @@ angular.module('eyeopener.controllers')
   $scope.article = {};
   angular.extend($scope.article, shareArticle);
 
-  // 分享Modal
-  $ionicModal.fromTemplateUrl('templates/modal_share.html', {
+  $scope.award = { sum:0}
+
+  // 打赏Modal
+  $ionicModal.fromTemplateUrl('templates/modal_award.html', {
     scope: $scope
   }).then(function(modal) {
-    $scope.shareModal = modal;
+    $scope.awardModal = modal;
+  });
+
+  // 分享popover
+  $ionicPopover.fromTemplateUrl('article-detail-share-popover.html', {
+    scope: $scope
+  }).then(function(popover) {
+    $scope.sharePopover = popover;
   });
 
   // 获取更多评论
@@ -584,14 +655,27 @@ angular.module('eyeopener.controllers')
   }
 
   // 打开分享页面
-  $scope.openShare = function(){
-    $scope.shareModal.show();
+  $scope.openShare = function($event){
+    $scope.sharePopover.show($event);
   }
 
   // 关闭分享页面
   $scope.closeShare = function(){
-    console.log( 'closeShare' );
-    $scope.shareModal.hide();
+    $scope.sharePopover.hide();
+  }
+
+  // 打开分享页面
+  $scope.openAward = function(){
+    $scope.awardModal.show();
+  }
+
+  // 关闭分享页面
+  $scope.closeAward = function(){
+    $scope.awardModal.hide();
+  }
+  
+  $scope.stopPropagation = function($event){
+    $event.stopPropagation();
   }
 
   $scope.goBack = function(){
@@ -697,7 +781,7 @@ angular.module('eyeopener.controllers')
 
   $scope.comment = {
     content: '',
-    placeholder: '写评论:'
+    placeholder: '写下你的评论…'
   }
 
   if( toComment ){

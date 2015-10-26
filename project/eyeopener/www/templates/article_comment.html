@@ -1,6 +1,8 @@
 
 <style type="text/css" media="screen">
-.article-comment-content{ width: 100%; height: 20em; padding: .5em;}
+.article-comment-publish .scroll{ height: 100%; }
+.article-comment-publish label{ height: 100%; display: block;}
+.article-comment-content{ width: 100%; padding: 1em .5em 0; resize: none;}
 </style>
 
 <ion-view view-title="评论">
@@ -15,7 +17,9 @@
   </ion-nav-bar>
 
   <!-- 主区域 -->
-  <ion-content>
-    <textarea class="article-comment-content" ng-model="comment.content" placeholder="{{comment.placeholder}}"></textarea>
+  <ion-content class="article-comment-publish">
+    <label for="article-comment-content">
+      <textarea id="article-comment-content" name="article-comment-content" class="article-comment-content" ng-model="comment.content" placeholder="{{comment.placeholder}}" eo-focus-me></textarea>
+    </label>
   </ion-content>
 </ion-view>

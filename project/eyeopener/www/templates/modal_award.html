@@ -1,0 +1,57 @@
+<style type="text/css">
+.eoModal-award {}
+.eoModal-award-content{}
+.eoModal-award-content .eoModal-award-rp-header{border-bottom-left-radius: 80%; border-bottom-right-radius: 80%;height: 5em;border: 1px solid transparent; background-color: rgb(205,4,0);}
+.eoModal-award-content .award-wrapper{background-color: black;}
+.eoModal-award-content .eoModal-award-rp-receiver{ position: relative; top: -2em; text-align: center;}
+.eoModal-award-content .eoModal-award-rp-receiver img{display: block; width: 4em; height: 4em; border-radius: 50%; margin: 0 auto;}
+.eoModal-award-content .eoModal-award-rp-receiver .eoModal-award-uname{ display: block; padding: .8em 0; color: #333; font-size: 1.5em;}
+.eoModal-award-content .eoModal-award-rp-receiver .eoModal-award-title{font-size: 1.2em; color: #999;}
+.eoModal-award-content .eoModal-award-rps { text-align: center;}
+.eoModal-award-content .eoModal-award-rp { display: inline-block; width: 30%;padding: 1.5em 0;border-radius: .5em;border: 1px solid rgb(205,4,0); color: rgb(205,4,0); margin-top: .5em;}
+.eoModal-award-content .eoModal-award-rp .eoModal-award-rp-num{ font-size: 2em;font-style: italic;}
+.eoModal-award-content .eoModal-award-rp .eoModal-award-rp-yuan{}
+.eoModal-award-content .eoModal-award-more{text-align: center;padding-top: 4em; color:rgb(110,110,220);}
+.eoModal-award-content .eoModal-award-more a{}
+</style>
+<ion-modal-view class="eoModal-award" ng-click="closeAward()">
+  <ion-content class="eoModal-award-content">
+
+  <div class="eoModal-award-rp-header">
+  </div>
+  <div class="eoModal-award-rp-receiver">
+    <img ng-src="{{article.upic}}">
+    <span class="eoModal-award-uname">{{article.uname}}</span>
+    <span class="eoModal-award-title">{{article.title}}</span>
+  </div> 
+  <div class="eoModal-award-rps">
+    <div class="eoModal-award-rp">
+      <span class="eoModal-award-rp-num">1</span>
+      <span class="eoModal-award-rp-yuan">分</span>
+    </div>
+    <div class="eoModal-award-rp">
+      <span class="eoModal-award-rp-num">5</span>
+      <span class="eoModal-award-rp-yuan">分</span>
+    </div>
+    <div class="eoModal-award-rp">
+      <span class="eoModal-award-rp-num">1</span>
+      <span class="eoModal-award-rp-yuan">角</span>
+    </div>
+    <div class="eoModal-award-rp">
+      <span class="eoModal-award-rp-num">2</span>
+      <span class="eoModal-award-rp-yuan">角</span>
+    </div>
+    <div class="eoModal-award-rp">
+      <span class="eoModal-award-rp-num">5</span>
+      <span class="eoModal-award-rp-yuan">角</span>
+    </div>
+    <div class="eoModal-award-rp">
+      <span class="eoModal-award-rp-num">1</span>
+      <span class="eoModal-award-rp-yuan">元</span>
+    </div>
+  </div> 
+  <div class="eoModal-award-more">
+     <a >其他金额</a>
+   </div> 
+  </ion-content>
+</ion-modal-view>
