@@ -45,6 +45,10 @@ angular.module('eyeopener.controllers')
       viewDataFun = EOArticles.querySubmit;
       $scope.search.type = 'submit';
       $scope.search.name = '提交过的问题';
+    } else if( view == 'favorite' ){
+      viewDataFun = EOArticles.queryFavorite;
+      $scope.search.type = 'favorite';
+      $scope.search.name = '收藏过的问题';
     }
 
     $scope.questions = [];
@@ -513,7 +517,7 @@ angular.module('eyeopener.controllers')
   $scope.article = {};
   angular.extend($scope.article, shareArticle);
 
-  $scope.award = { sum:0}
+  $scope.award = { sum:0, to:false, id: false }
 
   // 打赏Modal
   $ionicModal.fromTemplateUrl('templates/modal_award.html', {
@@ -559,6 +563,36 @@ angular.module('eyeopener.controllers')
     });
   }
 
+  // 打赏
+  function award(){  
+    var awardFun;
+    var params = {};
+
+    params.uid = me.uid;//uid:'用户ID'
+    params.toUid = $scope.award.to;//toUid:'被打赏用户ID'
+    params.payValue = $scope.award.sum;//payValue:'打赏数额'
+
+    if( $scope.award.type == 'aid' ){
+      params.aid = $scope.award.id;//aid:'文章ID'
+      awardFun = EOArticles.pay;
+    } else if( $scope.award.type == 'cid' ){
+      params.cid = $scope.award.id;//cid:'评论ID'
+      awardFun = EOComments.pay;      
+    }
+
+    console.log( params )
+
+    awardFun(params, function(status, statusText, data){
+      console.log( data )
+
+      if( data.code != '10000' ){
+        showAlert(data.text, '打赏失败');
+      } else{
+        showAlert(data.text, '');
+      }
+    });
+  }
+
   function showAlert(msg,title){
     var alertPopup = $ionicPopup.alert({
       title: title,
@@ -572,7 +606,7 @@ angular.module('eyeopener.controllers')
     // 弹出框
     _selectPopup = $ionicPopup.show({
       cssClass: 'article-detail-popup',
-      template: '<a ng-click="goComment()" class="ul">回复</a><a ng-click="likeComment()" class="ul">赞</a><a class="ul" a ng-click="copy()">复制</a><a ng-click="report()">举报</a>',
+      template: '<a ng-click="goComment()" class="ul">评论</a><a ng-click="likeComment()" class="ul">点赞</a><a ng-click="openAward(\'cid\')" class="ul">打赏</a><a class="ul" a ng-click="copy()">复制</a><a ng-click="report()">举报</a>',
       scope: $scope
     });
     angular.element( window ).one('click', function(){
@@ -597,6 +631,24 @@ angular.module('eyeopener.controllers')
         $scope.article.likes = parseInt($scope.article.likes) + 1;
       }
       $scope.articleLiked = true;
+    });
+  }
+
+  // 收藏文章
+  $scope.favoriteArticle = function(){
+    
+    $scope.closeShare();
+
+    EOArticles.favorite({
+      uid: me.uid,
+      aid: articleId
+    }, function(status, statusText, data){
+      if( window.plugins && window.plugins.toast ){
+        window.plugins.toast.showLongCenter(data.text);
+      } else{
+        alert( data.text )
+      }
+      
     });
   }
 
@@ -665,15 +717,75 @@ angular.module('eyeopener.controllers')
   }
 
   // 打开分享页面
-  $scope.openAward = function(){
-    $scope.awardModal.show();
+  $scope.openAward = function(type){
+    var delay = 0;
+    // type: aid － 文章， cid - 评论
+    if( type == 'aid' ){      
+      $scope.award.to = $scope.article.uid;
+      $scope.award.id = articleId;
+    } else if( type == 'cid' ){
+      var comment = EOShare.get(shareDataComment);
+      $scope.award.to = comment.user.uid;
+      $scope.award.id = comment.cid;
+      delay = 100;
+    } else{
+      return;
+    }
+
+    if( me.uid == $scope.award.to ){
+      showAlert('不能自己给自己打赏哦','打赏失败');
+      return;
+    }
+
+    $scope.award.uid = me.uid;
+    $scope.award.type = type;
+    $timeout( function(){
+      $scope.awardModal.show();
+    }, delay);
+    
   }
 
   // 关闭分享页面
   $scope.closeAward = function(){
     $scope.awardModal.hide();
   }
-  
+
+  $scope.setSpecificAaward = function( money ){
+    $scope.award.sum = money;
+    award();
+  }
+ 
+  // 打开打赏（自定义）页面
+  $scope.openCustomAward = function($event){
+
+    $scope.award.sum = 0;
+
+    var customAwardShow = $ionicPopup.show({
+      title: '其他金额',
+      scope: $scope,
+      templateUrl:'modal_award_other.html',
+      buttons: [{
+        text:'赞赏',
+        type:'button-balanced',
+        onTap: function(e){
+          award();
+          e.preventDefault();
+        }
+      }]
+    });
+
+    angular.element(window).one('click', function(){
+      customAwardShow.close();
+    });
+
+    $scope.stopPropagation($event);
+  }
+
+  // 关闭打赏（自定义）页面
+  $scope.closeCustomAward = function(){
+    $scope.customAwardModal.hide();
+  }
+
   $scope.stopPropagation = function($event){
     $event.stopPropagation();
   }
@@ -774,18 +886,21 @@ angular.module('eyeopener.controllers')
  */
 .controller('ArticleCommentCtrl', function($scope, $stateParams, $ionicHistory, $ionicLoading, EOShare, EOComments, EOUser) {
   var shareDataComment = 'ArticleCommentCtrl.share.comment';
-
+  var shareDataArticle = 'ArticleDetailCtrl.share.article';
+  var articleId = $stateParams.articleId;
   var me = EOUser.me();
   var toComment = EOShare.get(shareDataComment);
-  var articleId = $stateParams.articleId;
+  var shareArticle = EOShare.get(shareDataArticle);
 
   $scope.comment = {
     content: '',
-    placeholder: '写下你的评论…'
+    placeholder: '写下你的评论…',
+    tips: shareArticle.context
   }
 
   if( toComment ){
     $scope.comment.placeholder = '回复' + toComment.user.uname + ':';
+    $scope.comment.tips = toComment.context;
   }
   
   $scope.goBack = function(){    

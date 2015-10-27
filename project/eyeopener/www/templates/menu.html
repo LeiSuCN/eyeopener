@@ -1,8 +1,12 @@
 <style type="text/css">
 .eo-left-side{}
 .left-side-user-profile{ text-align: center; padding: 1em 0;}
-.left-side-user-profile img{border-radius: 50%; height: 8em;}
-.left-side-user-profile span{ display: block; font-size: 18px;color: white; line-height: 2em;}
+.left-side-user-profile img{border-radius: 50%; height: 6em;}
+.left-side-user-profile label{ display: block; font-size: 14px;color: #999; line-height: 1em;}
+.left-side-user-profile .user-profile-name{ display: block; font-size: 18px;color: white; line-height: 2em;}
+.left-side-user-statistics .statistics-item{ margin:0; padding: 0; width: 49%; display: inline-block; font-size: 14px; color: white; }
+.left-side-user-statistics .statistics-range{ font-size: 2em;}
+.left-side-user-statistics .bottom-row{}
 .eo-left-side .menu-left{ background-image: url(img/menu_bg.png);background-size: 100% 100%;}
 .eo-left-side .eo-left-menu .item{ background-color: transparent!important; border:0px;border-top: 1px solid rgba(255,255,255, .1); padding: 12px 16px;}
 .eo-left-side .eo-left-menu-item{display: block; color: white;font-size: 14px;}
@@ -23,28 +27,35 @@
     <ion-content>
       <div class="left-side-user-profile">
         <img ng-src="{{me.upic}}"  ng-click="login()">
-        <span>{{me.cname}}</span>
+        <label>让门店老板赚钱更轻松</label>
+        <span class="user-profile-name">{{me.cname}}</span>
+        <div class="left-side-user-statistics">
+          <div class="statistics-item">
+            <div class="top-row">
+              <span class="statistics-range">{{uprofile.likeRank}}</span><span>名</span>
+            </div>
+            <div class="bottom-row">
+              共{{uprofile.like}}赞
+            </div>
+          </div>
+          <div class="statistics-item">
+            <div class="top-row">
+              <span class="statistics-range">{{uprofile.awardRank}}</span><span>名</span>
+            </div>
+            <div class="bottom-row">
+              共{{uprofile.award}}元
+            </div>
+          </div>
+        </div>
       </div>
       <ion-list class="eo-left-menu">
         <!-- 阅读 -->
         <ion-item menu-close  ng-click="view('read')">
           <a class="eo-left-menu-item menu-item-read"><i class="icon ion-ios-bookmarks-outline"></i>阅读</a>
         </ion-item>
-        <!-- 点赞 -->
-        <ion-item menu-close ng-click="view('like')"> 
-          <a class="eo-left-menu-item menu-item-like"><i class="icon ion-ios-heart-outline"></i>点赞</a>
-        </ion-item>
-        <!-- 评论 -->
-        <ion-item menu-close ng-click="view('comment')">
-          <a class="eo-left-menu-item menu-item-comment"><i class="icon ion-ios-chatboxes-outline"></i>评论</a>
-        </ion-item>
-        <!-- 创建 -->
-        <ion-item menu-close ng-click="view('submit')">
-          <a class="eo-left-menu-item menu-item-ask"><i class="icon ion-paper-airplane"></i>创建</a>
-        </ion-item>
         <!-- 收藏 -->
         <ion-item menu-close>
-          <a class="eo-left-menu-item menu-item-ask"><i class="icon ion-bookmark"></i>收藏</a>
+          <a class="eo-left-menu-item menu-item-ask" ng-click="view('favorite')"><i class="icon ion-bookmark"></i>收藏({{uprofile.favorite}})</a>
         </ion-item>
         <!-- 设置 -->
         <ion-item ng-click="setting()">

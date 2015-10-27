@@ -25,33 +25,43 @@
     <span class="eoModal-award-title">{{article.title}}</span>
   </div> 
   <div class="eoModal-award-rps">
-    <div class="eoModal-award-rp">
+    <div class="eoModal-award-rp" ng-click="setSpecificAaward(1)">
       <span class="eoModal-award-rp-num">1</span>
       <span class="eoModal-award-rp-yuan">分</span>
     </div>
-    <div class="eoModal-award-rp">
+    <div class="eoModal-award-rp" ng-click="setSpecificAaward(5)">
       <span class="eoModal-award-rp-num">5</span>
       <span class="eoModal-award-rp-yuan">分</span>
     </div>
-    <div class="eoModal-award-rp">
+    <div class="eoModal-award-rp" ng-click="setSpecificAaward(10)">
       <span class="eoModal-award-rp-num">1</span>
       <span class="eoModal-award-rp-yuan">角</span>
     </div>
-    <div class="eoModal-award-rp">
+    <div class="eoModal-award-rp" ng-click="setSpecificAaward(20)">
       <span class="eoModal-award-rp-num">2</span>
       <span class="eoModal-award-rp-yuan">角</span>
     </div>
-    <div class="eoModal-award-rp">
+    <div class="eoModal-award-rp" ng-click="setSpecificAaward(50)">
       <span class="eoModal-award-rp-num">5</span>
       <span class="eoModal-award-rp-yuan">角</span>
     </div>
-    <div class="eoModal-award-rp">
+    <div class="eoModal-award-rp" ng-click="setSpecificAaward(100)">
       <span class="eoModal-award-rp-num">1</span>
       <span class="eoModal-award-rp-yuan">元</span>
     </div>
   </div> 
   <div class="eoModal-award-more">
-     <a >其他金额</a>
+     <a ng-click="openCustomAward($event)">其他金额</a>
    </div> 
   </ion-content>
 </ion-modal-view>
+
+<script id="modal_award_other.html" type="text/ng-template">
+<div class="list" ng-click="stopPropagation($event)">
+  <label class="item item-input">
+    <span class="input-label">金额(元)</span>
+    <input type="number" placeholder="可填写1-200" ng-model="award.sum" min=1 max=200>
+  </label>
+</div>
+</script>
+

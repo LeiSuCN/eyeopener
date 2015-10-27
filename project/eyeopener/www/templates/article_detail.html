@@ -48,7 +48,7 @@
 
   <a class="article-detail-buttom-button article-detail-buttom-button-like" ng-class="{liked:articleLiked}" ng-click="likeArticle()"><span class="icon ion-ios-heart-outline"></span></a>
 
-  <a class="article-detail-buttom-button article-detail-buttom-button-award" ng-click="openAward()"><span class="icon ion-social-yen-outline"></span></a>
+  <a class="article-detail-buttom-button article-detail-buttom-button-award" ng-click="openAward('aid')"><span class="icon ion-social-usd-outline"></span></a>
 
   <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"><div style="font-size: 14px;line-height: 1em;color: white;">{{article.commentCount}}<br>评论</div></a>
 
@@ -101,9 +101,6 @@
 
 <script id="article-detail-share-popover.html" type="text/ng-template">
   <ion-popover-view>
-    <ion-header-bar>
-      <h1 class="title">问题分享</h1>
-    </ion-header-bar>
     <ion-content class="article-detail-share-popover-content">
       <ul class="list">
         <li class="item">
@@ -111,6 +108,9 @@
         </li>
         <li class="item">
           <img ng-src="img/share_wx.png"><span>发送给微信好友</span>
+        </li>
+        <li class="item" ng-click="favoriteArticle()">
+          <img ng-src="img/share_bookmark.png"><span>收藏</span>
         </li>
       </ul>
     </ion-content>

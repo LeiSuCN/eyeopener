@@ -3,7 +3,7 @@ angular.module('eyeopener.controllers')
  * 全局Controller
  */
 .controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, $ionicLoading, $ionicPopup
-  , EOUser, EOShare) {
+  , $timeout, EOUser, EOShare) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -35,6 +35,14 @@ angular.module('eyeopener.controllers')
 
   if( !$scope.me.upic ){
     $scope.me.upic = 'img/def.png';
+  }
+
+  // 统计信息
+  $scope.uprofile = {
+    like: 0, // 被赞总量
+    favorite: 0, // 收藏数量
+    pay:0
+
   }
 
   // 登录Modal
@@ -70,6 +78,22 @@ angular.module('eyeopener.controllers')
   // 隐藏加载
   function hideLoading(){
     $ionicLoading.hide();
+  }
+
+  // 刷新个人信息
+  function getUserProfile(){
+
+    var me = EOUser.me();
+
+    EOUser.getinfo({uid: me.uid}, function(status, statusText, data){
+      console.log( data )
+      $scope.uprofile.like = data.belikeCurrValue;
+      $scope.uprofile.likeRank = data.belikeRankNo;
+      $scope.uprofile.award = data.bepayCurrValue;
+      $scope.uprofile.awardRank = data.bepayRankNo;
+      $scope.uprofile.favorite = data.countFavoriteBm;
+    });
+
   }
 
   // 第三方认证成功后
@@ -248,4 +272,8 @@ angular.module('eyeopener.controllers')
     EOShare.set(shareDataArticleList, viewType);
     $scope.$emit('Article:refresh');
   }
+
+  $timeout( function(){
+    getUserProfile();
+  }, 1000)
 })

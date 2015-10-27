@@ -3,6 +3,7 @@
 .article-comment-publish .scroll{ height: 100%; }
 .article-comment-publish label{ height: 100%; display: block;}
 .article-comment-content{ width: 100%; padding: 1em .5em 0; resize: none;}
+.article-comment-content-tips{border: 1px solid #999;color: #999;margin: .5em;padding: .5em;border-radius: .5em;}
 </style>
 
 <ion-view view-title="评论">
@@ -18,6 +19,9 @@
 
   <!-- 主区域 -->
   <ion-content class="article-comment-publish">
+    <div class="article-comment-content-tips">
+      {{comment.tips}}
+    </div>
     <label for="article-comment-content">
       <textarea id="article-comment-content" name="article-comment-content" class="article-comment-content" ng-model="comment.content" placeholder="{{comment.placeholder}}" eo-focus-me></textarea>
     </label>

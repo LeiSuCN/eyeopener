@@ -149,6 +149,11 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/eyer/register', params, successcb, errorcb);
   }
 
+  // 个人信息
+  api.getinfo = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/getinfo', params, successcb, errorcb);
+  }
+
   api.experts = function(params, successcb, errorcb){
     EOUtils.send('/eyer/getlistpro', params, successcb, errorcb);
   }
@@ -185,6 +190,10 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/article/getlistbyuid', params, successcb, errorcb);
   }
 
+  api.queryFavorite = function(params, successcb, errorcb){
+    EOUtils.send('/article/getfavoritesbyuid', params, successcb, errorcb);
+  }
+
   api.get = function(params, successcb, errorcb){
     EOUtils.send('/article/getinfo', params, successcb, errorcb);
   }
@@ -196,6 +205,7 @@ angular.module('eyeopener.services', [])
   api.like = function(params, successcb, errorcb){
     EOUtils.send('/article/likebyaid', params, successcb, errorcb);
   }
+
 
   api.types = function(params, successcb, errorcb, force/* 强制刷新 */){
 
@@ -232,6 +242,16 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/report/askbyuid', params, successcb, errorcb);
   }
 
+  // 打赏
+  api.pay = function(params, successcb, errorcb){
+    EOUtils.send('/article/paybyuid', params, successcb, errorcb);
+  }
+
+  // 收藏
+  api.favorite = function(params, successcb, errorcb){
+    EOUtils.send('/article/favoritebyaid', params, successcb, errorcb);
+  } 
+
   return api;
 })
 
@@ -259,5 +279,10 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/report/buildbyuid', params, successcb, errorcb);
   }
 
+  // 打赏
+  api.pay = function(params, successcb, errorcb){
+    EOUtils.send('/comment/paybyuid', params, successcb, errorcb);
+  }
+  
   return api;
 })
