@@ -45,6 +45,28 @@ angular.module('eyeopener.filters', [])
 })
 
 /*
+ * 专题ID转专题颜色
+ */
+.filter('typeColor', function(EOArticles) {
+
+  return function(typeId){
+    var color = '';
+    var typeResp = EOArticles.cacheTypes;
+    if( typeResp && typeResp.data && typeResp.data.length > 0 ){
+      var types = typeResp.data;
+      for( var i = 0 ; i < types.length; i++ ){
+        var type = types[i];
+        if( type.id == typeId ){
+          color = type.bgc;
+          break;
+        }
+      }
+    }
+    return color;
+  }
+})
+
+/*
  * 时间转换为时间差
  */
 .filter('eoReadableTime', function($filter) {
@@ -70,7 +92,7 @@ angular.module('eyeopener.filters', [])
     } else if( diffMills < DIFF_HOUR_MAX ){
       return parseInt( diffMills / 3600000 ) + '小时前';
     } else{
-      return $filter('date')(oriDate, 'MM-dd HH:mm');
+      return $filter('date')(oriDate, 'MM月dd日');
     }
   }
 })

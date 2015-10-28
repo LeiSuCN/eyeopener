@@ -33,22 +33,24 @@ angular.module('eyeopener.controllers')
   function refreshTypes(){
     var currentRootType = false;
     EOArticles.types({}, function(status, statusText, data){
-      $scope.oriTypes = data;
-      angular.forEach(data, function(type){
-        if( type.team != currentRootType.name ){
-          if( currentRootType ){
-            $scope.types.push(currentRootType);
-          }
+      $scope.types = data;
+      console.log( $scope.types )
+      // $scope.oriTypes = data;
+      // angular.forEach(data, function(type){
+      //   if( type.team != currentRootType.name ){
+      //     if( currentRootType ){
+      //       $scope.types.push(currentRootType);
+      //     }
 
-          currentRootType = {'name': type.team, types: [] };
-        }
+      //     currentRootType = {'name': type.team, types: [] };
+      //   }
 
-        currentRootType.types.push(type);
-      });
+      //   currentRootType.types.push(type);
+      // });
 
-      if( currentRootType ){
-        $scope.types.push( currentRootType );
-      }
+      // if( currentRootType ){
+      //   $scope.types.push( currentRootType );
+      // }
     });
   }
 

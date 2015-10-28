@@ -152,6 +152,11 @@ angular.module('eyeopener.controllers')
     $state.go( 'app.finder_list' );
   }
 
+  $scope.doRefresh = function(){
+    $scope.$emit('Article:refresh');
+    $scope.$broadcast('scroll.refreshComplete');
+  }
+
   $rootScope.$on('Article:refresh', function(){
     reset();
     page = page + 1;
@@ -401,29 +406,7 @@ angular.module('eyeopener.controllers')
     }
   }
 
-  function testUpload(){
-
-    uploadPicture({aid:'123',uid:'456'}, angular.element('#articleCreateImage0').find('img').attr('src'), 
-      function(r){
-        alert('success')
-      }, function(error){
-        
-    alert("An error has occurred: Code = " + error.code);
-    alert("upload error source " + error.source);
-    alert("upload error target " + error.target);
-
-      }, function(status){
-        $scope.article.title = status;
-      });
-  }
-
   $scope.submit = function(){
-
-    //testUpload();return;
-    // var images = ['img/def.png','img/QQ.png','img/weixin.png'];
-    // uploadPictures({}, images, function(){ 
-    //   console.log( 'upload finished' )
-    // }, function(){}, function(){});return;
 
     var article = $scope.article;
 
@@ -580,14 +563,12 @@ angular.module('eyeopener.controllers')
       awardFun = EOComments.pay;      
     }
 
-    console.log( params )
-
     awardFun(params, function(status, statusText, data){
-      console.log( data )
 
       if( data.code != '10000' ){
         showAlert(data.text, '打赏失败');
       } else{
+        $scope.article.payValue = data.countPayValue;
         showAlert(data.text, '');
       }
     });
@@ -652,18 +633,23 @@ angular.module('eyeopener.controllers')
     });
   }
 
-  $scope.shareWX = function(){
+  $scope.shareWX = function(type){
     if( !window.Wechat ){
       alert('没有微信插件')
       return;
     }
 
     var params = {};
-    params.scene = Wechat.Scene.TIMELINE;
+    if( type == 'session' ){
+      params.scene = Wechat.Scene.SESSION;
+    }else{
+      params.scene = Wechat.Scene.TIMELINE;
+    }
+    
     params.message = {
       title: "眼界",
       description: "猫屋",
-      messageExt: "这是第三方带的测试字段",
+      messageExt: "让门店赚钱更轻松",
       thumb: "http://img.mailworld.org/uploads/eyer/share.png",
       media: {
         type: Wechat.Type.LINK,

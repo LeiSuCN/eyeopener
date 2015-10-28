@@ -81,4 +81,9 @@
     <feature name="http://api.phonegap.com/1.0/file" />
     <feature name="http://api.phonegap.com/1.0/battery" />
     <feature name="http://api.phonegap.com/1.0/device" />
+
+    <chcp>
+        <config-file url="http://img.mailworld.org/eo/www/chcp.json"/>
+        <local-development enabled="false"/>
+    </chcp>
 </widget>

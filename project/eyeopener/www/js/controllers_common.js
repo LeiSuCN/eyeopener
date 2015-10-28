@@ -3,7 +3,7 @@ angular.module('eyeopener.controllers')
  * 全局Controller
  */
 .controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, $ionicLoading, $ionicPopup
-  , $timeout, EOUser, EOShare) {
+  , $timeout, $ionicSlideBoxDelegate, $interval, EOUser, EOShare) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -86,7 +86,6 @@ angular.module('eyeopener.controllers')
     var me = EOUser.me();
 
     EOUser.getinfo({uid: me.uid}, function(status, statusText, data){
-      console.log( data )
       $scope.uprofile.like = data.belikeCurrValue;
       $scope.uprofile.likeRank = data.belikeRankNo;
       $scope.uprofile.award = data.bepayCurrValue;
@@ -176,14 +175,26 @@ angular.module('eyeopener.controllers')
 
     var usr = $scope.loginData.usr;
     var pwd = $scope.loginData.pwd;
+    var code = $scope.loginData.code;
+    var boy = $scope.loginData.boy;
 
     if( !usr ){
       showWarnMessage('帐号不能为空');
       return;
     }
     
-    if( usr.length < 4 ){
-      showWarnMessage('帐号长度不能小于4位');
+    if( usr.length != 11 ){
+      showWarnMessage('帐号必须为手机号码');
+      return;      
+    }
+
+    if( !code ){
+      showWarnMessage('验证码不能为空');
+      return;
+    }
+    
+    if( code.length != 4 ){
+      showWarnMessage('验证码必须为4位');
       return;      
     }
 
@@ -198,9 +209,9 @@ angular.module('eyeopener.controllers')
     }
 
     showLoading();
-    EOUser.register({uname:usr, pwd:pwd, cname:usr, upic:''},function(status, statusText, data){
+    EOUser.registerWithPhone({uname:usr, pwd:pwd, phone:usr, upic:'', code: code, guider: boy},function(status, statusText, data){
       hideLoading();
-      if( data.code != '10000' ){
+      if( data.code != '10000'){
         showWarnMessage(data.text, '注册失败');
       } else{
         $scope.loginWithEo();
@@ -217,8 +228,8 @@ angular.module('eyeopener.controllers')
       return;
     }
     
-    if( usr.length < 4 ){
-      showWarnMessage('帐号长度不能小于4位');
+    if( usr.length != 11 ){
+      showWarnMessage('帐号必须为手机号码');
       return;      
     }
 
@@ -244,6 +255,14 @@ angular.module('eyeopener.controllers')
     });
   }
 
+  $scope.slideLogin = function(){
+    $ionicSlideBoxDelegate.slide(0);
+  }
+
+  $scope.slideRegister = function(){
+    $ionicSlideBoxDelegate.slide(1); 
+  }
+
   $scope.closeLogin = function() {
     $scope.modal.hide();
   };
@@ -258,6 +277,39 @@ angular.module('eyeopener.controllers')
     EOUser.clear();
     $scope.closeSetting();
   };
+
+  // 发送短信
+  $scope.sns = function($event){
+
+    var usr = $scope.loginData.usr;
+    
+    if( usr.length != 11 ){
+      showWarnMessage('帐号必须为手机号码');
+      return;      
+    }
+
+    var target = angular.element($event.target);
+    var oriHtml = target.html();
+    target.attr('disabled','disabled')
+    var s = 60;
+    $interval(function(){
+      s = s -1;
+      target.html('(' + s + ')秒后重新获取');
+
+      if( s <= 1 ){
+        target.removeAttr('disabled');
+        target.html(oriHtml);
+      }
+
+    }, 1000, s);
+    EOUser.getPhoneCode({
+      phone: usr //获取验证的手机号码
+    }, function(status, statusText, data){
+      if( data.code != '10000' && data.text){
+        showWarnMessage(data.text);
+      }
+    });
+  }
 
   $scope.closeSetting = function() {
     $scope.settingModal.hide();

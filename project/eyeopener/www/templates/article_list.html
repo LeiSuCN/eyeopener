@@ -1,19 +1,24 @@
 
 <style type="text/css" media="screen">
-.feed-item{padding: 8px 16px;}
+.feed-item{padding: 8px 16px;  border-bottom: .3em solid #d7d7d7;}
 #submitQuestion{ position: fixed; right:1em; bottom: 1em; z-index:9; border-radius:50%; border:0; display:block; width:3em; height: 3em; background-color: rgba(0,0,0,0.9);}
 .feed-main .qustion-source{color:#999; font-size:14px; line-height:1.6;padding-right: 2em;  position: relative;}
 .feed-main .qustion-source a{color:#259;}
 .feed-main .qustion-source img{ position: absolute; top:0; right:0; width: 1.5em;height: 1.5em;border-radius: 50%;}
+.feed-main .qustion-content{ position: relative;}
+.feed-main .qustion-content.has-pic{ padding-right: 5em;}
+.feed-main .qustion-content .content1stpic{ position: absolute; top: 0; right: 0; width: 5em; height: 4em;}
+.feed-main .qustion-content .content1stpic img{ max-height: 100%; max-width: 100%; }
 .feed-main .qustion-content h2{  color: #222; font-size:18px; line-height: 1.6; font-weight: bold;}
 .feed-main .qustion-content{ display: block; text-decoration: none; }
 .feed-main .qustion-content .qustion-vote{ font-size: 14px;padding: 0em; border-radius: .2em;position: absolute; left:0; top: 0; background-color: rgb(92,181,255); color:white; width: 2.8em; text-align: center;}
-.feed-main .qustion-content .qustion-summary{ height: 2.8em;position: relative;font-size:16px; line-height:1.4; color:#222;word-wrap: break-word;white-space: normal; color:rgb(112,112,112);}
-.feed-main .qustion-footer{ text-align: right;}
-.feed-main .qustion-footer span{font-size:12px; margin-right: 8px;}
+.feed-main .qustion-content .qustion-summary{ height: 3em;position: relative;font-size:16px; line-height:1.4; color:#222;word-wrap: break-word; overflow: hidden; ;white-space: normal; text-overflow: ellipsis; color:#666;}
+.feed-main .qustion-footer{ text-align: right; }
+.feed-main .qustion-footer span{font-size:14px; margin-right: 8px;}
 .feed-main .qustion-footer .icon-status{ position: relative;}
 .feed-main .qustion-footer .icon-status .icon{margin-right: 2px; opacity: .8;}
-.feed-main .qustion-footer .icon-status .text{margin-right: 6px;color: black; opacity: .8;}
+.feed-main .qustion-footer .icon-status .text{margin-right: 6px;color: #999; opacity: .8;}
+.feed-main .qustion-footer .icon-status .assertive{ color: #f74131;}
 
 </style>
 
@@ -43,21 +48,30 @@
     </ion-nav-bar>
 
     <ion-content on-swipe-left="swipeLeft()">
+
+      <ion-refresher
+        pulling-text="加载更多..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
+
       <ion-item collection-repeat="question in questions" class="feed-item">
         <div class="feed-main">
           <div class="qustion-source">
-            来自 <a>{{question.aType | typeName}}</a>
-            <img ng-src="{{question.aType | typePic}}">
+            类目 <a>{{question.aType | typeName}}</a>
+            <img ng-src="{{question.aType | typePic}}" style="background-color: #{{question.aType | typeColor}}">
           </div>
-          <div class="qustion-content" ng-click="gotoArticleDetail(question)">
+          <div class="qustion-content" ng-click="gotoArticleDetail(question)" ng-class="{true:'has-pic' }[question.pics.length > 0]">
             <h2>{{question.title}}</h2>
-            <div class="qustion-summary">{{question.context}}</div>           
+            <div class="qustion-summary">{{question.context}}</div>
+            <div ng-if="question.pics.length > 0" class="content1stpic">
+                  <img ng-src="{{question.pics[0].picUrl}}">
+            </div>      
           </div>
           <div class="qustion-footer">
            <span class="icon-status" style="float:left;"><i class="icon ion-ios-clock assertive"></i><a class="text">{{question.buildDate*1000 | eoReadableTime }}</a></span>
-           <span class="icon-status"><i class="icon ion-ios-book assertive"></i><a class="text">{{question.reads}}</a></span>
-           <span class="icon-status"><i class="icon ion-chatbox-working assertive"></i><a class="text">{{question.commentCount}}</a></span>
-           <span class="icon-status"><i class="icon ion-heart assertive"></i><a class="text">{{question.likes}}</a></span>
+           <span class="icon-status"><i class="icon ion-ios-book assertive"></i><a class="text">{{question.reads}}阅读</a></span>
+           <span class="icon-status"><i class="icon ion-chatbox-working assertive"></i><a class="text">{{question.commentCount}}评论</a></span>
+           <span class="icon-status"><i class="icon ion-heart assertive"></i><a class="text">{{question.likes}}赞</a></span>
           </div>
         </div>
       </ion-item>

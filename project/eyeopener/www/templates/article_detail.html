@@ -18,11 +18,12 @@
 .article-detail-content{white-space: pre-line; font-size: 15px; color: #5A5A5A; line-height: 1.7; }
 .article-detail-imgs {text-align: center;}
 .article-detail-imgs img{ max-width: 70%; padding: 0 .5em;}
-.article-detail-status{ padding: 14px 10px; border-top: 1px solid #E7E7E7; margin-top: 2em; text-align: right;}
+.article-detail-status{ padding: 14px 10px; border-top: 1px solid #E7E7E7; border-bottom: 1px solid #E7E7E7; text-align: right;}
 .article-detail-status a{ font-size: 18px; margin-right: .5em;color: #BEBEBE; }
 .article-detail-status a:before{ margin-right: 5px; }
+.article-detail-comments{margin-top: 2em;border-top: 1px solid #d7d7d7;}
 .article-detail-comment{ position: relative; padding-left: 3.2em; }
-.article-detail-comment .user-header-photo{ position: absolute; left: 0; top:1em;width: 3em;}
+.article-detail-comment .user-header-photo{ position: absolute; left: 0; top:.2em;width: 2.5em;}
 .article-detail-comment .user-header-photo img{ width: 100%; max-height: 100%;  border-radius: 50%;}
 .article-detail-comment .article-detail-date{ position: relative; font-size: .8em; color: #BEBEBE; }
 
@@ -50,7 +51,7 @@
 
   <a class="article-detail-buttom-button article-detail-buttom-button-award" ng-click="openAward('aid')"><span class="icon ion-social-usd-outline"></span></a>
 
-  <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"><div style="font-size: 14px;line-height: 1em;color: white;">{{article.commentCount}}<br>评论</div></a>
+  <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"><span class="icon ion-edit"></span></a>
 
 
 	<!-- 顶部导航 -->
@@ -62,23 +63,24 @@
     </ion-nav-buttons>
     <ion-nav-title style="maring-left:0;">{{article.aType | typeName}}</ion-nav-title>
     <ion-nav-buttons side="right">
-      <button class="button button-icon button-clear ion-android-share-alt" ng-click="openShare($event)"></button>
+      <button class="button button-icon button-clear ion-share" ng-click="openShare($event)"></button>
     </ion-nav-buttons>
   </ion-nav-bar>
 
   <!-- 主区域 -->
   <ion-content class="article-detail" delegate-handle="article-detail-scroll" on-scroll="scrolling()">
-    <h2 class="article-detail-title">{{article.title}}</h2>    
+    <h2 class="article-detail-title">{{article.title}}</h2>  
+    <div class="article-detail-status">
+      <span class="article-detail-author">{{article.uname}}</span>
+      <a class="icon ion-ios-heart">{{article.likes}}</a>
+      <a class="icon ion-social-yen">{{article.payValue}}</a>
+      <a class="icon ion-chatboxes">{{article.commentCount}}</a>
+    </div>  
     <div class="article-detail-content">{{article.context}}</div>
     <div class="article-detail-imgs">
        <img ng-src="{{pic.picUrl}}" ng-repeat="pic in article.pics">
     </div>
-    <div class="article-detail-status">
-      <span class="article-detail-author">{{article.uname}}</span>
-      <a class="icon ion-ios-heart">{{article.likes}}</a>
-      <a class="icon ion-social-yen">{{article.likes}}</a>
-      <a class="icon ion-chatboxes">{{article.commentCount}}</a>
-    </div>
+
     <div class="article-detail-comments">
       <ion-list>
         <ion-item ng-repeat="comment in comments" on-tap="popupCommentOpts(comment)">
@@ -103,10 +105,10 @@
   <ion-popover-view>
     <ion-content class="article-detail-share-popover-content">
       <ul class="list">
-        <li class="item">
+        <li class="item" ng-click="shareWX()">
           <img ng-src="img/share_moments.png"><span>分享到朋友圈</span>
         </li>
-        <li class="item">
+        <li class="item" ng-click="shareWX('session')">
           <img ng-src="img/share_wx.png"><span>发送给微信好友</span>
         </li>
         <li class="item" ng-click="favoriteArticle()">

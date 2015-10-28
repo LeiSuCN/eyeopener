@@ -15,9 +15,12 @@
 .login-enter-option-wb{background-color: rgb(221,17,33);}
 .login-enter-option-qq{background-color: rgb(82,148,208);}
 .login-enter-option-wx{background-color: rgb(124,222,62);}
+.login-modal .slider-pager{ display: none;}
 </style>
 <ion-modal-view class="login-modal">
   <ion-content>
+<ion-slide-box>
+  <ion-slide>
     <div class="login-modal-main">
       <div class="login-modal-header">
         <div class="login-modal-header-title">登录眼界</div>
@@ -29,7 +32,7 @@
         <input type="password" placeholder="密码" ng-model="loginData.pwd">
         <div class="button-bar">
           <a class="button button-balanced" ng-click="loginWithEo()">登录</a>
-          <a class="button button-calm" ng-click="registerWithEo()">注册</a>
+          <a class="button button-calm icon-right ion-arrow-right-c" ng-click="slideRegister()">注册</a>
         </div>
       </div>
       <div class="login-modal-header">
@@ -47,5 +50,33 @@
         </a>
       </div>
     </div>
+  </ion-slide>
+  <ion-slide>
+    <div class="login-modal-main">
+      <div class="login-modal-header">
+        <div class="login-modal-header-title">注册眼界</div>
+        <div class="login-modal-header-sub">眼界账号注册</div>
+        <a class="button button-icon icon ion-ios-close login-modal-header-close" ng-click="closeLogin()"></a>
+      </div>
+      <div class="login-enter-login">
+        <input type="text" placeholder="账号" ng-model="loginData.usr">
+  <div class="item item-input-inset" style="border-radius: 5px; padding: 0;">
+    <label class="item-input-wrapper">
+      <input type="text" placeholder="验证码" style="margin: 0" ng-model="loginData.code">
+    </label>
+    <button class="button button-small button-assertive" style="margin:0;" ng-click="sns($event)">获取验证码</button>
+  </div>
+        <input type="password" placeholder="密码" ng-model="loginData.pwd">
+        <input type="text" placeholder="推荐人" ng-model="loginData.boy">
+        <div class="button-bar">
+          <a class="button button-balanced  icon-left ion-arrow-left-c" ng-click="slideLogin()">登录</a>
+          <a class="button button-calm" ng-click="registerWithEo()">注册</a>
+        </div>
+      </div>
+    </div>
+  </ion-slide>
+</ion-slide-box>
+
+
   </ion-content>
 </ion-modal-view>

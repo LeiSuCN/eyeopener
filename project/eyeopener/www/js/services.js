@@ -149,6 +149,11 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/eyer/register', params, successcb, errorcb);
   }
 
+  // 手机号注册
+  api.registerWithPhone = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/registerphone', params, successcb, errorcb);
+  }
+
   // 个人信息
   api.getinfo = function(params, successcb, errorcb){
     EOUtils.send('/eyer/getinfo', params, successcb, errorcb);
@@ -158,9 +163,15 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/eyer/getlistpro', params, successcb, errorcb);
   }
 
+  // 清除数据
   api.clear = function(){
     _me = false;
     saveUser(false);
+  }
+
+  // 获取验证短信
+  api.getPhoneCode = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/getphonecode', params, successcb, errorcb);
   }
 
   return api;

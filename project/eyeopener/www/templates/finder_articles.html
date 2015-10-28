@@ -11,7 +11,7 @@
 .finder-articles .bar-footer .rbutton span.num{ font-size: .8em; color: red;padding-top: .1em;}
 
 .finder-articles .header{ position: relative;}
-.finder-articles .header img{width: 100%;display: block;}
+.finder-articles .header img{width: 30%; margin: 0 auto;display: block; padding: 1em 0;}
 .finder-articles .header .summary{  position: absolute;bottom: 0;width: 100%;text-align: center;color: white;font-size: 18px;  padding: .5em 0;  font-weight: bold; background-color: rgba(0,0,0,0.4);}
 .finder-articles .header .summary span{color: rgb( 255, 204, 0 );}
 </style>
@@ -31,10 +31,10 @@
     </div>
     <div class="buttons pull-right">
       <button class="rbutton" ng-click="ask()">
-        <span>申请<br><span class="num">1000</span></span>
+        <span>申请</span>
       </button>
       <button class="rbutton" ng-click="challeng()">
-        <span>吐槽<br><span class="num">1000</span></span>
+        <span>吐槽</span>
       </button>
     </div>
   </div>
@@ -45,7 +45,7 @@
   </ion-nav-bar>
 
   <ion-content  class="finder-articles-content">
-    <div class="header">
+    <div class="header" style="background-color: #{{type.bgc}}">
       <img ng-src="{{type.picUrl}}">
       <div class="summary">
         <span>{{type.countArticle}}</span>篇文章
@@ -56,7 +56,7 @@
     <ion-item collection-repeat="question in articles" class="feed-item">
       <div class="feed-main">
         <div class="qustion-source">
-          来自 <a>{{question.aType | typeName}}</a>
+          类目 <a>{{question.aType | typeName}}</a>
           <img ng-src="{{question.aType | typePic}}">
         </div>
         <div class="qustion-content" ng-click="gotoArticleDetail(question)">
@@ -64,10 +64,10 @@
           <div class="qustion-summary">{{question.context}}</div>           
         </div>
         <div class="qustion-footer">
-         <span class="icon-status" style="float:left;"><i class="icon ion-ios-clock assertive"></i><a class="text">{{question.buildDate*1000 | date:'MM-dd HH:mm' }}</a></span>
-         <span class="icon-status"><i class="icon ion-ios-book assertive"></i><a class="text">{{question.reads}}</a></span>
-         <span class="icon-status"><i class="icon ion-chatbox-working assertive"></i><a class="text">{{question.commentCount}}</a></span>
-         <span class="icon-status"><i class="icon ion-heart assertive"></i><a class="text">{{question.likes}}</a></span>
+         <span class="icon-status" style="float:left;"><i class="icon ion-ios-clock assertive"></i><a class="text">{{question.buildDate*1000 | eoReadableTime }}</a></span>
+         <span class="icon-status"><i class="icon ion-ios-book assertive"></i><a class="text">{{question.reads}}阅读</a></span>
+         <span class="icon-status"><i class="icon ion-chatbox-working assertive"></i><a class="text">{{question.commentCount}}评论</a></span>
+         <span class="icon-status"><i class="icon ion-heart assertive"></i><a class="text">{{question.likes}}赞</a></span>
         </div>
       </div>
     </ion-item>

@@ -2,25 +2,12 @@
 <style type="text/css" media="screen">
 .eo-finder{}
 .eo-finder .tab-nav{top:0;}
-.eo-finder .slider-pager{ display: none;}
 .eo-finder .tab-title{ font-size: 24px;}
-.eo-finder .finder-list-group{font-size: 18px;  clear: both;}
-.eo-finder .finder-list-group-header{padding: 1em;position: relative;}
-.eo-finder .finder-list-group-header-name{color: gray;}
-.eo-finder .finder-list-group-header-more{font-size: 12px;  position: absolute; right: 1em; top: 0.7em;}
-.eo-finder .finder-list-group-header-more:before{font-size: 14px;}
-.eo-finder .finder-list-group-subs{}
-.eo-finder .finder-list-group-sub{display: inline-block;width: 50%; height: 8em ;background-size: 100% 100%; position: relative;  float: left;}
-.eo-finder .finder-list-group-sub-name{font-size:.8em;background: #000; color: white; position: absolute; top:1em; left: 0; padding-left: .2em; padding-right:1em; border-bottom-right-radius: 10%;border-top-right-radius: 10%;line-height: 2em; opacity: .4;}
-
-.eo-finder .finder-list-group-sub-summary{position: absolute;  bottom: 0;text-align: center;  display: block;  width: 100%;color: white; background-color: rgba(0, 0, 0, .5);  padding: .2em 0;}
-
-.eo-finder .finder-list-group-sub-summary span{  margin: 0 .2em;}
-.eo-finder .finder-list-group-sub-summary i{margin-right: .2em;}
-
-.eo-finder .item-thumbnail-left p{ font-size: 24px; padding-top: 1em; color:red;}
-.eo-finder .item-thumbnail-left p i{ margin-right: .2em;}
-.eo-finder .item-thumbnail-left p span{margin-right: 1em;}
+.eo-finder .finder-list-group{ display: inline-block;margin: 0;padding: 0; border: 0; width: 50%;height: 10em; float: left;}
+.eo-finder .finder-list-group-wrapper{border: .5em solid white;  height: 100%;text-align: center;position: relative; opacity: .8;}
+.eo-finder .finder-list-group-logo{  width: 40%;  top: 25%; left: 30%; position: absolute;}
+.eo-finder .finder-list-group-name{ position: absolute; bottom: .2em; left: .2em; color: white; font-weight: bold;}
+.eo-finder .finder-banner img{ width: 100%; }
 </style>
 
 <ion-view view-title="">
@@ -46,6 +33,26 @@
 
   <!-- 主区域 -->
   <ion-content  on-swipe-right="swipeRight()"  on-swipe-left="swipeLeft()" class="eo-finder">
+    <ion-slide-box>
+      <ion-slide class="finder-banner">
+        <img src="img/banner/1.jpg">
+      </ion-slide>
+      <ion-slide class="finder-banner">
+        <img src="img/banner/2.jpg">
+      </ion-slide>
+      <ion-slide class="finder-banner">
+        <img src="img/banner/3.jpg">
+      </ion-slide>      
+    </ion-slide-box>
+    <div>
+    <ion-item ng-repeat=" type in types" class="finder-list-group" ng-click="goTypeList(type)">
+      <div  class="finder-list-group-wrapper" style="background-color: #{{type.bgc}};">
+        <img ng-src="{{type.picUrl}}" class="finder-list-group-logo">
+        <span class="finder-list-group-name">{{type.name}}</span>
+      </div>
+    </ion-item>
+    </div>
+    <!--
     <ion-slide-box ng-init="disableSlide()">
       <ion-slide>
         <eo-finder-types types="types"></eo-finder-types>
@@ -62,5 +69,6 @@
         </ion-item>
       </ion-slide>
     </ion-slide-box>
+    -->
   </ion-content>
 </ion-view>
