@@ -189,6 +189,10 @@ angular.module('eyeopener.services', [])
     EOUtils.send('/article/getlist', params, successcb, errorcb);
   }
 
+  api.pquery = function(params, successcb, errorcb){
+    EOUtils.send('/article/getlistpro', params, successcb, errorcb);
+  }
+
   api.queryLike = function(params, successcb, errorcb){
     EOUtils.send('/article/getlistbyuidwithlikes', params, successcb, errorcb);
   }

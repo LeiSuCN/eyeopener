@@ -4,17 +4,31 @@ angular.module('eyeopener.controllers')
  * 问题列表Controller
  */
 .controller('ArticleListCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $ionicPopup
-  , EOShare, EOArticles, EOUser) {
+  , $ionicScrollDelegate, $ionicTabsDelegate, $ionicSlideBoxDelegate, EOShare, EOArticles, EOUser) {
   var shareDataArticleList = 'ArticleListCtrl.share.view'; 
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var shareDataSearch = 'ArticleSearchCtrl.share.search';
   var isHasMore = true;
   var limit = 10;
-  var page = 0;
+  var page = 0; // 问题页码
+  var ppage = 0; // 话题页码
   var viewDataFun;
   var view;
+  var hasLoadType = false; // 标志类型数据是否加载
+  var tabsHandle = false; // delegate-handle="article-list-tabs"
+  var scrollHandle = false; // delegate-handle="article-list-content"
+  var slideHandle = false; // delegate-handle="article-list-slidebox"
+
+  $scope.articles = [];
   $scope.questions = [];
-  $scope.topTips = '';
+  $scope.topTips = '搜索话题/问题    ';
+
+  var currentSlide = {}
+  var slidesHeight = {
+    a: {left:0, top:0},
+    q: {left:0, top:0},
+    c: 0
+  }
 
   // 搜索内容
   var gSearch = EOShare.get(shareDataSearch);
@@ -32,7 +46,7 @@ angular.module('eyeopener.controllers')
     // 视图
     view = EOShare.get(shareDataArticleList);
     if( !view || view == 'read' ){
-      viewDataFun = EOArticles.query;
+      viewDataFun = currentSlide.fun;
     } else if( view == 'like' ){
       viewDataFun = EOArticles.queryLike;
       $scope.search.type = 'like';
@@ -53,10 +67,72 @@ angular.module('eyeopener.controllers')
 
     $scope.questions = [];
     isHasMore = true; 
-    page = 0;    
+    page = 0;
+    ppage = 0;
+  }
+
+  function setCurrentSlide(slide){
+    if( slide == 'a' ){ // 话题
+      currentSlide.q = 'a'; // 当前的视图：a - 专题, q - 问题
+      currentSlide.data = $scope.articles; // 当前的数据容器
+      currentSlide.fun = EOArticles.pquery; // 数据查询函数
+      currentSlide.page = ppage; // 当前页码
+    } else{ // 问题
+      currentSlide.q = 'q'; // 当前的视图：a - 专题, q - 问题
+      currentSlide.data = $scope.questions; // 当前的数据容器
+      currentSlide.fun = EOArticles.query; // 数据查询函数
+      currentSlide.page = page; // 当前页码
+    }
+  }
+
+  // 调整slide高度
+  function resetSlideHeight(){
+    $scope.$broadcast('scroll.infiniteScrollComplete');
+    $ionicLoading.hide();
+    scrollHandle.resize();
+    return;
+    $timeout(function(){
+      var ele = angular.element('#article_list_slide_' + currentSlide.q + ' .feed-item');
+      var eleCount = 0;
+      var eleHeight = 0;
+      if( ele.length > 0 ){
+        eleCount = currentSlide.data.length;
+        eleHeight = ele.outerHeight();
+      }
+
+      console.log(eleCount + ' * ' + eleHeight);
+      angular.element('.article-list-content .collection-repeat-container').height(eleCount*eleHeight);
+      $scope.$broadcast('scroll.infiniteScrollComplete');
+      $ionicLoading.hide();
+      scrollHandle.resize();
+    }, 500);
+
+    // var ele = angular.element('#article_list_slide_' + currentSlide.q + ' .feed-item');
+    // var eleCount = currentSlide.data.length;
+    // var eleHeight = ele.outerHeight();
+
+    // console.log(eleCount + ' * ' + eleHeight);
+
+    // if( eleCount > 0 && eleHeight == 0 ){// 延后刷新
+    //   $timeout(resetSlideHeight, 500);
+    //   return;
+    // }
+
+    // angular.element('.article-list-content .collection-repeat-container').height(eleCount*eleHeight);
+    // scrollHandle.resize();
   }
 
   function getMore(){
+
+    // 需要预先加载type数据
+    if( !hasLoadType ){
+      EOArticles.types({},function(){
+        hasLoadType = true;
+        getMore();
+      }); 
+      return;
+    }
+
     // loading
     $ionicLoading.show({
       template: '<ion-spinner icon="ripple" class="eo-spinner"></ion-spinner>',
@@ -66,7 +142,7 @@ angular.module('eyeopener.controllers')
     var params = {};
     // 分页条件
     params.limit = limit;
-    params.page = page;
+    params.page = currentSlide.page;
     // 搜索条件
     if( $scope.search.type == 'hot' ){
       params.title = $scope.search.name;
@@ -90,7 +166,7 @@ angular.module('eyeopener.controllers')
 
       if( data && data.length > 0 ){
         angular.forEach( data, function(question){
-          $scope.questions.push( question );
+          currentSlide.data.push( question );
         })
         if( data.length < limit ){
           isHasMore = false;
@@ -98,8 +174,7 @@ angular.module('eyeopener.controllers')
       } else{
         isHasMore = false;
       }
-      $scope.$broadcast('scroll.infiniteScrollComplete');
-      $ionicLoading.hide();
+      resetSlideHeight();
     };
 
     viewDataFun(params, successCallback);    
@@ -113,7 +188,15 @@ angular.module('eyeopener.controllers')
    * 加载更多数据
    */
   $scope.loadMore = function(){
-    page = page + 1;
+
+    if( currentSlide.q == 'a' ){
+      ppage = ppage + 1;
+      currentSlide.page = ppage;
+    } else{
+      page = page + 1;
+      currentSlide.page = page;
+    }
+
     getMore();
   }
 
@@ -152,6 +235,51 @@ angular.module('eyeopener.controllers')
     $state.go( 'app.finder_list' );
   }
 
+  // 切换时
+  function active( idx, tab ){
+    console.log( idx + ',' + tab)
+    tabsHandle.select( idx );
+    slideHandle.slide( idx );
+    setCurrentSlide(tab); 
+
+    var aEle = angular.element('#article_list_slide_' + tab );
+    // 重设slide的高度
+    var nonTab = ( tab == 'a' ? 'q' : 'a' );
+    var nEle = angular.element('#article_list_slide_' + nonTab );
+    // 保存non tab的高度
+    slidesHeight[nonTab] = scrollHandle.getScrollPosition();
+    nEle.height(0);
+    // 恢复active tab的高度
+    aEle.css('height','auto');
+    var position = slidesHeight[tab];
+    scrollHandle.scrollTo( position.left, position.top);
+    //angular.element('#article_list_slide_' + nonTab ).height(0);
+
+    //resetSlideHeight();  
+  }
+
+  // 切换tab时
+  $scope.activeTab = function( tab ){
+    var idx = 0;
+    if( tab == 'a' ){
+      idx = 0;
+    } else{
+      idx = 1;
+    }
+    active( idx, tab )
+  }
+
+  // 切换slide时
+  $scope.activeSlide = function( idx ){
+    var tab = 'a';
+    if( idx == 0 ){
+      tab = 'a'
+    } else{
+      tab = 'q'
+    }
+    active( idx, tab )
+  }
+
   $scope.doRefresh = function(){
     $scope.$emit('Article:refresh');
     $scope.$broadcast('scroll.refreshComplete');
@@ -165,19 +293,13 @@ angular.module('eyeopener.controllers')
 
   // 延迟加载数据
   $scope.$on('$ionicView.loaded', function(){
-    $timeout( function(){
-      // 为了filter能够缓存到专题数据
-      // TODO ugly!!!
-      EOArticles.types({});  
-
-      // 统计全网数据
-      EOArticles.summary({}, function(status, statusText, data){
-        $scope.topTips = '话题' + data.numArticle + '/得赏0';
-      });    
-    } )
+    tabsHandle = $ionicTabsDelegate.$getByHandle('article-list-tabs');
+    scrollHandle = $ionicScrollDelegate.$getByHandle('article-list-content');
+    slideHandle = $ionicSlideBoxDelegate.$getByHandle('article-list-slidebox');
   })
 
   // 恢复初始状态
+  setCurrentSlide('a');
   reset();
 })
 
