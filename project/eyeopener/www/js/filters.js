@@ -8,15 +8,24 @@ angular.module('eyeopener.filters', [])
   return function(typeId){
   	var name = '';
   	var typeResp = EOArticles.cacheTypes;
-  	if( typeResp && typeResp.data && typeResp.data.length > 0 ){
+  	if( typeResp && typeResp.data ){
   		var types = typeResp.data;
-  		for( var i = 0 ; i < types.length; i++ ){
-  			var type = types[i];
-  			if( type.id == typeId ){
-  				name = type.name;
-  				break;
-  			}
-  		}
+
+      for( pId in types ){
+        var type = types[pId];
+
+        for( var i = 0 ; i < type.menu.length ; i++ ){
+          var sub = type.menu[i];
+          if( sub.id == typeId ){
+            name = type.name;
+            break;
+          }
+        }
+
+        if( name ){
+          break;
+        }
+      }
   	}
     return name;
   }
@@ -28,18 +37,27 @@ angular.module('eyeopener.filters', [])
 .filter('typePic', function(EOArticles) {
 
   return function(typeId){
-  	var pic = '';
-  	var typeResp = EOArticles.cacheTypes;
-  	if( typeResp && typeResp.data && typeResp.data.length > 0 ){
-  		var types = typeResp.data;
-  		for( var i = 0 ; i < types.length; i++ ){
-  			var type = types[i];
-  			if( type.id == typeId ){
-  				pic = type.picUrl;
-  				break;
-  			}
-  		}
-  	}
+    var pic = '';
+    var typeResp = EOArticles.cacheTypes;
+    if( typeResp && typeResp.data ){
+      var types = typeResp.data;
+
+      for( pId in types ){
+        var type = types[pId];
+
+        for( var i = 0 ; i < type.menu.length ; i++ ){
+          var sub = type.menu[i];
+          if( sub.id == typeId ){
+            pic = type.picUrl;
+            break;
+          }
+        }
+
+        if( pic ){
+          break;
+        }
+      }
+    }
     return pic;
   }
 })
@@ -52,12 +70,21 @@ angular.module('eyeopener.filters', [])
   return function(typeId){
     var color = '';
     var typeResp = EOArticles.cacheTypes;
-    if( typeResp && typeResp.data && typeResp.data.length > 0 ){
+    if( typeResp && typeResp.data ){
       var types = typeResp.data;
-      for( var i = 0 ; i < types.length; i++ ){
-        var type = types[i];
-        if( type.id == typeId ){
-          color = type.bgc;
+
+      for( pId in types ){
+        var type = types[pId];
+
+        for( var i = 0 ; i < type.menu.length ; i++ ){
+          var sub = type.menu[i];
+          if( sub.id == typeId ){
+            color = type.bgc;
+            break;
+          }
+        }
+
+        if( color ){
           break;
         }
       }

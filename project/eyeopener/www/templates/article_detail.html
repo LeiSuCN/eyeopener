@@ -49,7 +49,7 @@
 
   <a class="article-detail-buttom-button article-detail-buttom-button-like" ng-class="{liked:articleLiked}" ng-click="likeArticle()"><span class="icon ion-ios-heart-outline"></span></a>
 
-  <a class="article-detail-buttom-button article-detail-buttom-button-award" ng-click="openAward('aid')"><span class="icon ion-social-usd-outline"></span></a>
+  <a class="article-detail-buttom-button article-detail-buttom-button-award" ng-click="openAward('aid')"><span class="icon ion-social-yen-outline"></span></a>
 
   <a class="article-detail-buttom-button article-detail-buttom-button-comment" ng-click="goComment()"><span class="icon ion-edit"></span></a>
 
@@ -90,7 +90,7 @@
             </a>
             <h3 class="article-detail-font">{{comment.user.uname}}</h3>
             <div class="article-detail-date">
-              {{comment.buildDate*1000 | date:'yyyy-MM-dd HH:mm:ss' }}
+              {{comment.buildDate*1000 | eoReadableTime }}
               <span class="icon ion-ios-heart-outline comment-like">{{comment.likes}}</span>
             </div> 
             <div class="article-detail-context"><span ng-show="comment.touser.uname" class="article-detail-re">回复 {{comment.touser.uname}} : </span>{{comment.context}}</div>            

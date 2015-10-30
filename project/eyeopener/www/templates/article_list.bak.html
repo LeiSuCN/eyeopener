@@ -70,13 +70,14 @@
       <ion-tab title="问题" ng-click="activeTab('q')"></ion-tab>
     </ion-tabs>
 
-    <ion-content class="article-list-content" delegate-handle="article-list-content" on-swipe-left="swipeLeft()"  on-swipe-right="swipeRight()">
-
+    <ion-content class="article-list-content" delegate-handle="article-list-content">
       <ion-refresher
-        pulling-text="刷新数据..."
+        pulling-text="加载更多..."
         on-refresh="doRefresh()">
       </ion-refresher>
 
+      <ion-slide-box on-slide-changed="activeSlide($index,$event)" delegate-handle="article-list-slidebox">
+    <ion-slide id="article_list_slide_a">
       <ion-item ng-repeat="question in articles" class="feed-item">
         <div class="feed-main" ng-click="gotoArticleDetail(question)">
           <div class="qustion-source">
@@ -98,8 +99,62 @@
           </div>
         </div>
       </ion-item>
-      
+    </ion-slide>
+    <ion-slide id="article_list_slide_q">
+      <ion-item ng-repeat="question in questions" class="feed-item">
+        <div class="feed-main" ng-click="gotoArticleDetail(question)">
+          <div class="qustion-source">
+            类目 <a>{{question.aType | typeName}}</a>
+            <img ng-src="{{question.aType | typePic}}" style="background-color: #{{question.aType | typeColor}}">
+          </div>
+          <div class="qustion-content" ng-class="{true:'has-pic' }[question.pics.length > 0]">
+            <h2>{{question.title}}</h2>
+            <div class="qustion-summary">{{question.context}}</div>
+            <div ng-if="question.pics.length > 0" class="content1stpic">
+                  <img ng-src="{{question.pics[0].picUrl}}">
+            </div>      
+          </div>
+          <div class="qustion-footer">
+           <span class="icon-status" style="float:left;"><i class="icon ion-ios-clock dark"></i><a class="text">{{question.buildDate*1000 | eoReadableTime }}</a></span>
+           <span class="icon-status"><i class="icon ion-ios-book dark"></i><a class="text">{{question.reads}}阅读</a></span>
+           <span class="icon-status"><i class="icon ion-chatbox-working dark"></i><a class="text">{{question.commentCount}}评论</a></span>
+           <span class="icon-status"><i class="icon ion-heart dark"></i><a class="text">{{question.likes}}赞</a></span>
+          </div>
+        </div>
+      </ion-item>
+    </ion-slide>
+      </ion-slide-box>
+  <ion-infinite-scroll on-infinite="loadMore()" distance="1%" ng-if="hasMore()"></ion-infinite-scroll>
+
+<!--
+      <ion-refresher
+        pulling-text="加载更多..."
+        on-refresh="doRefresh()">
+      </ion-refresher>
+
+      <ion-item collection-repeat="question in questions" class="feed-item">
+        <div class="feed-main" ng-click="gotoArticleDetail(question)">
+          <div class="qustion-source">
+            类目 <a>{{question.aType | typeName}}</a>
+            <img ng-src="{{question.aType | typePic}}" style="background-color: #{{question.aType | typeColor}}">
+          </div>
+          <div class="qustion-content" ng-class="{true:'has-pic' }[question.pics.length > 0]">
+            <h2>{{question.title}}</h2>
+            <div class="qustion-summary">{{question.context}}</div>
+            <div ng-if="question.pics.length > 0" class="content1stpic">
+                  <img ng-src="{{question.pics[0].picUrl}}">
+            </div>      
+          </div>
+          <div class="qustion-footer">
+           <span class="icon-status" style="float:left;"><i class="icon ion-ios-clock assertive"></i><a class="text">{{question.buildDate*1000 | eoReadableTime }}</a></span>
+           <span class="icon-status"><i class="icon ion-ios-book assertive"></i><a class="text">{{question.reads}}阅读</a></span>
+           <span class="icon-status"><i class="icon ion-chatbox-working assertive"></i><a class="text">{{question.commentCount}}评论</a></span>
+           <span class="icon-status"><i class="icon ion-heart assertive"></i><a class="text">{{question.likes}}赞</a></span>
+          </div>
+        </div>
+      </ion-item>
       <ion-infinite-scroll on-infinite="loadMore()" distance="1%" ng-if="hasMore()"></ion-infinite-scroll>
+-->
     </ion-content>
 
 </ion-view>

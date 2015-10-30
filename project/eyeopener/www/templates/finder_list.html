@@ -1,10 +1,11 @@
 
 <style type="text/css" media="screen">
 .eo-finder{}
+.eo-finder .icon{ color: white;}
 .eo-finder .tab-nav{top:0;}
 .eo-finder .tab-title{ font-size: 24px;}
 .eo-finder .finder-list-group{ display: inline-block;margin: 0;padding: 0; border: 0; width: 50%;height: 10em; float: left;}
-.eo-finder .finder-list-group-wrapper{border: .5em solid white;  height: 100%;text-align: center;position: relative; opacity: .8;}
+.eo-finder .finder-list-group-wrapper{border: .2em solid white;  height: 100%;text-align: center;position: relative; opacity: .8;}
 .eo-finder .finder-list-group-logo{  width: 40%;  top: 25%; left: 30%; position: absolute;}
 .eo-finder .finder-list-group-name{ position: absolute; bottom: .2em; left: .2em; color: white; font-weight: bold;}
 .eo-finder .finder-banner img{ width: 100%; }
@@ -35,40 +36,22 @@
   <ion-content  on-swipe-right="swipeRight()"  on-swipe-left="swipeLeft()" class="eo-finder">
     <ion-slide-box>
       <ion-slide class="finder-banner">
-        <img src="img/banner/1.jpg">
+        <img src="http://img.mailworld.org/uploads/banner/151029/1002.jpg">
       </ion-slide>
       <ion-slide class="finder-banner">
-        <img src="img/banner/2.jpg">
+        <img src="http://img.mailworld.org/uploads/banner/151029/1003.jpg">
       </ion-slide>
       <ion-slide class="finder-banner">
-        <img src="img/banner/3.jpg">
+        <img src="http://img.mailworld.org/uploads/banner/151029/1001.jpg">
       </ion-slide>      
     </ion-slide-box>
     <div>
-    <ion-item ng-repeat=" type in types" class="finder-list-group" ng-click="goTypeList(type)">
+    <ion-item ng-repeat=" (id, type) in types" class="finder-list-group" ng-click="goTypeList(id,type)">
       <div  class="finder-list-group-wrapper" style="background-color: #{{type.bgc}};">
         <img ng-src="{{type.picUrl}}" class="finder-list-group-logo">
         <span class="finder-list-group-name">{{type.name}}</span>
       </div>
     </ion-item>
     </div>
-    <!--
-    <ion-slide-box ng-init="disableSlide()">
-      <ion-slide>
-        <eo-finder-types types="types"></eo-finder-types>
-      </ion-slide>
-      <ion-slide>
-        <ion-item ng-repeat="expert in experts" class="item item-thumbnail-left ">
-          <img ng-src="{{expert.upic}}">
-          <h2>{{expert.cname}}</h2>
-          <p class="item-{{$index+1}}">
-            <span><i class="icon ion-ios-bookmarks-outline"></i>{{expert.countLikeAritcle}}</span>
-            <span><i class="icon ion-ios-chatboxes-outline"></i>{{expert.countComment}}</span>
-            <span><i class="icon ion-ios-heart-outline"></i>{{expert.countLike}}</span>
-          </p>
-        </ion-item>
-      </ion-slide>
-    </ion-slide-box>
-    -->
   </ion-content>
 </ion-view>

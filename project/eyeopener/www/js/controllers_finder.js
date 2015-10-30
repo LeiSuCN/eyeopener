@@ -31,28 +31,14 @@ angular.module('eyeopener.controllers')
 
   // 更新列表
   function refreshTypes(){
-    var currentRootType = false;
     EOArticles.types({}, function(status, statusText, data){
       $scope.types = data;
-      console.log( $scope.types )
-      // $scope.oriTypes = data;
-      // angular.forEach(data, function(type){
-      //   if( type.team != currentRootType.name ){
-      //     if( currentRootType ){
-      //       $scope.types.push(currentRootType);
-      //     }
-
-      //     currentRootType = {'name': type.team, types: [] };
-      //   }
-
-      //   currentRootType.types.push(type);
-      // });
-
-      // if( currentRootType ){
-      //   $scope.types.push( currentRootType );
-      // }
     });
   }
+
+  $scope.toggleLeftSideMenu = function() {
+    $ionicSideMenuDelegate.toggleLeft();
+  };
 
   $scope.disableSlide = function(){
     $ionicSlideBoxDelegate.enableSlide(false);
@@ -61,34 +47,6 @@ angular.module('eyeopener.controllers')
   $scope.showTypes = function(){
     $ionicSlideBoxDelegate.slide(0);
   }
-
-  $scope.showExperts = function(){
-    $ionicSlideBoxDelegate.slide(1); 
-  }
-
-  $scope.toggleLeftSideMenu = function() {
-    $ionicSideMenuDelegate.toggleLeft();
-  };
-
-  $scope.swipeRight = function(){
-    $scope.goBack();
-  }
-
-  $scope.swipeLeft = function(){
-    if( $ionicSideMenuDelegate.isOpen() ){
-      $ionicSideMenuDelegate.toggleLeft();
-    }
-  }
-
-  $scope.drillSubs = function(cate){
-    $scope.showRootType = $scope.types[parseInt(cate)]
-    $ionicScrollDelegate.$getByHandle('finder-subs-content').scrollTop();
-    $scope.subsModal.show();
-  }
-
-  $scope.closeLogin = function() {
-    $scope.subsModal.hide();
-  };
 
   $scope.showTypeSearchModal = function(){
     $scope.typeSearchModal.show();
@@ -102,17 +60,15 @@ angular.module('eyeopener.controllers')
     $scope.search.name = '';
   }
 
-  $scope.goTypeList = function(type){
+  $scope.goTypeList = function(typeId, type){
     $scope.subsModal.hide();
     EOShare.set(shareDataType, type);
-    $state.go( 'app.finder_article', {type:type.id});
+    $state.go( 'app.finder_article', {type:typeId});
   }
 
   $scope.goBack = function(){    
     $ionicHistory.goBack();
   }
-
-  //refreshTypes();
 
   // 进入
   $scope.$on('$ionicView.loaded', function(){
@@ -129,13 +85,21 @@ angular.module('eyeopener.controllers')
  * 返现专题Controller
  */
 .controller('FinderArticleListCtrl', function($scope, $rootScope, $state, $stateParams
-  , $timeout, $ionicLoading, $ionicPopup, EOShare, EOArticles, EOUser, EOUtils) {
+  , $timeout, $ionicLoading, $ionicPopup,$ionicTabsDelegate, $ionicScrollDelegate, EOShare, EOArticles, EOUser, EOUtils) {
 
   var shareDataType = 'FinderArticleListCtrl.share.type';
   var shareDataArticle = 'ArticleDetailCtrl.share.article';
   var typeId = $stateParams.type;
   var me = EOUser.me();
+  var currentTab = false;
+  var tabsHandle = false;
+  var limit = 10;
+  var page = 0;
+  var isHasMore = true;
+  var _scrollTop = 0; // 滚动条位置
+  var _showButtomButton = true; // 是否显示底部按钮
 
+  $scope.showHeader = true; // 是否显示header
   $scope.type = EOShare.get(shareDataType);
   $scope.articles = [];
   $scope.data = {
@@ -148,16 +112,106 @@ angular.module('eyeopener.controllers')
       hideOnStageChange: true
     });
 
-    var params = {aType: typeId};
-    //var params = {};
+    var params = {aType: currentTab.id, pType: currentTab.pType};
+    // 分页条件
+    params.limit = limit;
+    params.page = page;
     EOArticles.query(params, function(status, statusText, data){
+      
+      if( !!data.substr == true ){
+        isHasMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+        $ionicLoading.hide(); 
+        return;
+      }
+
       if( data || data.length > 0 ){
         angular.forEach( data, function(article){
           $scope.articles.push( article );
         })
+        if( data.length < limit ){
+          isHasMore = false;
+        }
+      } else{
+        isHasMore = false;
       }
+      $scope.$broadcast('scroll.infiniteScrollComplete');
       $ionicLoading.hide();
     });    
+  }
+
+
+  function reload(){
+    $scope.articles = [];
+    isHasMore = true; 
+    page = 0;
+    getMore();
+  }
+
+  function setCurrentTab(tabName){
+
+    if( tabName == '活动通告' ){
+      $scope.showHeader = true;
+    } else{
+      $scope.showHeader = false;
+    }
+
+    for( var i = 0 ; i < $scope.type.menu.length ; i++ ){
+      if( $scope.type.menu[i].name == tabName ){
+        currentTab = $scope.type.menu[i];
+        break;
+      }
+    }
+  }
+
+  $scope.scrolling = function(){
+
+    var position = $ionicScrollDelegate.$getByHandle('finder-articles-content').getScrollPosition();
+
+    if( _scrollTop == 0 ){
+      _scrollTop = position.top;
+      return;
+    }
+    var activeDistance = 5;
+    var distince = position.top - _scrollTop;
+    // 向下滑动
+    if( distince > 0 ){
+      // 向下滑动有效距离
+      if( distince < activeDistance ){
+        return;
+      }
+      _scrollTop = position.top;
+      if( _showButtomButton ){
+        _showButtomButton = false;
+        angular.element('.finder-articles-footer')
+          .animate({'bottom':'-4em'})
+      }
+    }
+    // 向上滑动
+    else if( distince < 0 ){
+      // 向下滑动有效距离
+      if( distince*-1 < activeDistance ){
+        return;
+      }
+      _scrollTop = position.top;
+      if( !_showButtomButton ){
+        _showButtomButton = true;
+        angular.element('.finder-articles-footer')
+          .animate({'bottom':'0'})
+      }
+    }   
+  }
+
+  $scope.loadMore = function(){
+
+    page = page + 1;
+
+    getMore();
+  }
+
+  // 是否有跟多数据
+  $scope.hasMore = function(){
+    return isHasMore;
   }
 
   // 申请
@@ -169,11 +223,6 @@ angular.module('eyeopener.controllers')
       aType:typeId    
     }, function(status, statusText, data){
       EOUtils.hideLoading();
-      // var alertPopup = $ionicPopup.alert({
-      //   title: '提交成功',
-      //   template: '您的申请已经成功提交,我们会尽快联系您'
-      // });
-      // alertPopup.then(function(res) {});
       window.plugins.toast.showLongCenter('您的申请已经成功提交,我们会尽快联系您');
     }, function(){
       EOUtils.hideLoading();
@@ -211,7 +260,12 @@ angular.module('eyeopener.controllers')
         }
       ]
     });
+  }
 
+  $scope.activeTab = function(tabId, subName){
+    tabsHandle.select( tabId );
+    setCurrentTab(subName);
+    reload();
   }
   
   $scope.gotoArticleDetail = function(article){
@@ -225,7 +279,9 @@ angular.module('eyeopener.controllers')
 
   // 延迟加载数据
   $scope.$on('$ionicView.loaded', function(){
-    $timeout( getMore )
+    setCurrentTab('活动通告');
+    tabsHandle = $ionicTabsDelegate.$getByHandle('finder-list-tabs');
+    $timeout( reload )
   })
 
   // 退出时清除共享数据
