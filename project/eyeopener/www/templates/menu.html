@@ -49,9 +49,13 @@
         </div>
       </div>
       <ion-list class="eo-left-menu">
-        <!-- 阅读 -->
-        <ion-item menu-close  ng-click="view('read')">
-          <a class="eo-left-menu-item menu-item-read"><i class="icon ion-ios-bookmarks-outline"></i>阅读</a>
+        <!-- 首页 -->
+        <ion-item menu-close ng-click="view('read')">
+          <a class="eo-left-menu-item menu-item-read"><i class="icon ion-ios-bookmarks-outline"></i>首页</a>
+        </ion-item>
+        <!-- 我的钱包 -->
+        <ion-item menu-close ng-click="gotoProfileWallet()">
+          <a class="eo-left-menu-item menu-item-like"><i class="icon ion-cash"></i>我的钱包</a>
         </ion-item>
         <!-- 收藏 -->
         <ion-item menu-close>

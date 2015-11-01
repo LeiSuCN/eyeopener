@@ -141,6 +141,17 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
     }
   })
 
+  // ==== ==== ==== ==== >>>> 用户信息 － 我的钱包
+  .state('app.profile_wallet', {
+    url: '/profile_wallet',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/profile_wallet.html',
+        controller: 'ProfileWalletCtrl'
+      }
+    }
+  })
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/knows');
 });

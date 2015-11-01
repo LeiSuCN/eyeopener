@@ -332,6 +332,11 @@ angular.module('eyeopener.controllers')
     $state.go( 'app.profile_edit' );
   }
 
+  // 跳转我的钱包
+  $scope.gotoProfileWallet = function(){
+    $state.go( 'app.profile_wallet' );
+  }
+
   $scope.view = function(viewType){
     var shareDataArticleList = 'ArticleListCtrl.share.view'; 
     EOShare.set(shareDataArticleList, viewType);

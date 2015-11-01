@@ -104,6 +104,14 @@ angular.module('eyeopener.services', [])
     $ionicLoading.hide();
   }
 
+  api.toast = function(msg){
+    if( window.plugins && window.plugins.toast ){
+      window.plugins.toast.showLongCenter(msg);
+    } else{
+      alert( msg )
+    }    
+  }
+
   return api;
 })
 
@@ -134,6 +142,21 @@ angular.module('eyeopener.services', [])
     }
 
     return _me;
+  }
+
+  // 刷新本地用户信息缓存
+  api.refreshCachedUser = function(){
+
+    api.getinfo({uid: _me.uid}, function(status, statusText, data){
+      angular.extend(_me, data);
+      EOUtils.setObject('me', data);
+    })
+
+  }
+
+  // 更新用户信息
+  api.update = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/fixinfo', params, successcb, errorcb);
   }
 
   api.login = function(params, successcb, errorcb){

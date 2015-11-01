@@ -2,10 +2,13 @@
 <style type="text/css" media="screen">
 .eo-profile-edit{}
 .eo-profile-edit .eo-profile-edit-block{ margin: 1em; border-bottom: 1px solid #e5e5e5;}
-.eo-profile-edit .eo-profile-edit-item{ border: 1px solid #e5e5e5; border-bottom:0px; width: 100%; color:#666;}
-.eo-profile-edit .eo-profile-edit-item{ padding: .5em; }
+.eo-profile-edit .eo-profile-edit-item{ border: 1px solid #e5e5e5; border-bottom:0px; width: 100%; color:#666; padding: .5em; display: block;}
 
 .eo-profile-edit .eo-profile-edit-block h3{ font-size: 1.2em; line-height: 2em; margin:0;}
+
+/* 数据修改后的样式 */
+.eo-profile-edit .eo-profile-edit-block .ng-dirty{ color: red }
+
 
 /* 头像 */
 .eo-profile-edit .eo-profile-edit-header{text-align: center;}
@@ -36,40 +39,45 @@
 
   <!-- 主区域 -->
   <ion-content class="eo-profile-edit-content">
-    <!-- 头像 -->
-    <div class="eo-profile-edit-block eo-profile-edit-header">
-      <img ng-src="{{user.upic}}">
-    </div>
-    <!-- 个人信息 -->
-    <div class="eo-profile-edit-block eo-profile-edit-person">
-      <input type="text" class="eo-profile-edit-item eo-profile-edit-name" ng-model="user.cname">
-      <div class="eo-profile-edit-item eo-profile-edit-sex">
-        <label for="userSexMale" ng-class="{true:'active'}[user.sex == 1]">
-          <input type="radio" value=1 id="userSexMale" name="userSexMale" ng-model="user.sex">
-          <i class="icon ion-male"></i> 男
-        </label>
-        <label for="userSexFemale" ng-class="{true:'active'}[user.sex == 0]">
-          <input type="radio" value=0 id="userSexFemale" name="userSexFemale" ng-model="user.sex">
-          <i class="icon ion-female"></i> 女
-        </label>
+    <form name="eoProfileEditForm" ng-init="setFormScope(this)">
+      <!-- 头像 -->
+      <div class="eo-profile-edit-block eo-profile-edit-header" ng-click="openHeaderEdit($event)">
+        <img ng-src="{{user.upic}}">
       </div>
-    </div>
-    <!-- 个人简介 -->
-    <div class="eo-profile-edit-block eo-profile-edit-desc">
-      <h3>个人简介</h3>
-      <textarea class="eo-profile-edit-item" rows="3" ng-model="user.description"></textarea>
-    </div>
-    <!-- 门店资料 -->
-    <div class="eo-profile-edit-block eo-profile-edit-store">
-      <h3>门店资料</h3>
-      <input type="text" class="eo-profile-edit-item" placeholder="请输入门店名称">
-      <div class="eo-profile-edit-item" ng-click="openBussinessModal($event)">{{user.bType | eoBussinessId2Name}}</div>
-      <input type="text" class="eo-profile-edit-item" placeholder="门店地址">
-    </div>
-    <!-- 获得项目 -->
-    <div class="eo-profile-edit-block eo-profile-edit-service">
-      <h3>获得项目</h3>
-    </div>
+      <!-- 个人信息 -->
+      <div class="eo-profile-edit-block eo-profile-edit-person">
+        <input type="text" class="eo-profile-edit-item eo-profile-edit-name" name="cname" ng-model="user.cname">
+        <div class="eo-profile-edit-item eo-profile-edit-sex">
+          <label for="#userSexMale" ng-class="{true:'active'}[user.male == 1]">
+            <input type="radio" value=1 id="userSexMale" name="male" ng-model="user.male">
+            <i class="icon ion-male"></i> 男
+          </label>
+          <label for="#userSexFemale" ng-class="{true:'active'}[user.male == 0]">
+            <input type="radio" value=0 id="userSexFemale" name="male" ng-model="user.male">
+            <i class="icon ion-female"></i> 女
+          </label>
+        </div>
+      </div>
+      <!-- 个人简介 -->
+      <div class="eo-profile-edit-block eo-profile-edit-desc">
+        <h3>个人简介</h3>
+        <textarea class="eo-profile-edit-item" rows="3" name="description" ng-model="user.description"></textarea>
+      </div>
+      <!-- 门店资料 -->
+      <div class="eo-profile-edit-block eo-profile-edit-store">
+        <h3>门店资料</h3>
+        <input type="text" class="eo-profile-edit-item" name="storeName" placeholder="请输入门店名称" ng-model="user.storeName">
+        <label for="storeBussiness" class="eo-profile-edit-item eo-profile-edit-storeBussiness"  ng-click="openBussinessModal($event)">
+          {{user.bType | eoBussinessId2Name}}
+          <input type="hidden" class="eo-profile-edit-storeBussiness" name="bType" ng-model="user.bType">
+        </label>
+        <input type="text" class="eo-profile-edit-item" name="storeaddr" placeholder="门店地址" ng-model="user.storeaddr">
+      </div>
+      <!-- 获得项目 -->
+      <div class="eo-profile-edit-block eo-profile-edit-service">
+        <h3>获得项目</h3>
+      </div>
+    </form>
   </ion-content>
 
   <!-- 底部按钮 -->
@@ -95,4 +103,18 @@
     </div>
   </ion-content> 
 </ion-modal-view>
+</script>
+
+<script id="profile_edit_header.html" type="text/ng-template">
+  <ion-popover-view class="">
+    <ion-header-bar>
+      <h1 class="title">请选择要使用的应用</h1>
+    </ion-header-bar>
+    <ion-content>
+      <div>
+        <a><img>图库</a>
+        <a><img>相机</a>
+      </div>
+    </ion-content>
+  </ion-popover-view>
 </script>
