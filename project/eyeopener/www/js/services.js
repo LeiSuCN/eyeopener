@@ -1,5 +1,17 @@
 top.window.SEVER_ADDRESS = top.window.SEVER_ADDRESS || 'http://112.74.213.249' ; //mwnshop.mailworld.org 112.74.213.249
 
+
+top.window.BUSINESS = top.window.BUSINESS || [
+  {id:'convenience', name:'便民商店/便利店'},
+  {id:'culture', name:'文化用品店'},
+  {id:'clothes', name:'服装鞋帽皮具店'},
+  {id:'children', name:'儿童用品店'},
+  {id:'gift', name:'礼品饰品店'},
+  {id:'cigarette', name:'烟酒专卖店'},
+  {id:'electron', name:'手机销售/数码销售'},
+  {id:'other', name:'其他个人用品'}
+]
+
 angular.module('eyeopener.services', [])
 
 //

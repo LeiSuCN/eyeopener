@@ -77,7 +77,7 @@
         on-refresh="doRefresh()">
       </ion-refresher>
 
-      <ion-item ng-repeat="question in articles" class="feed-item">
+      <ion-item collection-repeat="question in articles" class="feed-item">
         <div class="feed-main" ng-click="gotoArticleDetail(question)">
           <div class="qustion-source">
             类目 <a>{{question.aType | typeName}}</a>

@@ -3,7 +3,7 @@ angular.module('eyeopener.controllers')
  * 全局Controller
  */
 .controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, $ionicLoading, $ionicPopup
-  , $timeout, $ionicSlideBoxDelegate, $interval, EOUser, EOShare) {
+  , $timeout, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $interval, EOUser, EOShare) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -268,10 +268,17 @@ angular.module('eyeopener.controllers')
   };
 
   $scope.login = function() {
-    $scope.modal.show();
+
+    if( $scope.me && $scope.me.uid ){
+      $scope.gotoProfileEdit();
+    } else{
+      $scope.modal.show();
+    }
+
   };
 
   $scope.logout = function() {
+    $scope.me.uid = false;
     $scope.me.cname = '未登录';
     $scope.me.upic = 'img/def.png';
     EOUser.clear();
@@ -318,6 +325,12 @@ angular.module('eyeopener.controllers')
   $scope.setting = function() {
     $scope.settingModal.show();
   };
+
+  // 跳转个人资料编辑
+  $scope.gotoProfileEdit = function(){
+    $ionicSideMenuDelegate.toggleLeft( false );
+    $state.go( 'app.profile_edit' );
+  }
 
   $scope.view = function(viewType){
     var shareDataArticleList = 'ArticleListCtrl.share.view'; 

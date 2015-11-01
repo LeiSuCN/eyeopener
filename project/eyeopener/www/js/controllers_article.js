@@ -506,7 +506,7 @@ angular.module('eyeopener.controllers')
     var article = $scope.article;
 
     if( !article.title ){
-      showAlert('请填写问题简素')
+      showAlert('请填写问题简述')
       return;      
     }
 

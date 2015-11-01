@@ -123,3 +123,23 @@ angular.module('eyeopener.filters', [])
     }
   }
 })
+
+/*
+ * 经营id转经营名城
+ */
+ .filter('eoBussinessId2Name', function($filter) {
+
+  return function( id ){
+    var name = '';
+    for( var i = 0 ; i < top.window.BUSINESS.length ; i++ ){
+      var b = top.window.BUSINESS[i];
+
+      if( b.id == id ){
+        name = b.name;
+        break;
+      }
+    }
+    return name;
+  }
+
+})

@@ -129,6 +129,18 @@ angular.module('eyeopener', ['ionic', 'eyeopener.controllers', 'eyeopener.servic
       }
     }
   })
+
+  // ==== ==== ==== ==== >>>> 用户信息 － 用户资料编辑
+  .state('app.profile_edit', {
+    url: '/profile_edit',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/profile_edit.html',
+        controller: 'ProfileEditCtrl'
+      }
+    }
+  })
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/knows');
 });
