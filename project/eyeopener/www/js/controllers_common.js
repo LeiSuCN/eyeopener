@@ -3,7 +3,7 @@ angular.module('eyeopener.controllers')
  * 全局Controller
  */
 .controller('AppCtrl', function($scope, $state, $ionicModal, $timeout, $ionicLoading, $ionicPopup
-  , $timeout, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $interval, EOUser, EOShare) {
+  , $timeout, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $interval, EOUser, EOShare, EOMessage) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -345,5 +345,6 @@ angular.module('eyeopener.controllers')
 
   $timeout( function(){
     getUserProfile();
+    EOMessage.start();
   }, 1000)
 })

@@ -7,12 +7,16 @@
 .eo-profile-edit .eo-profile-edit-block h3{ font-size: 1.2em; line-height: 2em; margin:0;}
 
 /* 数据修改后的样式 */
-.eo-profile-edit .eo-profile-edit-block .ng-dirty{ color: red }
+.eo-profile-edit .eo-profile-edit-block .ng-dirty{ color: red; }
 
 
 /* 头像 */
 .eo-profile-edit .eo-profile-edit-header{text-align: center;}
 .eo-profile-edit .eo-profile-edit-header img{ width: 40%;}
+.eo-profile-edit-header-choose{text-align: center;}
+.eo-profile-edit-header-choose a{display: inline-block; width: 45%;  color: #666;}
+.eo-profile-edit-header-choose i{display: block; font-size: 5em; color: #999;}
+.eo-profile-edit-header-choose span{}
 
 /* 个人信息 */
 .eo-profile-edit-person .eo-profile-edit-name{display: block; width: 100%; }
@@ -61,7 +65,7 @@
       <!-- 个人简介 -->
       <div class="eo-profile-edit-block eo-profile-edit-desc">
         <h3>个人简介</h3>
-        <textarea class="eo-profile-edit-item" rows="3" name="description" ng-model="user.description"></textarea>
+        <textarea class="eo-profile-edit-item" rows="3" name="profile" ng-model="user.profile"></textarea>
       </div>
       <!-- 门店资料 -->
       <div class="eo-profile-edit-block eo-profile-edit-store">
@@ -71,7 +75,7 @@
           {{user.bType | eoBussinessId2Name}}
           <input type="hidden" class="eo-profile-edit-storeBussiness" name="bType" ng-model="user.bType">
         </label>
-        <input type="text" class="eo-profile-edit-item" name="storeaddr" placeholder="门店地址" ng-model="user.storeaddr">
+        <input type="text" class="eo-profile-edit-item" name="storeAddr" placeholder="门店地址" ng-model="user.storeAddr">
       </div>
       <!-- 获得项目 -->
       <div class="eo-profile-edit-block eo-profile-edit-service">
@@ -111,9 +115,9 @@
       <h1 class="title">请选择要使用的应用</h1>
     </ion-header-bar>
     <ion-content>
-      <div>
-        <a><img>图库</a>
-        <a><img>相机</a>
+      <div class="eo-profile-edit-header-choose">
+        <a ng-click="chooseHeaderImage('photo')"><i class="icon ion-image"></i>图库</a>
+        <a ng-click="chooseHeaderImage()"><i class="icon ion-camera"></i>相机</a>
       </div>
     </ion-content>
   </ion-popover-view>

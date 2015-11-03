@@ -36,6 +36,10 @@ angular.module('eyeopener.controllers')
     });
   }
 
+  $scope.swipeRight = function() {
+    $state.go( 'app.knows' );
+  };
+
   $scope.toggleLeftSideMenu = function() {
     $ionicSideMenuDelegate.toggleLeft();
   };

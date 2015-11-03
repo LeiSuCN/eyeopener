@@ -1,6 +1,11 @@
 
 <style type="text/css" media="screen">
 .eo-profile-wallet{}
+.eo-profile-wallet .eo-profile-wallet-summary{padding: 2em 0; border-bottom: 1px solid #d7d7d7; text-align: center;}
+.eo-profile-wallet .eo-profile-wallet-summary h2{ font-size: 2em;color: #666;}
+.eo-profile-wallet .eo-profile-wallet-summary span{ font-size: 2em;color: #f74131;}
+.eo-profile-wallet .button-bar { margin-top: 3em;}
+.eo-profile-wallet .button-bar .button{ margin: 1em;}
 </style>
 
 <ion-view view-title="我的钱包" class="eo-profile-wallet">
@@ -13,7 +18,15 @@
   </ion-nav-bar>
 
   <!-- 主区域 -->
-  <ion-content class="eo-profile-edit-content">
+  <ion-content class="eo-profile-wallet-content">
+    <div class="eo-profile-wallet-summary">
+      <h2>帐号余额</h2>
+      <span><i class="icon ion-social-yen" style="margin-right: .2em;"></i>{{account.total}}</span>
+    </div>
+    <div class="button-bar">
+      <a class="button button-assertive">充值</a> 
+      <a class="button button-balanced">提现</a>    
+    </div>
   </ion-content>
 
   <!-- 底部按钮 -->

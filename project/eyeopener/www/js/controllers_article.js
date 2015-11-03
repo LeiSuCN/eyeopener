@@ -135,19 +135,7 @@ angular.module('eyeopener.controllers')
   }
 
   $scope.swipeLeft = function(){
-
-    if( tabsHandle.selectedIndex() == 1 ){
-      return;
-    }
-
-    $scope.activeTab('q');
-  }
-
-  $scope.swipeRight = function(){
-    if( tabsHandle.selectedIndex() == 0 ){
-      return;
-    }
-    $scope.activeTab('a');
+    $scope.gotoFinderList();
   }
 
   /*
@@ -253,7 +241,7 @@ angular.module('eyeopener.controllers')
   })
 
   // 恢复初始状态
-  setCurrentSlide('a');
+  setCurrentSlide('q');
   reset();
 })
 
@@ -728,6 +716,7 @@ angular.module('eyeopener.controllers')
     });
   }
 
+  // 微信分享
   $scope.shareWX = function(type){
     if( !window.Wechat ){
       alert('没有微信插件')
@@ -740,7 +729,7 @@ angular.module('eyeopener.controllers')
     }else{
       params.scene = Wechat.Scene.TIMELINE;
     }
-    
+
     params.message = {
       title: "眼界",
       description: "猫屋",
@@ -748,7 +737,7 @@ angular.module('eyeopener.controllers')
       thumb: "http://img.mailworld.org/uploads/eyer/share.png",
       media: {
         type: Wechat.Type.LINK,
-        webpageUrl: "http://img.mailworld.org/download/eyer"
+        webpageUrl: "http://112.74.213.249/preview?aid=" + articleId
       }
     };
 

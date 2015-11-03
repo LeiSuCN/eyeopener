@@ -34,6 +34,27 @@ angular.module('eyeopener.controllers')
 
   angular.extend($scope.user, me);
 
+  // 上传单张图片
+  function uploadPicture(params, fileURL, uploadSuccess, uploadError, updateStatus){
+
+    var uri = EOUtils.getServer() + '/eyer/fixpic';
+    var options = new FileUploadOptions();
+    options.params = params;
+    options.fileKey="image";
+    options.fileName=fileURL.substr(fileURL.lastIndexOf('/')+1);
+
+    var ft = new FileTransfer();
+    ft.onprogress = function(progressEvent) {
+        if (progressEvent.lengthComputable) {
+          var status = parseInt( progressEvent.loaded / progressEvent.total * 100 );
+          console.log( status );
+        } else {
+          //loadingStatus.increment();
+        }
+    };
+    ft.upload(fileURL, uri, uploadSuccess, uploadError, options);
+  }
+
   $scope.setFormScope = function( scope ){
     formScope = scope;
   }
@@ -61,12 +82,43 @@ angular.module('eyeopener.controllers')
       count += 1;
     })
 
+    if( $scope.user.upic != me.upic ){
+    	EOUtils.showLoading();
+
+    	uploadPicture({uid: me.uid}, $scope.user.upic, function(r){
+    		EOUtils.hideLoading();
+    		//EOUtils.toast('上传成功');
+    		//alert("Code = " + r.responseCode);
+    		//alert("Response = " + r.response);
+    		if( count == 0 ){
+    			EOUtils.hideLoading();
+    			EOUtils.toast('上传成功');
+    			EOUser.refreshCachedUser();
+    		} else{
+    			EOUser.update(params, function(status, statusText, data){
+    			  EOUtils.hideLoading();
+    			  EOUtils.toast(data.text);
+    			  formScope.eoProfileEditForm.$setPristine();
+    			  angular.element('.ng-dirty').removeClass('ng-dirty');
+    			  EOUser.refreshCachedUser();
+    			}, function(){
+    			  EOUtils.hideLoading();
+    			  EOUtils.toast('上传失败');
+    			});
+    		}
+
+    	}, function(){
+    		EOUtils.hideLoading();
+    		EOUtils.toast('上传失败');
+    	});
+    	return;
+    }
+
     if( count == 0 ){
       EOUtils.toast('资料没有变化');
       return;
     }
-    
-    EOUtils.showLoading();
+
     EOUser.update(params, function(status, statusText, data){
       EOUtils.hideLoading();
       EOUtils.toast(data.text);
@@ -86,6 +138,29 @@ angular.module('eyeopener.controllers')
   // 关闭头像编辑选择
   $scope.closeHeaderEdit = function(){
     $scope.headerPopover.hide();
+  }
+
+  // 选择头像
+  $scope.chooseHeaderImage = function(source){
+
+  	$scope.closeHeaderEdit();
+
+  	var options = {
+		quality:30,
+		destinationType: Camera.DestinationType.FILE_URI,
+		encodingType: Camera.EncodingType.JPEG,
+		correctOrientation: true  		
+  	}
+
+  	if( source == 'photo'){
+  		options.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
+  	}
+
+    EOUtils.getPicture(options).then(function(imageURI){
+      $scope.user.upic = imageURI;
+    }, function(err){
+      alert(err);
+    })
   }
 
   // 打开经营类型选择
@@ -114,12 +189,27 @@ angular.module('eyeopener.controllers')
 /*
  * 我的钱包Controller
  */
-.controller('ProfileWalletCtrl', function($scope, $ionicHistory
+.controller('ProfileWalletCtrl', function($scope, $ionicHistory, $timeout
   , EOUser, EOUtils) {
 
   var me = EOUser.me();
 
+  // 账户信息
+  $scope.account = {
+  	total: 0
+  }
+
   $scope.goBack = function(){
     $ionicHistory.goBack();
   }
+
+  // 延迟加载数据
+  $scope.$on('$ionicView.loaded', function(){
+    $timeout(function(){
+    	EOUser.getaccount({uid: me.uid}, function(status, statusText, data){
+    		$scope.account.total = data.account;
+    		$scope.account.can = data.canApply;
+    	});
+    }, 500);
+  })
 })

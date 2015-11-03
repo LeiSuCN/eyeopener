@@ -35,6 +35,29 @@ angular.module('eyeopener.services', [])
 })
 
 //
+// ======== ======== ======== ========>> 消息Service <<======== ======== ======== ========
+//
+.factory('EOMessage', function($interval) {
+
+  var _intervalTime = 3000;
+  var _timer = false;
+
+  var api = {};
+
+  // 启动定时器
+  api.start = function( key ){
+    if( _timer ){
+      return;
+    }
+    _timer = $interval( function(){
+      console.log('EOMessage timer')
+    }, _intervalTime);
+  }
+
+  return api;
+})
+
+//
 // ======== ======== ======== ========>> 共同Service <<======== ======== ======== ========
 //
 .factory('EOUtils', function($q, $http, $window, $ionicLoading) {
@@ -125,10 +148,12 @@ angular.module('eyeopener.services', [])
   // 保存用户信息
   function saveUser( user ){
     _me = {};
-    _me.uid = user.uid;//用户ID
-    _me.cname = user.cname;//用户昵称
-    _me.upic = user.upic;//用户头像
-    _me.buildDate = user.buildDate;//注册时间
+    // _me.uid = user.uid;//用户ID
+    // _me.cname = user.cname;//用户昵称
+    // _me.upic = user.upic;//用户头像
+    // _me.buildDate = user.buildDate;//注册时间
+
+    angular.extend(_me, user )
 
     EOUtils.setObject('me', user);
   }
@@ -192,6 +217,11 @@ angular.module('eyeopener.services', [])
   // 个人信息
   api.getinfo = function(params, successcb, errorcb){
     EOUtils.send('/eyer/getinfo', params, successcb, errorcb);
+  }
+
+  // 个人账户信息
+  api.getaccount = function(params, successcb, errorcb){
+    EOUtils.send('/eyer/getaccount', params, successcb, errorcb);
   }
 
   api.experts = function(params, successcb, errorcb){

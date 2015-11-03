@@ -21,7 +21,7 @@
       <button class="button button-icon button-clear ion-navicon" ng-click="toggleLeftSideMenu()"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
-    <div class=" item-input-inset">
+    <div class=" item-input-inset" style="display: none;">
       <label class="item-input-wrapper" style="background-color: rgb(62,157,237);border-radius:15px;">
         <i class="icon ion-ios-search placeholder-icon"></i>
         <input type="search" ng-model="search.name" style="font-size: 16px;width:13em;color:rgba(255,255,255,0.8);text-align: center;" ng-click="showTypeSearchModal()" placeholder="{{topTips}}">
@@ -33,7 +33,7 @@
   </ion-nav-bar>
 
   <!-- 主区域 -->
-  <ion-content  on-swipe-right="swipeRight()"  on-swipe-left="swipeLeft()" class="eo-finder">
+  <ion-content  on-swipe-right="swipeRight()" class="eo-finder">
     <ion-slide-box>
       <ion-slide class="finder-banner">
         <img src="http://img.mailworld.org/uploads/banner/151029/1002.jpg">

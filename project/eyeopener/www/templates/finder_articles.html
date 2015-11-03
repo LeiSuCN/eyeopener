@@ -46,7 +46,10 @@
       <img ng-src="{{type.picUrl}}">
     </div>
     <ion-item collection-repeat="question in articles" class="feed-item">
-      <div class="feed-main">
+      <div class="feed-main" ng-click="gotoArticleDetail(question)">
+        <div class="qustion-source">
+          来自 <a>{{question.storeName || question.cname}}</a>
+        </div>
         <div class="qustion-content" ng-class="{true:'has-pic' }[question.pics.length > 0]">
           <h2>{{question.title}}</h2>
           <div class="qustion-summary">{{question.context}}</div>
